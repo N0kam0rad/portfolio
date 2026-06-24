@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Luna's Rituals ✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#E8F4FF;--sun:#FFD166;--coral:#FF6B6B;--mint:#06D6A0;--lavender:#9B5DE5;--pink:#F72585;--navy:#1A1A2E;--bg:#F0F7FF;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);font-family:'Nunito',sans-serif;color:var(--navy);}
+.screen{display:none;flex-direction:column;height:100vh;overflow:hidden;}
+.screen.active{display:flex;}
+.scrollable{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;padding-bottom:90px;}
+/* SPLASH */
+#splash{background:linear-gradient(160deg,#FFE8F5 0%,#E8F4FF 50%,#E8FFF4 100%);justify-content:center;align-items:center;cursor:pointer;position:relative;overflow:hidden;}
+.star{position:absolute;font-size:24px;animation:float 3s ease-in-out infinite;}
+.star:nth-child(1){top:10%;left:8%}.star:nth-child(2){top:15%;right:10%;animation-delay:.5s}
+.star:nth-child(3){top:60%;left:5%;animation-delay:1s}.star:nth-child(4){bottom:15%;right:8%;animation-delay:.3s}
+.star:nth-child(5){bottom:25%;left:15%;animation-delay:.8s}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-12px) rotate(10deg)}}
+.splash-inner{text-align:center;position:relative;z-index:2;padding:40px 28px;}
+.splash-emoji{font-size:80px;animation:bounce 1.5s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.splash-title{font-family:'Fredoka One',cursive;font-size:52px;color:var(--lavender);margin-top:16px;line-height:1.1;}
+.splash-sub{font-size:18px;color:#8a8aaa;margin-top:8px;font-weight:600;}
+.splash-tap{margin-top:36px;font-size:16px;color:var(--mint);font-weight:700;animation:fadepulse 1.8s ease-in-out infinite;}
+@keyframes fadepulse{0%,100%{opacity:.4}50%{opacity:1}}
+/* NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:3px solid var(--sky);display:flex;padding:8px 0 18px;z-index:100;box-shadow:0 -4px 20px rgba(0,0,0,.08);}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:4px;}
+.nav-btn .ni{font-size:26px;}.nav-btn .nl{font-size:10px;font-weight:700;color:#bbb;font-family:'Nunito',sans-serif;}
+.nav-btn.active .nl{color:var(--lavender);}.nav-btn.active .ni{filter:drop-shadow(0 0 6px rgba(155,93,229,.4));}
+/* HOME */
+#home-screen{background:var(--bg);}
+.home-header{background:linear-gradient(135deg,var(--lavender),#c084fc);padding:44px 24px 28px;color:white;position:relative;overflow:hidden;}
+.home-header::before{content:'🌟';position:absolute;font-size:120px;right:-20px;top:-20px;opacity:.15;}
+.home-greeting{font-size:14px;font-weight:700;opacity:.85;letter-spacing:.06em;text-transform:uppercase;}
+.home-date{font-family:'Fredoka One',cursive;font-size:20px;color:rgba(255,255,255,0.65);margin-top:2px;}
+.home-name{font-family:'Fredoka One',cursive;font-size:44px;line-height:1.1;margin-top:4px;}
+.home-pts{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.25);border-radius:100px;padding:8px 18px;margin-top:14px;font-size:18px;font-weight:800;cursor:pointer;}
+.routine-cards{padding:16px 20px 0;display:flex;flex-direction:column;gap:12px;}
+.rc-big{background:white;border-radius:20px;padding:20px 20px 20px 16px;display:flex;align-items:center;gap:16px;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.08);transition:transform .15s;border:3px solid transparent;}
+.rc-big:active{transform:scale(.98);}.rc-big.morning{border-color:#FFE066;}.rc-big.bedtime{border-color:#C084FC;}.rc-big.done-today{opacity:.6;}
+.rc-icon-big{font-size:44px;flex-shrink:0;}.rc-info{flex:1;}
+.rc-title{font-family:'Fredoka One',cursive;font-size:22px;line-height:1.1;}
+.rc-title.morning{color:#E6A000;}.rc-title.bedtime{color:var(--lavender);}
+.rc-desc{font-size:12px;color:#8a8aaa;margin-top:3px;font-weight:600;}
+.rc-earn-tag{background:var(--sun);color:var(--navy);padding:4px 12px;border-radius:100px;font-size:12px;font-weight:800;margin-top:6px;display:inline-block;}
+.rc-earn-tag.done{background:#e0e0e0;color:#aaa;}
+/* mini step dots on routine card */
+.rc-dots{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap;}
+.rc-dot{width:10px;height:10px;border-radius:50%;background:#e8e8e8;transition:background .3s;}
+.rc-dot.done{background:var(--mint);}
+.rc-dot.done-bed{background:var(--lavender);}
+/* RITUAL VIEW */
+#ritual-view{background:var(--bg);}
+.rv-top{padding:44px 20px 20px;display:flex;align-items:center;gap:12px;}
+.rv-back-btn{width:44px;height:44px;border-radius:50%;background:white;border:none;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.1);flex-shrink:0;}
+.rv-head-text{flex:1;}
+.rv-title{font-family:'Fredoka One',cursive;font-size:32px;}
+.rv-title.morning{color:#E6A000;}.rv-title.bedtime{color:var(--lavender);}
+.rv-earn{font-size:14px;color:#8a8aaa;font-weight:700;margin-top:2px;}
+.steps-grid{padding:8px 20px;display:flex;flex-direction:column;gap:12px;}
+.step-card{background:white;border-radius:18px;padding:18px 18px 18px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;box-shadow:0 3px 14px rgba(0,0,0,.07);transition:all .2s;border:3px solid transparent;}
+.step-card.done{background:#F0FFF8;border-color:var(--mint);}
+.step-card.done .step-text{text-decoration:line-through;opacity:.5;}
+.step-card.done-bed{background:#F5F0FF;border-color:var(--lavender);}
+.step-card.done-bed .step-text{text-decoration:line-through;opacity:.5;}
+.step-icon-big{font-size:40px;flex-shrink:0;}.step-text{font-size:18px;font-weight:700;flex:1;}
+.step-subtext{font-size:13px;color:#8a8aaa;margin-top:2px;font-weight:600;}
+.step-checkbox{width:32px;height:32px;border-radius:50%;border:3px solid #ddd;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .25s;}
+.step-card.done .step-checkbox{background:var(--mint);border-color:var(--mint);color:white;}
+.step-card.done-bed .step-checkbox{background:var(--lavender);border-color:var(--lavender);color:white;}
+.rv-bottom{padding:14px 20px;background:white;border-top:2px solid var(--bg);}
+.rv-prog-bar{height:10px;background:#f0f0f0;border-radius:10px;overflow:hidden;margin-bottom:8px;}
+.rv-prog-fill{height:100%;border-radius:10px;transition:width .4s;background:linear-gradient(90deg,var(--mint),#06a87d);}
+.rv-prog-fill.bedtime{background:linear-gradient(90deg,var(--lavender),#7c3aed);}
+.rv-prog-meta{display:flex;justify-content:space-between;font-size:12px;color:#aaa;font-weight:700;margin-bottom:10px;}
+.finish-btn{width:100%;padding:18px;border:none;border-radius:14px;font-family:'Fredoka One',cursive;font-size:20px;cursor:pointer;display:none;transition:all .2s;background:linear-gradient(135deg,var(--mint),#06a87d);color:white;box-shadow:0 4px 16px rgba(6,214,160,.4);}
+.finish-btn.bedtime{background:linear-gradient(135deg,var(--lavender),#7c3aed);box-shadow:0 4px 16px rgba(155,93,229,.4);}
+.finish-btn.show{display:block;}.finish-btn:active{transform:scale(.98);}
+/* REWARDS */
+#rewards-screen{background:var(--bg);}
+.rewards-hero{background:linear-gradient(135deg,#FF6B9D,#C084FC);padding:44px 24px 28px;position:relative;overflow:hidden;}
+.rewards-hero::before{content:'⭐';position:absolute;font-size:120px;right:-15px;top:-15px;opacity:.2;}
+.rewards-lbl{font-size:13px;font-weight:800;opacity:.75;text-transform:uppercase;letter-spacing:.08em;color:white;}
+.rewards-bal{font-family:'Fredoka One',cursive;font-size:72px;line-height:1;color:white;}
+.rewards-bal-label{font-size:14px;font-weight:800;color:rgba(255,255,255,.75);margin-top:2px;}
+.rewards-streak{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.25);border-radius:100px;padding:6px 16px;margin-top:12px;font-size:15px;font-weight:800;color:white;}
+.savings-goal{padding:20px 20px 0;}
+.sg-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.sg-title{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8a8aaa;}
+.wish-add-btn{background:linear-gradient(135deg,var(--lavender),#c084fc);color:white;border:none;border-radius:100px;padding:8px 16px;font-family:'Fredoka One',cursive;font-size:14px;cursor:pointer;box-shadow:0 3px 10px rgba(155,93,229,.3);}
+/* WISHLIST CARDS */
+.wishlist-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.wish-card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.09);cursor:pointer;position:relative;}
+.wish-hero{width:100%;height:130px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.wish-hero img{width:100%;height:100%;object-fit:cover;display:block;}
+.wish-hero-emoji{font-size:56px;line-height:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.18));animation:wishbounce 2.5s ease-in-out infinite;}
+@keyframes wishbounce{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-7px) scale(1.08);}}
+.wish-amz-btn{position:absolute;bottom:8px;left:8px;background:rgba(255,153,0,0.92);color:#111;font-size:11px;font-weight:800;font-family:'Nunito',sans-serif;border:none;border-radius:20px;padding:5px 11px;cursor:pointer;text-decoration:none;display:inline-block;box-shadow:0 2px 8px rgba(0,0,0,0.15);z-index:2;}
+.wish-edit-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;background:rgba(255,255,255,.85);border-radius:50%;border:none;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.wish-body{padding:10px 12px 12px;}
+.wish-name{font-family:'Fredoka One',cursive;font-size:13px;color:var(--navy);line-height:1.2;margin-bottom:3px;}
+.wish-pts{font-size:11px;color:var(--lavender);font-weight:800;margin-bottom:7px;}
+.wish-prog-bar{height:7px;background:#f0f0f0;border-radius:10px;overflow:hidden;margin-bottom:4px;}
+.wish-prog-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--coral),var(--pink));transition:width .5s;}
+.wish-prog-meta{display:flex;justify-content:space-between;font-size:10px;color:#aaa;font-weight:700;margin-bottom:8px;}
+.cashout-btn-big{width:100%;padding:9px 6px;border:none;border-radius:10px;font-family:'Fredoka One',cursive;font-size:11px;cursor:pointer;transition:all .2s;}
+.cashout-btn-big:not(:disabled){background:linear-gradient(135deg,var(--coral),var(--pink));color:white;box-shadow:0 3px 10px rgba(247,37,133,.3);}
+.cashout-btn-big:disabled{background:#f0f0f0;color:#bbb;cursor:not-allowed;}
+.tx-section{padding:16px 20px 0;}
+.tx-title{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8a8aaa;margin-bottom:12px;}
+.tx-item{background:white;border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.tx-emoji{font-size:24px;}.tx-info{flex:1;}
+.tx-name{font-size:14px;font-weight:800;}.tx-when{font-size:12px;color:#aaa;margin-top:1px;}
+.tx-amount{font-family:'Fredoka One',cursive;font-size:20px;color:var(--mint);}
+.tx-amount.spent{color:var(--coral);}
+/* CELEBRATE */
+.celebrate{position:fixed;inset:0;z-index:500;display:none;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px;background:linear-gradient(160deg,rgba(155,93,229,.95),rgba(6,214,160,.95));}
+.celebrate.show{display:flex;}
+.cel-stars{font-size:56px;animation:spin 1s ease-in-out;}
+@keyframes spin{from{transform:rotate(-20deg) scale(.5)}to{transform:rotate(0) scale(1)}}
+.cel-big{font-family:'Fredoka One',cursive;font-size:52px;color:white;margin:16px 0 8px;line-height:1.1;}
+.cel-pts{font-family:'Fredoka One',cursive;font-size:64px;color:var(--sun);margin:8px 0;}
+.cel-msg{font-size:18px;font-weight:700;color:rgba(255,255,255,.85);margin-bottom:32px;}
+.cel-close-btn{padding:18px 44px;background:white;border:none;border-radius:14px;font-family:'Fredoka One',cursive;font-size:20px;color:var(--lavender);cursor:pointer;}
+/* SHEETS */
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:flex-end;justify-content:center;}
+.sheet-overlay.show{display:flex;}
+.sheet{background:white;border-radius:28px 28px 0 0;width:100%;max-height:92vh;overflow-y:auto;padding:0 0 40px;}
+.sheet-handle{width:40px;height:4px;background:#e0e0e0;border-radius:4px;margin:12px auto 20px;}
+.sheet-title{font-family:'Fredoka One',cursive;font-size:28px;color:var(--navy);padding:0 24px;margin-bottom:6px;}
+.sheet-sub{font-size:14px;color:#8a8aaa;font-weight:600;padding:0 24px;margin-bottom:24px;line-height:1.5;}
+.flow-progress{margin:0 24px 24px;height:6px;background:#f0f0f0;border-radius:10px;overflow:hidden;}
+.flow-progress-fill{height:100%;border-radius:10px;background:var(--lavender);transition:width .4s;}
+.pill-options{padding:0 24px;display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.pill-opt{width:100%;padding:18px 20px;background:white;border:2.5px solid #E8E8E8;border-radius:100px;font-family:'Fredoka One',cursive;font-size:18px;cursor:pointer;text-align:center;transition:all .2s;}
+.pill-opt.selected{border-color:var(--navy);border-width:3px;}
+.pill-opt:active{transform:scale(.97);}
+.sheet-cta{margin:0 24px;padding:18px;background:var(--navy);color:white;border:none;border-radius:100px;width:calc(100% - 48px);font-family:'Fredoka One',cursive;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s;}
+.sheet-cta:disabled{opacity:.4;cursor:not-allowed;}
+.img-input-wrap{margin:0 24px 16px;}
+.img-input-label{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8a8aaa;margin-bottom:8px;display:block;}
+.img-input{width:100%;padding:14px 18px;border:2.5px solid #E8E8E8;border-radius:18px;font-size:16px;font-family:'Nunito',sans-serif;font-weight:600;outline:none;}
+.img-input:focus{border-color:var(--lavender);}
+.img-preview{width:100%;height:120px;border-radius:16px;overflow:hidden;background:#F0F0FF;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:48px;}
+.img-preview img{width:100%;height:100%;object-fit:cover;}
+.edit-item-img{width:calc(100% - 48px);height:160px;border-radius:18px;overflow:hidden;margin:0 24px 16px;display:flex;align-items:center;justify-content:center;}
+.edit-item-img img{width:100%;height:100%;object-fit:cover;}
+/* TOAST */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--mint);color:white;padding:12px 24px;border-radius:100px;font-size:14px;font-weight:800;z-index:999;transition:transform .4s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+/* ── PIECE UNLOCK BURST ── */
+.piece-burst{position:fixed;inset:0;z-index:800;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;opacity:0;}
+.piece-burst.pop{animation:burstIn 1.35s cubic-bezier(.22,1,.36,1) forwards;}
+@keyframes burstIn{
+  0%  {opacity:0;transform:scale(.4);}
+  18% {opacity:1;transform:scale(1.15);}
+  32% {transform:scale(.92);}
+  46% {transform:scale(1.06);}
+  58% {transform:scale(1);}
+  72% {opacity:1;}
+  100%{opacity:0;transform:scale(1.08);}
+}
+/* ripple rings that expand outward */
+.burst-ring{position:absolute;border-radius:50%;border:4px solid rgba(255,255,255,.6);animation:ringOut 1.1s ease-out forwards;}
+.burst-ring:nth-child(1){width:80px;height:80px;animation-delay:0s;}
+.burst-ring:nth-child(2){width:80px;height:80px;animation-delay:.1s;border-color:rgba(255,209,102,.5);}
+.burst-ring:nth-child(3){width:80px;height:80px;animation-delay:.2s;border-color:rgba(192,132,252,.4);}
+@keyframes ringOut{
+  0%  {transform:scale(1);opacity:.8;}
+  100%{transform:scale(4.5);opacity:0;}
+}
+/* the big puzzle piece tile */
+.burst-tile{width:96px;height:96px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:52px;box-shadow:0 12px 40px rgba(0,0,0,.25);position:relative;z-index:2;border:4px solid rgba(255,255,255,.7);}
+/* sparkle particles */
+.burst-sparks{position:absolute;inset:0;pointer-events:none;}
+.spark{position:absolute;font-size:22px;animation:sparkFly 1s ease-out forwards;}
+.spark:nth-child(1){top:50%;left:50%;animation-delay:.05s;--dx:-70px;--dy:-80px;}
+.spark:nth-child(2){top:50%;left:50%;animation-delay:.1s; --dx:75px; --dy:-65px;}
+.spark:nth-child(3){top:50%;left:50%;animation-delay:.0s; --dx:-85px;--dy:50px;}
+.spark:nth-child(4){top:50%;left:50%;animation-delay:.15s;--dx:80px; --dy:60px;}
+.spark:nth-child(5){top:50%;left:50%;animation-delay:.08s;--dx:0px;  --dy:-95px;}
+.spark:nth-child(6){top:50%;left:50%;animation-delay:.12s;--dx:0px;  --dy:90px;}
+@keyframes sparkFly{
+  0%  {transform:translate(-50%,-50%) translate(0,0) scale(1);opacity:1;}
+  100%{transform:translate(-50%,-50%) translate(var(--dx),var(--dy)) scale(0);opacity:0;}
+}
+/* text label below tile */
+.burst-label{font-family:'Fredoka One',cursive;font-size:22px;color:white;margin-top:16px;text-shadow:0 2px 12px rgba(0,0,0,.3);position:relative;z-index:2;text-align:center;line-height:1.3;}
+.burst-sublabel{font-size:14px;font-weight:800;color:rgba(255,255,255,.8);margin-top:4px;position:relative;z-index:2;}
+/* PUZZLE CARDS */
+.puzzle-section{padding:12px 20px 0;}
+.puzzle-section-title{font-size:11px;font-weight:800;color:#8a8aaa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+.puzzle-cards-row{display:flex;flex-direction:column;gap:10px;}
+.pz-card{background:white;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.08);cursor:pointer;transition:transform .15s;}
+.pz-card:active{transform:scale(.98);}
+.pz-card-top{padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;}
+.pz-card-top.morning-pz{background:linear-gradient(135deg,#FF6B9D,#C084FC);}
+.pz-card-top.bedtime-pz{background:linear-gradient(135deg,#5B4FE8,#C084FC);}
+.pz-card-label{font-family:'Fredoka One',cursive;font-size:16px;color:white;}
+.pz-card-badge{background:rgba(255,255,255,.25);border-radius:100px;padding:3px 10px;font-size:11px;font-weight:800;color:white;}
+.pz-card-body{padding:10px 16px 14px;display:flex;gap:12px;align-items:center;}
+/* 3×2 tile grid */
+.pz-mini-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:2px;border-radius:10px;overflow:hidden;width:108px;height:72px;flex-shrink:0;}
+.pz-tile{position:relative;overflow:hidden;background:#E8E0FF;}
+.pz-tile .pz-slice{position:absolute;inset:0;transition:opacity .5s;}
+.pz-tile .pz-fog{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;background:linear-gradient(135deg,#C8D8FF,#E8E0FF);transition:opacity .5s;}
+.pz-tile.revealed .pz-fog{opacity:0;pointer-events:none;}
+.pz-tile.covered .pz-slice{opacity:0;}
+.pz-card-info{flex:1;}
+.pz-hint{font-size:12px;font-weight:700;color:#8a8aaa;margin-bottom:6px;line-height:1.4;}
+.pz-hint span{color:var(--lavender);}
+.pz-prog-row{display:flex;align-items:center;justify-content:space-between;}
+.pz-prog-text{font-size:11px;font-weight:800;color:#aaa;}
+.pz-prog-text b{color:var(--coral);}
+.pz-status{font-size:11px;font-weight:800;color:var(--lavender);}
+.pz-status.unlocked{color:var(--coral);}
+.pz-status.solved{color:var(--mint);}
+/* PUZZLE OVERLAY */
+.puzzle-overlay{position:fixed;inset:0;z-index:600;display:none;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:32px;background:linear-gradient(160deg,rgba(91,79,232,.96),rgba(192,132,252,.96));}
+.puzzle-overlay.show{display:flex;}
+.puzzle-full-img{width:220px;height:147px;border-radius:20px;overflow:hidden;border:4px solid white;box-shadow:0 8px 32px rgba(0,0,0,.25);margin-bottom:20px;display:flex;align-items:center;justify-content:center;font-size:80px;background:white;}
+.puzzle-full-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.puzzle-q-title{font-family:'Fredoka One',cursive;font-size:28px;color:white;margin-bottom:6px;line-height:1.2;}
+.puzzle-q-sub{font-size:15px;color:rgba(255,255,255,.85);font-weight:700;margin-bottom:24px;}
+.puzzle-choices{display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px;}
+.puzzle-choice{padding:16px 24px;background:white;border:none;border-radius:100px;font-family:'Fredoka One',cursive;font-size:17px;color:var(--navy);cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(0,0,0,.12);}
+.puzzle-choice:active{transform:scale(.97);}
+.puzzle-choice.correct{background:var(--mint);color:white;transform:scale(1.04);}
+.puzzle-choice.wrong{background:var(--coral);color:white;opacity:.7;}
+.puzzle-choice.disabled{cursor:not-allowed;opacity:.5;}
+</style>
+</head>
+<body>
+<!-- SPLASH -->
+<div id="splash" class="screen active" onclick="leaveSplash()">
+  <span class="star">⭐</span><span class="star">🌟</span><span class="star">✨</span><span class="star">💫</span><span class="star">⭐</span>
+  <div class="splash-inner">
+    <div class="splash-emoji">🦋</div>
+    <div class="splash-title">Luna's<br>Rituals!</div>
+    <div class="splash-sub">Complete routines, earn ⭐ points!</div>
+    <div class="splash-tap">👆 Tap to start!</div>
+  </div>
+</div>
+<!-- HOME -->
+<div id="home-screen" class="screen">
+  <div class="scrollable">
+    <div class="home-header">
+      <div class="home-greeting" id="homeGreeting">Good morning ✨</div>
+      <div class="home-date" id="homeDate">Tuesday, March 10</div>
+      <div class="home-name">Hi Luna! 🌸</div>
+      <div class="home-pts" onclick="goTo('rewards-screen',1)">
+        <span>⭐</span><span id="homePts">0</span>
+        <span style="font-size:13px;opacity:.8">points → see prizes</span>
+      </div>
+    </div>
+    <div class="routine-cards">
+      <div class="rc-big morning" id="cardMorning" onclick="openRitual('morning')">
+        <div class="rc-icon-big">☀️</div>
+        <div class="rc-info">
+          <div class="rc-title morning">Morning Routine</div>
+          <div class="rc-desc">7 steps to a great day!</div>
+          <div class="rc-earn-tag" id="earnMorning">Earn 100 ⭐</div>
+          <div class="rc-dots" id="dotsMorning"></div>
+        </div>
+        <div style="font-size:28px;">→</div>
+      </div>
+      <div class="rc-big bedtime" id="cardBedtime" onclick="openRitual('bedtime')">
+        <div class="rc-icon-big">🌙</div>
+        <div class="rc-info">
+          <div class="rc-title bedtime">Bedtime Routine</div>
+          <div class="rc-desc">4 steps for sweet dreams!</div>
+          <div class="rc-earn-tag" id="earnBedtime">Earn 100 ⭐</div>
+          <div class="rc-dots" id="dotsBedtime"></div>
+        </div>
+        <div style="font-size:28px;">→</div>
+      </div>
+    </div>
+    <!-- PUZZLE CARDS -->
+    <div class="puzzle-section">
+      <div class="puzzle-section-title">🧩 Today's Mystery Puzzles</div>
+      <div class="puzzle-cards-row">
+        <div class="pz-card" onclick="openPuzzleIfReady('morning')" id="pzCardMorning">
+          <div class="pz-card-top morning-pz">
+            <div class="pz-card-label" id="pzTitleMorning">Morning Mystery!</div>
+            <div class="pz-card-badge" id="pzBadgeMorning">+50 ⭐</div>
+          </div>
+          <div class="pz-card-body">
+            <div class="pz-mini-grid" id="pzGridMorning"></div>
+            <div class="pz-card-info">
+              <div class="pz-hint" id="pzHintMorning">Finish morning routine to reveal pieces!</div>
+              <div class="pz-prog-row">
+                <div class="pz-prog-text" id="pzProgMorning"><b>0</b>/6 pieces</div>
+                <div class="pz-status" id="pzStatusMorning">🔒 Locked</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pz-card" onclick="openPuzzleIfReady('bedtime')" id="pzCardBedtime">
+          <div class="pz-card-top bedtime-pz">
+            <div class="pz-card-label" id="pzTitleBedtime">Bedtime Mystery!</div>
+            <div class="pz-card-badge" id="pzBadgeBedtime">+50 ⭐</div>
+          </div>
+          <div class="pz-card-body">
+            <div class="pz-mini-grid" id="pzGridBedtime"></div>
+            <div class="pz-card-info">
+              <div class="pz-hint" id="pzHintBedtime">Finish bedtime routine to reveal pieces!</div>
+              <div class="pz-prog-row">
+                <div class="pz-prog-text" id="pzProgBedtime"><b>0</b>/4 pieces</div>
+                <div class="pz-status" id="pzStatusBedtime">🔒 Locked</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="margin:12px 20px 0;background:white;border-radius:18px;padding:16px;box-shadow:0 3px 14px rgba(0,0,0,.07);">
+      <div style="font-size:13px;font-weight:800;color:#8a8aaa;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Your Streak</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:36px;color:var(--coral);" id="homeStreak">🔥 0 days</div>
+      <div style="font-size:13px;color:#8a8aaa;font-weight:600;margin-top:4px;">Keep going every day!</div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="goTo('home-screen',0)"><span class="ni">🏠</span><span class="nl">Home</span></button>
+    <button class="nav-btn" onclick="goTo('rewards-screen',1)"><span class="ni">⭐</span><span class="nl">Prizes</span></button>
+  </nav>
+</div>
+<!-- RITUAL VIEW -->
+<div id="ritual-view" class="screen">
+  <div class="rv-top">
+    <button class="rv-back-btn" onclick="backHome()">←</button>
+    <div class="rv-head-text">
+      <div class="rv-title" id="rvTitle">Morning</div>
+      <div class="rv-earn" id="rvEarnText">Earn 100 ⭐ when done!</div>
+    </div>
+  </div>
+  <div class="scrollable" style="padding-bottom:120px;">
+    <div class="steps-grid" id="stepsGrid"></div>
+  </div>
+  <div class="rv-bottom">
+    <div class="rv-prog-bar"><div class="rv-prog-fill" id="rvProg"></div></div>
+    <div class="rv-prog-meta"><span id="rvProgTxt">0 done</span><span id="rvProgPct">0%</span></div>
+    <button class="finish-btn" id="finishBtn" onclick="finishRitual()">I'm done! 🎉</button>
+  </div>
+</div>
+<!-- REWARDS -->
+<div id="rewards-screen" class="screen">
+  <div class="scrollable">
+    <div class="rewards-hero">
+      <div class="rewards-lbl">Luna's Star Points ⭐</div>
+      <div class="rewards-bal"><span id="rewardsPts">0</span></div>
+      <div class="rewards-bal-label">points to spend on prizes!</div>
+      <div class="rewards-streak" id="rewardsStreak">🔥 0 day streak!</div>
+    </div>
+    <div class="savings-goal">
+      <div class="sg-header">
+        <div class="sg-title">My Prize Wishlist 🎁</div>
+        <button class="wish-add-btn" onclick="openAddFlow()">✦ I want this!</button>
+      </div>
+      <div id="wishlistEl" class="wishlist-grid"></div>
+    </div>
+    <div class="tx-section" style="margin-bottom:24px;">
+      <div class="tx-title">Points Earned 🌟</div>
+      <div id="txEl"></div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn" onclick="goTo('home-screen',0)"><span class="ni">🏠</span><span class="nl">Home</span></button>
+    <button class="nav-btn active" onclick="goTo('rewards-screen',1)"><span class="ni">⭐</span><span class="nl">Prizes</span></button>
+  </nav>
+</div>
+<!-- ADD WISHLIST SHEET -->
+<div class="sheet-overlay" id="addFlowSheet">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div id="addStep1">
+      <div class="flow-progress"><div class="flow-progress-fill" style="width:33%"></div></div>
+      <div class="sheet-title">What do you want? 🌟</div>
+      <div class="sheet-sub">Pick the emoji that matches!</div>
+      <div class="pill-options" id="emojiPills"></div>
+      <button class="sheet-cta" id="step1Cta" disabled onclick="addFlowNext(2)">Next →</button>
+    </div>
+    <div id="addStep2" style="display:none">
+      <div class="flow-progress"><div class="flow-progress-fill" style="width:66%"></div></div>
+      <div class="sheet-title">What's it called? 💬</div>
+      <div class="sheet-sub">Type the name and how much it costs.</div>
+      <div class="img-input-wrap">
+        <label class="img-input-label">Name of the toy</label>
+        <input class="img-input" id="addName" placeholder="e.g. Princess Play Tent" oninput="checkStep2()">
+      </div>
+      <div class="img-input-wrap">
+        <label class="img-input-label">Price ($)</label>
+        <input class="img-input" id="addPrice" type="number" placeholder="27.99" oninput="checkStep2()">
+      </div>
+      <button class="sheet-cta" id="step2Cta" disabled onclick="addFlowNext(3)">Next →</button>
+    </div>
+    <div id="addStep3" style="display:none">
+      <div class="flow-progress"><div class="flow-progress-fill" style="width:100%"></div></div>
+      <div class="sheet-title">Add a photo? 📸</div>
+      <div class="sheet-sub">Saved! Mama can paste a photo link below.</div>
+      <div id="addImgPreview" class="img-preview" style="margin:0 24px 12px;"><span id="addPreviewEmoji">🎁</span></div>
+      <div class="img-input-wrap">
+        <label class="img-input-label">Image URL (Mama pastes this)</label>
+        <input class="img-input" id="addImgUrl" placeholder="https://..." oninput="previewImg()">
+      </div>
+      <button class="sheet-cta" onclick="saveNewWishItem()">Add to Wishlist! 🎉</button>
+    </div>
+  </div>
+</div>
+<!-- EDIT ITEM SHEET -->
+<div class="sheet-overlay" id="editItemSheet">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="editItemTitle">Edit Item</div>
+    <div class="sheet-sub">Update the photo, name, or price.</div>
+    <div id="editImgPreview" class="edit-item-img"><span id="editPreviewEmoji" style="font-size:52px">🎁</span></div>
+    <div class="img-input-wrap">
+      <label class="img-input-label">Photo URL</label>
+      <input class="img-input" id="editImgUrl" placeholder="Paste image link here..." oninput="previewEditImg()">
+    </div>
+    <div class="img-input-wrap">
+      <label class="img-input-label">Name</label>
+      <input class="img-input" id="editName">
+    </div>
+    <div class="img-input-wrap">
+      <label class="img-input-label">Price ($)</label>
+      <input class="img-input" id="editPrice" type="number">
+    </div>
+    <button class="sheet-cta" style="margin-bottom:12px;" onclick="saveEditItem()">Save Changes ✓</button>
+    <button onclick="deleteWishItem()" style="display:block;width:calc(100% - 48px);margin:8px 24px 0;padding:14px;background:none;border:2px solid #ffcdd2;border-radius:100px;color:#EF9A9A;font-family:'Fredoka One',cursive;font-size:16px;cursor:pointer;">Remove from Wishlist</button>
+  </div>
+</div>
+<!-- PUZZLE QUESTION OVERLAY -->
+<div class="puzzle-overlay" id="puzzleOverlay">
+  <div class="puzzle-full-img" id="puzzleFullImg"></div>
+  <div class="puzzle-q-title" id="puzzleQTitle">What do you see?</div>
+  <div class="puzzle-q-sub" id="puzzleQSub">Tap the right answer!</div>
+  <div class="puzzle-choices" id="puzzleChoices"></div>
+</div>
+<!-- PIECE UNLOCK BURST -->
+<div class="piece-burst" id="pieceBurst">
+  <div class="burst-ring"></div>
+  <div class="burst-ring"></div>
+  <div class="burst-ring"></div>
+  <div class="burst-sparks">
+    <span class="spark">✨</span><span class="spark">⭐</span>
+    <span class="spark">🌟</span><span class="spark">💫</span>
+    <span class="spark">✨</span><span class="spark">⭐</span>
+  </div>
+  <div class="burst-tile" id="burstTile">🧩</div>
+  <div class="burst-label" id="burstLabel">Piece unlocked!</div>
+  <div class="burst-sublabel" id="burstSublabel">1 of 6</div>
+</div>
+<!-- CELEBRATE -->
+<div class="celebrate" id="celebrate">
+  <div class="cel-stars">🎉</div>
+  <div class="cel-big" id="celTitle">Routine<br>Complete!</div>
+  <div class="cel-pts" id="celPts">+100 ⭐</div>
+  <div class="cel-msg" id="celMsg">Added to your star points!</div>
+  <button class="cel-close-btn" onclick="closeCelebrate()">Yay! See my prizes! →</button>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+// ── DATA ──
+const RITUALS = {
+  morning:{title:'Morning Routine',shortTitle:'Morning',color:'morning',earn:100,icon:'☀️',steps:[
+    {icon:'🌅',text:'Rise & Shine!',sub:'Good morning superstar!'},
+    {icon:'🪥',text:'Brush Your Teeth',sub:'2 minutes, top and bottom!'},
+    {icon:'👗',text:'Get Dressed',sub:'Pick something you love!'},
+    {icon:'🥞',text:'Eat Breakfast',sub:'Fuel for your adventures.'},
+    {icon:'🎒',text:'Pack Your Backpack',sub:'Did you forget anything?'},
+    {icon:'💇',text:'Hair Time',sub:'Looking good!'},
+    {icon:'🤗',text:'Hug Mama',sub:'The best one!'},
+  ]},
+  bedtime:{title:'Bedtime Routine',shortTitle:'Bedtime',color:'bedtime',earn:100,icon:'🌙',steps:[
+    {icon:'🧸',text:'Pick Up Toys',sub:'Everything in its home!'},
+    {icon:'🛁',text:'Bath Time',sub:'Squeaky clean!'},
+    {icon:'🪥',text:'Brush Your Teeth',sub:'Goodnight cavities!'},
+    {icon:'💜',text:'Mommy-Daughter Time',sub:'The best part of the day ❤️'},
+  ]}
+};
+// Puzzle reward in points
+const PUZZLE_REWARD = 50;
+// Daily puzzles — indexed by day-of-year mod length
+const DAILY_PUZZLES = {
+  morning:[
+    {title:'Flutter Flutter!',emoji:'🦋',bg:'#E8D6FF',question:'What insect is this?',answer:'A Butterfly',choices:['A Butterfly','A Dragonfly','A Bee','A Moth']},
+    {title:'Hop Hop!',emoji:'🐰',bg:'#D6FFE8',question:'What animal is this?',answer:'A Bunny',choices:['A Cat','A Mouse','A Bunny','A Hamster']},
+    {title:'Once Upon a Time!',emoji:'🏰',bg:'#FFE8D6',question:'Who lives in a castle?',answer:'A Princess',choices:['A Princess','A Doctor','A Witch','A Chef']},
+    {title:'Magic!',emoji:'🦄',bg:'#F0D6FF',question:'What magical animal is this?',answer:'A Unicorn',choices:['A Horse','A Pony','A Unicorn','A Pegasus']},
+    {title:'Colors Everywhere!',emoji:'🌈',bg:'#FFF0D6',question:'How many colors in a rainbow?',answer:'7 colors',choices:['3 colors','5 colors','7 colors','10 colors']},
+    {title:'Splash!',emoji:'🐬',bg:'#D6E8FF',question:'What animal is this?',answer:'A Dolphin',choices:['A Shark','A Dolphin','A Whale','A Fish']},
+    {title:'Pretty Petals!',emoji:'🌸',bg:'#FFD6E7',question:'What flower is this?',answer:'A Cherry Blossom',choices:['A Sunflower','A Cherry Blossom','A Rose','A Daisy']},
+    {title:'Big Ears!',emoji:'🐘',bg:'#E8E8D6',question:'What animal has the biggest nose?',answer:'An Elephant',choices:['A Giraffe','A Lion','An Elephant','A Tiger']},
+    {title:'Waddle Waddle!',emoji:'🐧',bg:'#D6E8FF',question:'What bird loves snow?',answer:'A Penguin',choices:['An Owl','A Duck','A Penguin','A Parrot']},
+    {title:'Royal!',emoji:'👑',bg:'#FFFBD6',question:'Who wears a crown?',answer:'A Queen or King',choices:['A Fairy','A Queen or King','A Witch','A Dragon']},
+    {title:'Under the Sea!',emoji:'🧜',bg:'#D6F5FF',question:'Where does a mermaid live?',answer:'In the ocean',choices:['In a castle','In the clouds','In the forest','In the ocean']},
+    {title:'Sneaky Sneaky!',emoji:'🦊',bg:'#FFE8D6',question:'What color is a fox?',answer:'Orange',choices:['Blue','Orange','Purple','Pink']},
+    {title:'Reach for Stars!',emoji:'⭐',bg:'#FFFBD6',question:'Where do stars live?',answer:'In the sky',choices:['In the sea','In the ground','In the sky','Under pillows']},
+    {title:'Roar!',emoji:'🦁',bg:'#FFE8D6',question:'What do we call a lion\'s hair?',answer:'A mane',choices:['A tail','A mane','A fin','A shell']},
+  ],
+  bedtime:[
+    {title:'Twinkle Twinkle!',emoji:'🌙',bg:'#2A1A4E',question:'What do you see at night?',answer:'Stars and the moon',choices:['Stars and the moon','The sun','Rainbows','Butterflies']},
+    {title:'Sweet Dreams!',emoji:'🧸',bg:'#FFE8D6',question:'What do you hug when you sleep?',answer:'A teddy bear',choices:['A pillow only','A teddy bear','A book','A shoe']},
+    {title:'Sleepy Animals!',emoji:'🦉',bg:'#E8D6FF',question:'Which animal is awake at night?',answer:'An owl',choices:['A dog','A duck','A cow','An owl']},
+    {title:'Nighttime Sky!',emoji:'✨',bg:'#1A1A3E',question:'What is the brightest thing at night?',answer:'The moon',choices:['A candle','A torch','The moon','A lamp']},
+    {title:'Goodnight Moon!',emoji:'🌛',bg:'#2A1A4E',question:'What shape can the moon be?',answer:'A crescent',choices:['A square','A crescent','A triangle','A star']},
+    {title:'Dream Time!',emoji:'💜',bg:'#E8D6FF',question:'What do you do when you sleep?',answer:'Dream!',choices:['Run around','Dream!','Eat snacks','Play games']},
+    {title:'Cozy!',emoji:'🛌',bg:'#FFE8F0',question:'What makes you cozy in bed?',answer:'A blanket',choices:['A raincoat','A helmet','A blanket','A backpack']},
+  ]
+};
+const WISHLIST_DEFAULT = [
+  {name:"Sticker Pack",        emoji:"🌟",price:5.99,  bg:"#FFD6E7",amz:"https://www.amazon.com/s?k=kids+sticker+pack"},
+  {name:"Coloring Book",       emoji:"🖍️",price:7.99,  bg:"#D6E8FF",amz:"https://www.amazon.com/s?k=kids+coloring+book"},
+  {name:"Bubble Wand",         emoji:"🫧",price:8.99,  bg:"#D6FFF0",amz:"https://www.amazon.com/s?k=kids+bubble+wand"},
+  {name:"Toy Dinosaur",        emoji:"🦕",price:12.99, bg:"#E8D6FF",amz:"https://www.amazon.com/s?k=toy+dinosaur+kids"},
+  {name:"Building Blocks",     emoji:"🧱",price:16.99, bg:"#FFE8D6",amz:"https://www.amazon.com/s?k=kids+building+blocks"},
+  {name:"Plush Teddy Bear",    emoji:"🧸",price:18.99, bg:"#FFD6F0",amz:"https://www.amazon.com/s?k=plush+teddy+bear"},
+  {name:"Art & Craft Kit",     emoji:"🎨",price:22.99, bg:"#FFFBD6",amz:"https://www.amazon.com/s?k=kids+art+craft+kit"},
+  {name:"Play Tent",           emoji:"⛺",price:29.99, bg:"#D6F5FF",amz:"https://www.amazon.com/s?k=kids+play+tent"},
+];
+const EMOJI_CHOICES = ["🎀","🦋","🌸","💖","🦄","🏰","👗","🎨","🧸","🎠","⭐","🍭","🎪","👑","🌈","💜","🎁","🫧","🦕","🐶","🐱","💃","🧁","🍦","🚀","🌺","🐧","🌙"];
+// ── STATE ──
+// points replaces balance; stepsDone stores per-ritual per-day step states
+let state = {
+  points: 0, streak: 0, lastCompleted: null,
+  transactions: [], wishlist: [],
+  completedToday: {},   // {morning: 'datestring', bedtime: 'datestring'}
+  stepsDone: {},        // {'morning_2026-3-10': [true,false,...]}
+  puzzleState: {}       // {'morning_2026-3-10': {piecesRevealed:3, solved:false, earnedToday:false}}
+};
+let currentRitual = null;
+let addFlowData = {emoji:'',name:'',price:0,img:'',bg:''};
+let editingIdx = -1;
+// ── PERSISTENCE ──
+function save(){ localStorage.setItem('au_state_v4', JSON.stringify(state)); }
+function load(){
+  try{
+    const s = localStorage.getItem('au_state_v4');
+    if(s){ const parsed = JSON.parse(s); state = {...state, ...parsed}; }
+  }catch(e){}
+  if(!state.wishlist || !state.wishlist.length) state.wishlist = [...WISHLIST_DEFAULT];
+  if(!state.transactions) state.transactions = [];
+  if(!state.completedToday) state.completedToday = {};
+  if(!state.stepsDone) state.stepsDone = {};
+  if(!state.puzzleState) state.puzzleState = {};
+}
+// ── DAY KEY ──
+function dayKey(){ const d=new Date(); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
+function ritualDayKey(ritual){ return `${ritual}_${dayKey()}`; }
+// ── STEP STATES ──
+// Load today's step states for a ritual from persistent storage
+function getTodayStepStates(ritual){
+  const key = ritualDayKey(ritual);
+  const steps = RITUALS[ritual].steps;
+  const saved = state.stepsDone[key];
+  if(saved && saved.length === steps.length) return [...saved];
+  return new Array(steps.length).fill(false);
+}
+function saveStepState(ritual, idx, val){
+  const key = ritualDayKey(ritual);
+  if(!state.stepsDone[key]) state.stepsDone[key] = new Array(RITUALS[ritual].steps.length).fill(false);
+  state.stepsDone[key][idx] = val;
+  save();
+}
+// ── PUZZLE HELPERS ──
+function getPuzzleData(ritual){
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((now - start) / 86400000);
+  const pool = DAILY_PUZZLES[ritual];
+  return pool[dayOfYear % pool.length];
+}
+function getPuzzleState(ritual){
+  const key = `${ritual}_${dayKey()}`;
+  if(!state.puzzleState[key]){
+    const totalPieces = RITUALS[ritual].steps.length <= 4 ? 4 : 6;
+    state.puzzleState[key] = {piecesRevealed:0, solved:false, earnedToday:false, totalPieces};
+  }
+  return state.puzzleState[key];
+}
+// ── NAV ──
+function leaveSplash(){
+  document.getElementById('splash').classList.remove('active');
+  document.getElementById('home-screen').classList.add('active');
+  updateHome();
+}
+function goTo(id, navIdx){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.bottom-nav .nav-btn').forEach((b,i)=>b.classList.toggle('active',i===navIdx));
+  if(id==='rewards-screen') renderRewards();
+}
+function backHome(){
+  document.getElementById('ritual-view').classList.remove('active');
+  document.getElementById('home-screen').classList.add('active');
+}
+// ── RITUAL VIEW ──
+function openRitual(key){
+  currentRitual = key;
+  const r = RITUALS[key];
+  const tv = document.getElementById('rvTitle');
+  tv.textContent = r.shortTitle; tv.className = 'rv-title ' + r.color;
+  document.getElementById('rvEarnText').textContent = `Earn ${r.earn} ⭐ when you finish!`;
+  const grid = document.getElementById('stepsGrid');
+  grid.innerHTML = '';
+  // Load saved step states for today
+  const stepStates = getTodayStepStates(key);
+  r.steps.forEach((step, i) => {
+    const isDone = stepStates[i];
+    const d = document.createElement('div');
+    d.className = 'step-card' + (isDone ? (' ' + (key==='bedtime'?'done-bed':'done')) : '');
+    d.innerHTML = `<div class="step-icon-big">${step.icon}</div>
+      <div style="flex:1"><div class="step-text">${step.text}</div><div class="step-subtext">${step.sub}</div></div>
+      <div class="step-checkbox">${isDone?'✓':''}</div>`;
+    d.onclick = () => toggleStep(d, i, key);
+    grid.appendChild(d);
+  });
+  const fb = document.getElementById('finishBtn');
+  fb.className = 'finish-btn ' + r.color;
+  fb.classList.remove('show');
+  document.getElementById('rvProg').className = 'rv-prog-fill ' + (r.color==='bedtime'?'bedtime':'');
+  // If already completed today, dim finish area
+  const today = dayKey();
+  if(state.completedToday[key] === today){
+    fb.textContent = 'All done today! ✓';
+    fb.classList.add('show');
+    fb.disabled = true;
+  } else {
+    fb.textContent = "I'm done! 🎉";
+    fb.disabled = false;
+  }
+  document.getElementById('home-screen').classList.remove('active');
+  document.getElementById('ritual-view').classList.add('active');
+  updateProgress(key);
+}
+function toggleStep(el, i, ritual){
+  if(state.completedToday[ritual] === dayKey()) return;
+  const doneClass = ritual==='bedtime' ? 'done-bed' : 'done';
+  const wasDone = el.classList.contains(doneClass);
+  el.classList.toggle(doneClass);
+  const nowDone = el.classList.contains(doneClass);
+  el.querySelector('.step-checkbox').textContent = nowDone ? '✓' : '';
+  saveStepState(ritual, i, nowDone);
+  updateProgress(ritual);
+  // Sync puzzle pieces — pass element rect for burst origin
+  const doneCount = getTodayStepStates(ritual).filter(Boolean).length;
+  syncPuzzlePieces(ritual, doneCount, nowDone ? el : null);
+}
+function updateProgress(ritual){
+  if(!ritual) ritual = currentRitual;
+  const stepStates = getTodayStepStates(ritual);
+  const done = stepStates.filter(Boolean).length;
+  const total = stepStates.length;
+  const pct = Math.round(done/total*100);
+  document.getElementById('rvProg').style.width = pct+'%';
+  document.getElementById('rvProgTxt').textContent = `${done} of ${total} done!`;
+  document.getElementById('rvProgPct').textContent = pct+'%';
+  const fb = document.getElementById('finishBtn');
+  if(!fb.disabled){
+    if(done===total) fb.classList.add('show'); else fb.classList.remove('show');
+  }
+}
+function finishRitual(){
+  const r = RITUALS[currentRitual];
+  const today = dayKey();
+  if(state.completedToday[currentRitual] === today){ showToast('Already done today! ⭐'); return; }
+  state.points = (state.points||0) + r.earn;
+  state.completedToday[currentRitual] = today;
+  state.transactions.unshift({label:r.title, emoji:r.icon, date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}), amount:r.earn});
+  // Streak: update if at least one routine done today
+  const last = state.lastCompleted ? new Date(state.lastCompleted) : null;
+  const now = new Date();
+  if(last){ const diff = Math.floor((now-last)/86400000); state.streak = diff<=1 ? (state.streak||0)+1 : 1; }
+  else state.streak = 1;
+  state.lastCompleted = now.toISOString();
+  save(); updateHome(); renderPuzzleCards();
+  document.getElementById('celTitle').textContent = `${r.shortTitle}\nRoutine Done!`;
+  document.getElementById('celPts').textContent = `+${r.earn} ⭐`;
+  document.getElementById('celMsg').textContent = `Total: ${state.points} ⭐ — keep it up!`;
+  document.getElementById('celebrate').classList.add('show');
+  // Disable finish button
+  const fb = document.getElementById('finishBtn');
+  fb.textContent = 'All done today! ✓'; fb.disabled = true;
+}
+function closeCelebrate(){
+  document.getElementById('celebrate').classList.remove('show');
+  backHome();
+  setTimeout(()=>goTo('rewards-screen',1), 300);
+}
+// ── HOME UPDATE ──
+function updateHome(){
+  document.getElementById('homePts').textContent = state.points || 0;
+  document.getElementById('homeStreak').textContent = `🔥 ${state.streak||0} days`;
+  const today = dayKey();
+  // Routine cards: earn tags + step dots
+  ['morning','bedtime'].forEach(r => {
+    const card = document.getElementById('rc' + r.charAt(0).toUpperCase() + r.slice(1));
+    // We reference by IDs set in HTML
+    const earnEl = document.getElementById('earn' + r.charAt(0).toUpperCase() + r.slice(1));
+    const dotsEl = document.getElementById('dots' + r.charAt(0).toUpperCase() + r.slice(1));
+    const steps = RITUALS[r].steps;
+    const stepStates = getTodayStepStates(r);
+    const done = stepStates.filter(Boolean).length;
+    // Earn tag
+    if(state.completedToday[r] === today){
+      earnEl.className='rc-earn-tag done'; earnEl.textContent='Done today ✓';
+    } else {
+      earnEl.className='rc-earn-tag'; earnEl.textContent=`Earn ${RITUALS[r].earn} ⭐`;
+    }
+    // Progress dots
+    dotsEl.innerHTML = '';
+    steps.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'rc-dot' + (stepStates[i] ? (' ' + (r==='bedtime'?'done-bed':'done')) : '');
+      dotsEl.appendChild(dot);
+    });
+    // Card opacity
+    const cardEl = document.getElementById('card'+r.charAt(0).toUpperCase()+r.slice(1));
+    if(state.completedToday[r]===today) cardEl.classList.add('done-today');
+    else cardEl.classList.remove('done-today');
+  });
+  renderPuzzleCards();
+}
+// ── PUZZLE SYNC ──
+function syncPuzzlePieces(ritual, doneCount, fromEl){
+  const ps = getPuzzleState(ritual);
+  const totalPieces = ps.totalPieces;
+  const newRevealed = Math.min(doneCount, totalPieces);
+  if(newRevealed > ps.piecesRevealed){
+    const justUnlocked = newRevealed; // which piece number just unlocked
+    ps.piecesRevealed = newRevealed;
+    state.puzzleState[`${ritual}_${dayKey()}`] = ps;
+    save();
+    // Fire the burst animation before re-rendering cards
+    showPieceBurst(ritual, justUnlocked, totalPieces, ()=>{
+      renderPuzzleCards();
+      if(newRevealed === totalPieces && !ps.solved){
+        setTimeout(()=> showToast('🧩 All pieces revealed! Tap the puzzle!'), 200);
+      }
+    });
+  }
+}
+function showPieceBurst(ritual, pieceNum, total, onDone){
+  const puzzle = getPuzzleData(ritual);
+  const burst = document.getElementById('pieceBurst');
+  const tile  = document.getElementById('burstTile');
+  const label = document.getElementById('burstLabel');
+  const sub   = document.getElementById('burstSublabel');
+  // Color the tile to match the puzzle theme
+  tile.style.background = puzzle.bg;
+  tile.textContent = puzzle.emoji;
+  // Background tint behind burst — morning = pink/purple, bedtime = indigo/purple
+  burst.style.background = ritual === 'morning'
+    ? 'rgba(255,107,157,0.55)'
+    : 'rgba(91,79,232,0.55)';
+  burst.style.backdropFilter = 'blur(6px)';
+  burst.style.webkitBackdropFilter = 'blur(6px)';
+  label.textContent = pieceNum === total ? 'Puzzle unlocked! 🎉' : 'Piece unlocked!';
+  sub.textContent   = `${pieceNum} of ${total} 🧩`;
+  // Reset animation by cloning then replacing
+  burst.classList.remove('pop');
+  void burst.offsetWidth; // force reflow
+  burst.classList.add('pop');
+  // After animation finishes, re-render puzzle cards
+  const dur = 1350;
+  setTimeout(()=>{
+    burst.classList.remove('pop');
+    if(onDone) onDone();
+  }, dur);
+}
+// ── RENDER PUZZLE CARDS ──
+function renderPuzzleCards(){
+  renderOnePuzzleCard('morning');
+  renderOnePuzzleCard('bedtime');
+}
+function renderOnePuzzleCard(ritual){
+  const ps = getPuzzleState(ritual);
+  const puzzle = getPuzzleData(ritual);
+  const total = ps.totalPieces;
+  const revealed = ps.piecesRevealed;
+  const fogEmojis = ['❓','⭐','❓','💫','❓','✨','🌟','💜'];
+  // Title & badge
+  document.getElementById('pzTitle'+cap(ritual)).textContent = ps.solved ? puzzle.title+' ✓' : puzzle.title;
+  document.getElementById('pzBadge'+cap(ritual)).textContent = ps.earnedToday ? 'Earned! ✓' : `+${PUZZLE_REWARD} ⭐`;
+  // Mini grid — layout: morning=3×2 (6 pieces), bedtime=2×2 (4 pieces)
+  const grid = document.getElementById('pzGrid'+cap(ritual));
+  grid.innerHTML = '';
+  const cols = ritual==='morning' ? 3 : 2;
+  const rows = ritual==='morning' ? 2 : 2;
+  grid.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+  grid.style.gridTemplateRows = `repeat(${rows},1fr)`;
+  grid.style.width = ritual==='morning' ? '108px' : '72px';
+  for(let row=0; row<rows; row++){
+    for(let col=0; col<cols; col++){
+      const idx = row*cols+col;
+      const isRevealed = idx < revealed;
+      const tile = document.createElement('div');
+      tile.className = 'pz-tile ' + (isRevealed?'revealed':'covered');
+      tile.style.background = puzzle.bg;
+      const xPct = cols===1 ? '50%' : col===0 ? '0%' : col===cols-1 ? '100%' : '50%';
+      const yPct = row===0 ? '0%' : '100%';
+      tile.innerHTML = `
+        <div class="pz-slice" style="background-image:none;background:${puzzle.bg};opacity:${isRevealed?1:0};"></div>
+        <div class="pz-fog" style="opacity:${isRevealed?0:1}">${fogEmojis[idx]||'❓'}</div>
+        ${isRevealed && idx===Math.floor(total/2) ? `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:${total===4?'22px':'18px'}">${puzzle.emoji}</div>` : ''}`;
+      grid.appendChild(tile);
+    }
+  }
+  // Hint text
+  const hintEl = document.getElementById('pzHint'+cap(ritual));
+  if(ps.solved){ hintEl.innerHTML = `You solved it! 🎉`; hintEl.querySelector && null; }
+  else if(revealed===total){ hintEl.innerHTML = `All pieces revealed! <span>Tap to answer!</span>`; }
+  else if(revealed===0){ hintEl.innerHTML = `Finish ${ritual} routine to reveal pieces!`; }
+  else { hintEl.innerHTML = `<span>${revealed} of ${total}</span> pieces revealed! Keep going!`; }
+  // Prog text
+  document.getElementById('pzProg'+cap(ritual)).innerHTML = `<b>${revealed}</b>/${total} pieces`;
+  // Status pill
+  const statusEl = document.getElementById('pzStatus'+cap(ritual));
+  if(ps.solved){ statusEl.textContent='🌟 Solved!'; statusEl.className='pz-status solved'; }
+  else if(revealed===total){ statusEl.textContent='👆 Tap me!'; statusEl.className='pz-status unlocked'; }
+  else if(revealed===0){ statusEl.textContent='🔒 Locked'; statusEl.className='pz-status'; }
+  else { statusEl.textContent=`✨ ${total-revealed} more!`; statusEl.className='pz-status'; }
+}
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+// ── OPEN PUZZLE ──
+let activePuzzleRitual = null;
+function openPuzzleIfReady(ritual){
+  const ps = getPuzzleState(ritual);
+  if(ps.solved){ showToast('🌟 Already solved today! Come back tomorrow!'); return; }
+  if(ps.piecesRevealed < ps.totalPieces){ showToast('🔒 Finish the routine first!'); return; }
+  activePuzzleRitual = ritual;
+  showPuzzleQuestion(ritual);
+}
+function showPuzzleQuestion(ritual){
+  const puzzle = getPuzzleData(ritual);
+  const imgEl = document.getElementById('puzzleFullImg');
+  imgEl.style.background = puzzle.bg;
+  imgEl.innerHTML = `<span style="font-size:${ritual==='morning'?'90px':'80px'}">${puzzle.emoji}</span>`;
+  document.getElementById('puzzleQTitle').textContent = puzzle.question;
+  document.getElementById('puzzleQSub').textContent = `Answer right to win ${PUZZLE_REWARD} ⭐!`;
+  const shuffled = [...puzzle.choices].sort(()=>Math.random()-.5);
+  const choicesEl = document.getElementById('puzzleChoices');
+  choicesEl.innerHTML = '';
+  shuffled.forEach(choice => {
+    const btn = document.createElement('button');
+    btn.className = 'puzzle-choice';
+    btn.textContent = choice;
+    btn.onclick = () => handlePuzzleAnswer(choice, puzzle.answer);
+    choicesEl.appendChild(btn);
+  });
+  document.getElementById('puzzleOverlay').classList.add('show');
+}
+function handlePuzzleAnswer(chosen, correct){
+  const allBtns = document.querySelectorAll('.puzzle-choice');
+  allBtns.forEach(b => {
+    b.classList.add('disabled'); b.onclick = null;
+    if(b.textContent===correct) b.classList.add('correct');
+    else if(b.textContent===chosen && chosen!==correct) b.classList.add('wrong');
+  });
+  const key = `${activePuzzleRitual}_${dayKey()}`;
+  const ps = state.puzzleState[key];
+  if(chosen===correct){
+    setTimeout(()=>{
+      document.getElementById('puzzleOverlay').classList.remove('show');
+      ps.solved = true;
+      if(!ps.earnedToday){
+        ps.earnedToday = true;
+        state.points = (state.points||0) + PUZZLE_REWARD;
+        state.transactions.unshift({label:`🧩 Puzzle: ${getPuzzleData(activePuzzleRitual).title}`, emoji:'🧩', date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}), amount:PUZZLE_REWARD});
+      }
+      save(); updateHome(); renderPuzzleCards();
+      document.getElementById('celTitle').textContent = 'Puzzle\nSolved!';
+      document.getElementById('celPts').textContent = `+${PUZZLE_REWARD} ⭐`;
+      document.getElementById('celMsg').textContent = `You're so smart! Total: ${state.points} ⭐`;
+      document.getElementById('celebrate').classList.add('show');
+    }, 900);
+  } else {
+    setTimeout(()=>{
+      document.getElementById('puzzleQSub').textContent = `The answer was: ${correct}! Try again tomorrow 💜`;
+      setTimeout(()=> document.getElementById('puzzleOverlay').classList.remove('show'), 2500);
+    }, 800);
+  }
+}
+// ── REWARDS RENDER ──
+function renderRewards(){
+  document.getElementById('rewardsPts').textContent = state.points||0;
+  document.getElementById('rewardsStreak').textContent = `🔥 ${state.streak||0} day streak!`;
+  const wl = document.getElementById('wishlistEl');
+  wl.innerHTML = '';
+  const sorted = [...(state.wishlist||[])].map((item,idx)=>({...item,origIdx:idx})).sort((a,b)=>a.price-b.price);
+  sorted.forEach(item => {
+    const pts = Math.ceil(item.price); // price rounded up = point cost
+    const pct = Math.min(100, Math.round((state.points/pts)*100));
+    const can = state.points >= pts;
+    const d = document.createElement('div');
+    d.className = 'wish-card';
+    let heroInner = item.img
+      ? `<img src="${item.img}" alt="${item.name}" onerror="this.parentElement.style.background='${item.bg||'#F0D6FF'}';this.remove();this.parentElement.innerHTML+='<span class=\\'wish-hero-emoji\\'>${item.emoji||'🎁'}</span>'">`
+      : `<span class="wish-hero-emoji">${item.emoji||'🎁'}</span>`;
+    d.innerHTML = `
+      <div class="wish-hero" style="background:${item.bg||'#F0D6FF'}">
+        ${heroInner}
+        <button class="wish-edit-btn" onclick="openEditItem(event,${item.origIdx})">✏️</button>
+        ${item.amz ? `<a class="wish-amz-btn" href="${item.amz}" target="_blank" onclick="event.stopPropagation()">🛒 Shop</a>` : ''}
+      </div>
+      <div class="wish-body">
+        <div class="wish-name">${item.name}</div>
+        <div class="wish-pts">${pts} ⭐ · ${pct}% saved!</div>
+        <div class="wish-prog-bar"><div class="wish-prog-fill" style="width:${pct}%"></div></div>
+        <div class="wish-prog-meta"><span>${Math.min(state.points,pts)} ⭐</span><span>${pts} ⭐ goal 🎯</span></div>
+        <button class="cashout-btn-big" ${!can?'disabled':''} onclick="requestCashout(${item.origIdx})">
+          ${can?'Ask Mama! 🙌':`Need ${pts-state.points} more ⭐`}
+        </button>
+      </div>`;
+    wl.appendChild(d);
+  });
+  const txEl = document.getElementById('txEl');
+  if(!state.transactions||!state.transactions.length){
+    txEl.innerHTML='<div style="font-size:14px;color:#aaa;font-weight:700;padding:12px 0;">Complete a routine to earn your first star!</div>';
+  } else {
+    txEl.innerHTML = state.transactions.slice(0,10).map(t=>`
+      <div class="tx-item">
+        <div class="tx-emoji">${t.emoji||'⭐'}</div>
+        <div class="tx-info"><div class="tx-name">${t.label}</div><div class="tx-when">${t.date}</div></div>
+        <div class="tx-amount ${t.amount<0?'spent':''}">${t.amount>0?'+':''}${t.amount} ⭐</div>
+      </div>`).join('');
+  }
+}
+// ── CASHOUT ──
+function requestCashout(idx){
+  const item = state.wishlist[idx];
+  const pts = Math.ceil(item.price);
+  if(state.points < pts) return;
+  showToast(`Tell Mama you want: ${item.name}! 🙌`);
+  const confirmed = confirm(`Luna wants to cash out:\n${item.name} (${pts} ⭐)\n\nApprove?`);
+  if(confirmed){
+    state.points -= pts;
+    state.transactions.unshift({label:`Cashed out: ${item.name}`, emoji:'🎁', date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}), amount:-pts});
+    save(); renderRewards(); updateHome();
+    showToast(`Yay! ${item.name} is yours! 🎉`);
+  }
+}
+// ── ADD FLOW ──
+function openAddFlow(){
+  addFlowData = {emoji:'',name:'',price:0,img:'',bg:''};
+  const pills = document.getElementById('emojiPills');
+  pills.innerHTML = '';
+  const grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;';
+  EMOJI_CHOICES.slice(0,18).forEach(em=>{
+    const b = document.createElement('button');
+    b.className='pill-opt'; b.textContent=em; b.style.cssText='font-size:32px;padding:14px 8px;border-radius:18px;';
+    b.onclick=()=>{
+      document.querySelectorAll('#emojiPills .pill-opt').forEach(p=>p.classList.remove('selected'));
+      b.classList.add('selected'); addFlowData.emoji=em;
+      addFlowData.bg = ['#FFD6E7','#D6E8FF','#D6FFF0','#E8D6FF','#FFE8D6'][EMOJI_CHOICES.indexOf(em)%5];
+      document.getElementById('step1Cta').disabled=false;
+    };
+    grid.appendChild(b);
+  });
+  pills.appendChild(grid);
+  [1,2,3].forEach(i=>document.getElementById(`addStep${i}`).style.display=(i===1?'block':'none'));
+  document.getElementById('addFlowSheet').classList.add('show');
+}
+function addFlowNext(toStep){
+  if(toStep===2){ [1,2,3].forEach(i=>document.getElementById(`addStep${i}`).style.display=(i===2?'block':'none')); }
+  else if(toStep===3){
+    const name=document.getElementById('addName').value.trim();
+    const price=parseFloat(document.getElementById('addPrice').value);
+    if(!name||!price) return;
+    addFlowData.name=name; addFlowData.price=price;
+    document.getElementById('addPreviewEmoji').textContent=addFlowData.emoji||'🎁';
+    document.getElementById('addImgUrl').value='';
+    document.getElementById('addImgPreview').innerHTML=`<span id="addPreviewEmoji" style="font-size:48px">${addFlowData.emoji||'🎁'}</span>`;
+    [1,2,3].forEach(i=>document.getElementById(`addStep${i}`).style.display=(i===3?'block':'none'));
+  }
+}
+function checkStep2(){
+  const name=document.getElementById('addName').value.trim();
+  const price=document.getElementById('addPrice').value;
+  document.getElementById('step2Cta').disabled=!(name&&price&&parseFloat(price)>0);
+}
+function previewImg(){
+  const url=document.getElementById('addImgUrl').value.trim();
+  const prev=document.getElementById('addImgPreview');
+  prev.innerHTML = url ? `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:16px;" onerror="this.parentElement.innerHTML='<span style=\\'font-size:48px\\'>${addFlowData.emoji||'🎁'}</span>'">` : `<span style="font-size:48px">${addFlowData.emoji||'🎁'}</span>`;
+}
+function saveNewWishItem(){
+  const imgUrl=document.getElementById('addImgUrl').value.trim();
+  state.wishlist.push({name:addFlowData.name,emoji:addFlowData.emoji||'🎁',price:addFlowData.price,bg:addFlowData.bg||'#F0D6FF',img:imgUrl||''});
+  save(); document.getElementById('addFlowSheet').classList.remove('show');
+  renderRewards(); showToast(`${addFlowData.emoji} Added! 🎉`);
+}
+// ── EDIT ITEM ──
+function openEditItem(e,idx){
+  e.stopPropagation(); editingIdx=idx;
+  const item=state.wishlist[idx];
+  document.getElementById('editItemTitle').textContent=`Edit: ${item.name}`;
+  document.getElementById('editImgUrl').value=item.img||'';
+  document.getElementById('editName').value=item.name;
+  document.getElementById('editPrice').value=item.price;
+  const prev=document.getElementById('editImgPreview');
+  prev.style.background=item.bg||'#F0D6FF';
+  prev.innerHTML = item.img ? `<img src="${item.img}" style="width:100%;height:100%;object-fit:cover;" onerror="this.innerHTML='<span style=\\'font-size:52px\\'>${item.emoji||'🎁'}</span>'">` : `<span style="font-size:52px">${item.emoji||'🎁'}</span>`;
+  document.getElementById('editItemSheet').classList.add('show');
+}
+function previewEditImg(){
+  const url=document.getElementById('editImgUrl').value.trim();
+  const item=state.wishlist[editingIdx]||{};
+  const prev=document.getElementById('editImgPreview');
+  prev.style.background=item.bg||'#F0D6FF';
+  prev.innerHTML = url ? `<img src="${url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=\\'font-size:52px\\'>${item.emoji||'🎁'}</span>'">` : `<span style="font-size:52px">${item.emoji||'🎁'}</span>`;
+}
+function saveEditItem(){
+  const url=document.getElementById('editImgUrl').value.trim();
+  const name=document.getElementById('editName').value.trim();
+  const price=parseFloat(document.getElementById('editPrice').value);
+  if(!name||!price) return;
+  state.wishlist[editingIdx]={...state.wishlist[editingIdx],name,price,img:url};
+  save(); document.getElementById('editItemSheet').classList.remove('show');
+  renderRewards(); showToast('Updated! ✓');
+}
+function deleteWishItem(){
+  if(!confirm(`Remove "${state.wishlist[editingIdx].name}" from the wishlist?`)) return;
+  state.wishlist.splice(editingIdx,1); save();
+  document.getElementById('editItemSheet').classList.remove('show');
+  renderRewards(); showToast('Removed');
+}
+// Close sheets on overlay tap
+document.querySelectorAll('.sheet-overlay').forEach(el=>{
+  el.addEventListener('click',e=>{if(e.target===el) el.classList.remove('show');});
+});
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg;
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800);
+}
+// ── INIT ──
+(function(){
+  load(); updateHome();
+  const now=new Date(), h=now.getHours();
+  const greet=h<12?'Good morning ✨':h<17?'Good afternoon ☀️':'Good evening 🌙';
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const el=document.getElementById('homeGreeting'), del=document.getElementById('homeDate');
+  if(el) el.textContent=greet;
+  if(del) del.textContent=`${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}`;
+})();
+</script>
+</body>
+</html>
