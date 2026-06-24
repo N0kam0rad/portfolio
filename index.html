@@ -219,6 +219,14 @@
   .ab-bio p{font-size:1.07rem}.ab-bio .serif{color:var(--red)}
   .ab-bio .lookrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
   .ab-bio .lookrow .pill{background:var(--bg)}
+
+  /* HERO portrait (face at the top — portfolio lead) */
+  .hero-portrait{position:relative;justify-self:center;max-width:360px;width:100%}
+  .hero-portrait img{width:100%;aspect-ratio:4/5;object-fit:cover;border:3px solid var(--ink);border-radius:18px;box-shadow:12px 12px 0 var(--ink);transform:rotate(2deg);display:block}
+  /* About stat card (moved from hero) */
+  .ab-stats{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:30px}
+  .ab-stats h3{font-size:1.05rem;margin-bottom:16px}
+  .ab-stats .note{margin-top:6px;font-size:0.84rem;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -228,6 +236,7 @@
   <div class="wrap">
     <div class="logo"><span class="dot"></span> Tamara Richards <span class="chip">(almost)CEO</span></div>
     <div class="navlinks">
+      <a href="#about">About</a>
       <a href="#work">The work</a>
       <a href="#cooking">What's cooking</a>
       <a href="#blog">Build log</a>
@@ -239,15 +248,15 @@
 
 <div class="marquee" aria-hidden="true">
   <div class="track">
-    <b>SIX APPS &amp; COUNTING</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>A FRAGRANCE BRAIN</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
-    <b>SIX APPS &amp; COUNTING</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>A FRAGRANCE BRAIN</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
+    <b>ALWAYS SHIPPING</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>A FRAGRANCE BRAIN</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
+    <b>ALWAYS SHIPPING</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>A FRAGRANCE BRAIN</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
   </div>
 </div>
 
 <header class="hero">
   <div class="wrap hero-grid">
     <div class="reveal">
-      <span class="eyebrow">● Founder of a hundred unbuilt companies</span>
+      <span class="eyebrow">● Tamara Richards · (almost)CEO</span>
       <h1 class="title">I build the idea that <span class="red">wins</span> the <span class="mark">day.</span></h1>
       <p class="lede">My brain runs on a hundred open tabs at once — and <span class="serif">AI is what finally closes the gap</span> between a 2 a.m. idea and a thing that actually works. The blog's open to everyone. The apps? Those you unlock.</p>
       <div class="cta-row">
@@ -255,12 +264,10 @@
         <a class="btn" href="#blog">Read the build log</a>
       </div>
     </div>
-    <aside class="hero-card reveal">
-      <h3>On any given day…</h3>
-      <div class="meter-row">Ideas <div class="bar"><i style="width:100%;background:var(--red)"></i></div> ∞</div>
-      <div class="meter-row">Hours <div class="bar"><i style="width:30%;background:var(--blue)"></i></div> few</div>
-      <div class="meter-row">Shipped <div class="bar"><i style="width:60%;background:var(--green)"></i></div> 1/day</div>
-      <p class="note">The constraint was never ideas. It was the distance between thinking it and building it.</p>
+    <aside class="hero-portrait reveal">
+      <img src="assets/tamara.gif" alt="Tamara Richards" />
+      <span class="ab-sticker s1">the many faces of an idea machine ✦</span>
+      <span class="ab-sticker s2">(almost)CEO</span>
     </aside>
   </div>
 </header>
@@ -269,7 +276,7 @@
 <section id="work">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div><div class="tag">The work · preview &amp; unlock</div><h2>Six apps, <span class="serif">one engine.</span></h2></div>
+      <div><div class="tag">The work · preview &amp; unlock</div><h2>Different problems, <span class="serif">one engine.</span></h2></div>
       <p>Peek the demo on any card. Read the build free. <b>Subscribe or follow to open the full app.</b></p>
     </div>
     <div class="grid">
@@ -438,10 +445,12 @@
       <p class="ab-sub">Opera singer → solutions engineer → AI (ab)user. <em>(jk. I say please and thank you.)</em></p>
     </div>
     <div class="ab-grid">
-      <div class="ab-portrait reveal">
-        <img src="assets/tamara.gif" alt="Tamara Richards — many moods" />
-        <span class="ab-sticker s1">the many faces of an idea machine ✦</span>
-        <span class="ab-sticker s2">(almost)CEO</span>
+      <div class="ab-stats reveal">
+        <h3>On any given day…</h3>
+        <div class="meter-row">Ideas <div class="bar"><i style="width:100%;background:var(--red)"></i></div> ∞</div>
+        <div class="meter-row">Hours <div class="bar"><i style="width:30%;background:var(--blue)"></i></div> few</div>
+        <div class="meter-row">Shipped <div class="bar"><i style="width:60%;background:var(--green)"></i></div> 1/day</div>
+        <p class="note">The constraint was never ideas. It was the distance between thinking it and building it.</p>
       </div>
       <div class="ab-bio reveal">
         <p>I'm the <b>(almost)CEO of a million startups I never started</b> — the one who turns a 2 a.m. "wait, why doesn't this exist?" into a real idea, a process, and a plan with teeth.</p>
