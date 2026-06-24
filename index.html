@@ -4,164 +4,134 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Tamara Richards — (almost)CEO · Ideas, shipped with AI</title>
-<meta name="description" content="Tamara Richards builds the idea that wins the day. Apps and passion projects shipped with AI — plus a build log of the exact tools, prompts, and skills behind each one." />
+<meta name="description" content="Tamara Richards builds the idea that wins the day. Apps and passion projects shipped with AI, a build log of the exact tools and prompts, and a peek at what's cooking next." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root{
-    --bg:#F4EEE2;
-    --ink:#1A1613;
-    --paper:#FFFDF8;
-    --red:#ED3A24;       /* signature */
-    --pink:#FF4D9D;
-    --blue:#2F6BFF;
-    --green:#11B981;
-    --coral:#FF7A3D;
-    --purple:#7C4DFF;
-    --yellow:#FFC835;
-    --lime:#C2F23D;
-    --muted:#6E665B;
-    --shadow:6px 6px 0 var(--ink);
-    --shadow-sm:4px 4px 0 var(--ink);
-    --maxw:1180px;
+    --bg:#F4EEE2; --ink:#1A1613; --paper:#FFFDF8; --red:#ED3A24;
+    --pink:#FF4D9D; --blue:#2F6BFF; --green:#11B981; --coral:#FF7A3D;
+    --purple:#7C4DFF; --yellow:#FFC835; --lime:#C2F23D; --muted:#6E665B;
+    --shadow:6px 6px 0 var(--ink); --shadow-sm:4px 4px 0 var(--ink); --maxw:1180px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;line-height:1.55;
-    -webkit-font-smoothing:antialiased;overflow-x:hidden}
+  body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   h1,h2,h3,h4{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;line-height:0.95;letter-spacing:-0.025em}
   .serif{font-family:"Fraunces",Georgia,serif;font-style:italic;font-weight:500;letter-spacing:-0.01em}
   a{color:inherit}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
   .reveal{opacity:0;transform:translateY(26px);transition:opacity .6s ease, transform .6s ease}
   .reveal.in{opacity:1;transform:none}
+  .accentbar{height:12px;display:flex}.accentbar span{flex:1}
+  .accentbar span:nth-child(1){background:var(--red)}.accentbar span:nth-child(2){background:var(--blue)}
+  .accentbar span:nth-child(3){background:var(--green)}.accentbar span:nth-child(4){background:var(--coral)}
+  .accentbar span:nth-child(5){background:var(--purple)}.accentbar span:nth-child(6){background:var(--yellow)}
 
-  .accentbar{height:12px;display:flex}
-  .accentbar span{flex:1}
-  .accentbar span:nth-child(1){background:var(--red)}
-  .accentbar span:nth-child(2){background:var(--blue)}
-  .accentbar span:nth-child(3){background:var(--green)}
-  .accentbar span:nth-child(4){background:var(--coral)}
-  .accentbar span:nth-child(5){background:var(--purple)}
-  .accentbar span:nth-child(6){background:var(--yellow)}
-
-  /* NAV */
   nav{position:sticky;top:0;z-index:80;background:var(--bg);border-bottom:2px solid var(--ink)}
   nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
   .logo{display:flex;align-items:center;gap:11px;font-family:"Bricolage Grotesque";font-weight:800;font-size:1.15rem}
   .logo .dot{width:13px;height:13px;border-radius:50%;background:var(--red);border:2px solid var(--ink)}
-  .chip{font-family:"Inter";font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;
-    background:var(--yellow);border:2px solid var(--ink);border-radius:999px;padding:3px 9px;box-shadow:var(--shadow-sm)}
-  .navlinks{display:flex;gap:6px;align-items:center}
-  .navlinks a{text-decoration:none;font-weight:600;font-size:0.92rem;padding:8px 13px;border-radius:10px}
+  .chip{font-family:"Inter";font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;background:var(--yellow);border:2px solid var(--ink);border-radius:999px;padding:3px 9px;box-shadow:var(--shadow-sm)}
+  .navlinks{display:flex;gap:4px;align-items:center}
+  .navlinks a{text-decoration:none;font-weight:600;font-size:0.9rem;padding:8px 11px;border-radius:10px}
   .navlinks a:hover{background:#00000010}
   .navlinks a.cta{background:var(--ink);color:var(--bg);border:2px solid var(--ink)}
-  @media(max-width:740px){.navlinks a:not(.cta){display:none}}
+  @media(max-width:880px){.navlinks a:not(.cta){display:none}}
 
-  /* MARQUEE */
   .marquee{background:var(--red);color:#fff;border-bottom:2px solid var(--ink);overflow:hidden;white-space:nowrap;padding:10px 0}
   .marquee .track{display:inline-block;will-change:transform;animation:scroll 26s linear infinite}
-  .marquee b{font-family:"Bricolage Grotesque";font-weight:800;font-size:0.95rem;letter-spacing:0.01em;margin:0 6px}
+  .marquee b{font-family:"Bricolage Grotesque";font-weight:800;font-size:0.95rem;margin:0 6px}
   .marquee .star{color:var(--yellow);margin:0 14px}
   @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-  /* HERO */
-  header.hero{padding:58px 0 30px;position:relative}
+  header.hero{padding:58px 0 30px}
   .hero-grid{display:grid;grid-template-columns:1.45fr 0.85fr;gap:38px;align-items:center}
   @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:26px}}
-  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:0.8rem;text-transform:uppercase;
-    letter-spacing:0.1em;border:2px solid var(--ink);background:var(--paper);border-radius:999px;padding:7px 15px;box-shadow:var(--shadow-sm)}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;border:2px solid var(--ink);background:var(--paper);border-radius:999px;padding:7px 15px;box-shadow:var(--shadow-sm)}
   h1.title{font-size:clamp(3.1rem,8.5vw,6.4rem);margin:24px 0 22px;letter-spacing:-0.035em}
   h1.title .red{color:var(--red)}
-  h1.title .mark{background:var(--lime);border:2px solid var(--ink);border-radius:10px;padding:0 .1em;
-    box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  h1.title .mark{background:var(--lime);border:2px solid var(--ink);border-radius:10px;padding:0 .1em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
   .lede{font-size:clamp(1.08rem,2vw,1.3rem);max-width:54ch}
   .lede .serif{color:var(--red);font-size:1.06em}
   .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}
-  .btn{display:inline-block;text-decoration:none;font-weight:700;font-size:0.98rem;padding:14px 24px;
-    border:2px solid var(--ink);border-radius:13px;box-shadow:var(--shadow);transition:transform .12s, box-shadow .12s}
+  .btn{display:inline-block;text-decoration:none;font-weight:700;font-size:0.98rem;padding:14px 24px;border:2px solid var(--ink);border-radius:13px;box-shadow:var(--shadow);transition:transform .12s, box-shadow .12s;cursor:pointer;background:var(--paper)}
   .btn:hover{transform:translate(2px,2px);box-shadow:var(--shadow-sm)}
   .btn.red{background:var(--red);color:#fff}
-  .btn.paper{background:var(--paper)}
-
-  .hero-card{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);
-    padding:26px;transform:rotate(2.2deg)}
+  .hero-card{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:26px;transform:rotate(2.2deg)}
   .hero-card h3{font-size:1.05rem;margin-bottom:16px}
   .meter-row{display:flex;align-items:center;gap:10px;font-weight:600;font-size:0.9rem;margin-bottom:11px}
   .bar{flex:1;height:14px;border:2px solid var(--ink);border-radius:999px;overflow:hidden;background:#0000000a}
   .bar i{display:block;height:100%}
   .hero-card .note{margin-top:6px;font-size:0.82rem;color:var(--muted)}
 
-  /* SECTION shells */
-  section{padding:64px 0;border-top:2px solid var(--ink)}
+  section{padding:62px 0;border-top:2px solid var(--ink)}
   .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;flex-wrap:wrap;margin-bottom:34px}
   .sec-head .tag{font-weight:700;font-size:0.76rem;text-transform:uppercase;letter-spacing:0.16em;color:var(--red);margin-bottom:10px}
   .sec-head h2{font-size:clamp(2.1rem,5.2vw,3.6rem)}
-  .sec-head h2 .serif{color:var(--ink)}
   .sec-head p{color:var(--muted);max-width:44ch;font-size:1rem}
 
-  /* STEPS */
   .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
   @media(max-width:820px){.steps{grid-template-columns:1fr}}
   .step{background:var(--paper);border:2px solid var(--ink);border-radius:20px;box-shadow:var(--shadow);padding:26px}
-  .step .n{font-family:"Bricolage Grotesque";font-weight:800;font-size:1.7rem;width:54px;height:54px;display:grid;
-    place-items:center;border:2px solid var(--ink);border-radius:14px;margin-bottom:16px;color:#fff}
-  .step:nth-child(1) .n{background:var(--red)} .step:nth-child(2) .n{background:var(--blue)} .step:nth-child(3) .n{background:var(--green)}
-  .step h3{font-size:1.3rem;margin-bottom:9px}
-  .step p{color:var(--muted);font-size:0.95rem}
+  .step .n{font-family:"Bricolage Grotesque";font-weight:800;font-size:1.7rem;width:54px;height:54px;display:grid;place-items:center;border:2px solid var(--ink);border-radius:14px;margin-bottom:16px;color:#fff}
+  .step:nth-child(1) .n{background:var(--red)}.step:nth-child(2) .n{background:var(--blue)}.step:nth-child(3) .n{background:var(--green)}
+  .step h3{font-size:1.3rem;margin-bottom:9px}.step p{color:var(--muted);font-size:0.95rem}
 
-  /* WORK */
+  /* WORK / app cards */
   .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
   @media(max-width:820px){.grid{grid-template-columns:1fr}}
-  .proj{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);
-    overflow:hidden;display:flex;flex-direction:column;transition:transform .15s ease, box-shadow .15s ease;transform-style:preserve-3d}
+  .proj{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;transition:transform .15s ease, box-shadow .15s ease}
   .proj:hover{box-shadow:10px 10px 0 var(--ink)}
   .proj .top{padding:20px 24px;border-bottom:2px solid var(--ink);display:flex;align-items:center;justify-content:space-between;gap:12px;color:#fff}
-  .proj.pink .top{background:var(--pink)} .proj.blue .top{background:var(--blue)}
-  .proj.green .top{background:var(--green)} .proj.coral .top{background:var(--coral)}
-  .proj .top h3{font-size:1.6rem}
-  .status{font-family:"Inter";font-weight:700;font-size:0.66rem;text-transform:uppercase;letter-spacing:0.08em;
-    background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:4px 10px;white-space:nowrap}
-  .thumb{aspect-ratio:16/10;overflow:hidden;border-bottom:2px solid var(--ink);background:#00000008}
+  .proj.pink .top{background:var(--pink)}.proj.blue .top{background:var(--blue)}
+  .proj.green .top{background:var(--green)}.proj.coral .top{background:var(--coral)}
+  .proj.purple .top{background:var(--purple)}.proj.red .top{background:var(--red)}
+  .proj .top h3{font-size:1.5rem}
+  .status{font-family:"Inter";font-weight:700;font-size:0.64rem;text-transform:uppercase;letter-spacing:0.08em;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .thumb{aspect-ratio:16/10;overflow:hidden;border-bottom:2px solid var(--ink);background:#00000008;position:relative}
   .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-  .thumb.placeholder{display:grid;place-items:center}
-  .thumb.placeholder .big{font-family:"Bricolage Grotesque";font-weight:800;font-size:2.7rem;opacity:.16;letter-spacing:.04em}
-  .proj.blue .thumb.placeholder{background:repeating-linear-gradient(45deg,#2f6bff14 0 14px,transparent 14px 28px)}
-  .proj.green .thumb.placeholder{background:repeating-linear-gradient(45deg,#11b98114 0 14px,transparent 14px 28px)}
-  .proj.coral .thumb.placeholder{background:repeating-linear-gradient(45deg,#ff7a3d14 0 14px,transparent 14px 28px)}
+  .thumb.ph{display:grid;place-items:center}
+  .thumb.ph .big{font-family:"Bricolage Grotesque";font-weight:800;font-size:2.5rem;opacity:.18;letter-spacing:.04em;text-align:center;padding:0 10px}
+  .proj.blue .thumb.ph{background:repeating-linear-gradient(45deg,#2f6bff14 0 14px,transparent 14px 28px)}
+  .proj.green .thumb.ph{background:repeating-linear-gradient(45deg,#11b98114 0 14px,transparent 14px 28px)}
+  .proj.coral .thumb.ph{background:repeating-linear-gradient(45deg,#ff7a3d14 0 14px,transparent 14px 28px)}
+  .proj.purple .thumb.ph{background:repeating-linear-gradient(45deg,#7c4dff14 0 14px,transparent 14px 28px)}
+  .thumb .peek{position:absolute;bottom:10px;left:10px;font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:var(--ink);color:var(--bg);padding:4px 9px;border-radius:999px}
   .proj .pbody{padding:22px 24px;display:flex;flex-direction:column;gap:13px;flex:1}
   .proj .one{font-size:1.05rem;font-weight:600}
-  .proj .prob{font-size:0.92rem;color:var(--muted)}
-  .proj .prob b{color:var(--ink)}
+  .proj .prob{font-size:0.92rem;color:var(--muted)}.proj .prob b{color:var(--ink)}
   .builtwith{display:flex;flex-wrap:wrap;gap:7px}
   .pill{font-size:0.73rem;font-weight:600;border:2px solid var(--ink);border-radius:999px;padding:4px 10px;background:var(--bg)}
-  .pfoot{margin-top:auto;display:flex;gap:16px;flex-wrap:wrap;padding-top:4px}
+  .pfoot{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding-top:6px}
   .lnk{font-weight:700;font-size:0.9rem;text-decoration:none;border-bottom:3px solid currentColor;padding-bottom:1px}
-  .proj.pink .lnk{color:var(--pink)} .proj.blue .lnk{color:var(--blue)} .proj.green .lnk{color:#0e9e6e} .proj.coral .lnk{color:#df5e1f}
-  .lnk.mut{color:var(--muted);border-color:#00000022}
+  .proj.pink .lnk{color:var(--pink)}.proj.blue .lnk{color:var(--blue)}.proj.green .lnk{color:#0e9e6e}
+  .proj.coral .lnk{color:#df5e1f}.proj.purple .lnk{color:var(--purple)}.proj.red .lnk{color:var(--red)}
+  .lock-btn{font-family:"Inter";font-weight:700;font-size:0.84rem;border:2px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:11px;padding:8px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;box-shadow:var(--shadow-sm);transition:transform .12s}
+  .lock-btn:hover{transform:translate(2px,2px);box-shadow:none}
+  .lock-btn.unlocked{background:var(--lime);color:var(--ink)}
 
-  /* THE LAB — sticker wall */
-  .lab{background:var(--ink);color:var(--bg)}
-  .lab .sec-head .tag{color:var(--yellow)}
-  .lab .sec-head h2{color:var(--bg)}
-  .lab .sec-head p{color:#c9c2b6}
-  .wall{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;padding:8px 0 4px}
-  .sticky{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(1rem,2.4vw,1.5rem);
-    border:2px solid #000;border-radius:14px;padding:13px 20px;box-shadow:5px 5px 0 #000;cursor:grab;
-    transition:transform .15s ease}
-  .sticky:hover{transform:scale(1.05) rotate(0deg)!important}
-  .lab .hint{text-align:center;color:#c9c2b6;font-size:0.85rem;margin-top:24px}
-  .lab .hint .serif{color:var(--yellow)}
+  /* WHAT'S COOKING */
+  .cooking{background:var(--ink);color:var(--bg)}
+  .cooking .sec-head .tag{color:var(--yellow)}.cooking .sec-head h2{color:var(--bg)}.cooking .sec-head p{color:#c9c2b6}
+  .cook-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media(max-width:760px){.cook-grid{grid-template-columns:1fr}}
+  .cook{background:#241f1a;border:2px solid #3a332b;border-radius:18px;padding:22px;display:flex;gap:16px;align-items:flex-start}
+  .cook .emoji{font-size:1.6rem;line-height:1}
+  .cook h4{font-size:1.15rem;color:var(--bg);margin-bottom:5px}
+  .cook p{font-size:0.9rem;color:#b8b1a6}
+  .scook{display:inline-block;margin-top:9px;font-size:0.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:3px 9px;border-radius:999px;border:2px solid}
+  .scook.building{color:var(--lime);border-color:var(--lime)}
+  .scook.soon{color:var(--coral);border-color:var(--coral)}
+  .scook.concept{color:#b8b1a6;border-color:#5a5249}
 
   /* BUILD LOG */
-  .blog-feat{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);
-    overflow:hidden;display:grid;grid-template-columns:1fr 0.85fr}
+  .blog-feat{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-columns:1fr 0.85fr}
   @media(max-width:760px){.blog-feat{grid-template-columns:1fr}}
   .blog-feat .txt{padding:34px}
   .blog-feat .label{font-weight:700;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--red)}
-  .blog-feat h3{font-size:2rem;margin:13px 0 12px}
-  .blog-feat p{color:var(--muted);font-size:0.98rem}
+  .blog-feat h3{font-size:2rem;margin:13px 0 12px}.blog-feat p{color:var(--muted);font-size:0.98rem}
   .blog-feat .img{border-left:2px solid var(--ink);min-height:230px;background-size:cover;background-position:center}
   @media(max-width:760px){.blog-feat .img{border-left:none;border-top:2px solid var(--ink);min-height:180px}}
   .blog-feat .btn{margin-top:22px;background:var(--ink);color:var(--bg)}
@@ -169,46 +139,67 @@
   @media(max-width:820px){.blog-more{grid-template-columns:1fr}}
   .stub{background:var(--paper);border:2px dashed var(--ink);border-radius:16px;padding:20px}
   .stub .k{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted)}
-  .stub h4{font-size:1.12rem;margin:8px 0 6px} .stub p{font-size:0.87rem;color:var(--muted)}
+  .stub h4{font-size:1.12rem;margin:8px 0 6px}.stub p{font-size:0.87rem;color:var(--muted)}
 
-  /* ABOUT / CONTACT */
-  .about{display:grid;grid-template-columns:1fr 0.78fr;gap:28px;align-items:stretch}
+  /* TOOLS */
+  .tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:820px){.tools-grid{grid-template-columns:repeat(2,1fr)}}
+  .tool{display:flex;flex-direction:column;gap:4px;background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:16px 18px;text-decoration:none;box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s}
+  .tool:hover{transform:translate(2px,2px);box-shadow:none}
+  .tool b{font-family:"Bricolage Grotesque";font-size:1.05rem}
+  .tool span{font-size:0.82rem;color:var(--muted)}
+  .tool .arr{font-weight:700;color:var(--red)}
+  .repos{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .repos .lab{font-weight:700;font-size:0.82rem;color:var(--muted)}
+  .repo{font-weight:700;font-size:0.86rem;text-decoration:none;border:2px solid var(--ink);border-radius:999px;padding:7px 14px;background:var(--bg)}
+
+  .about{display:grid;grid-template-columns:0.8fr 1.2fr;gap:26px;align-items:stretch}
   @media(max-width:820px){.about{grid-template-columns:1fr}}
-  .about .card{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:32px}
-  .about .tag{font-weight:700;font-size:0.76rem;letter-spacing:0.16em;color:var(--red);margin-bottom:14px;text-transform:uppercase}
-  .about p{font-size:1.06rem} .about p+p{margin-top:14px}
-  .about p .serif{color:var(--red)}
-  .contact-box{background:var(--purple);color:#fff;border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);
-    padding:32px;display:flex;flex-direction:column;justify-content:center;text-align:center}
+  .portrait{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+  .portrait img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;border-bottom:2px solid var(--ink)}
+  .portrait .ph2{aspect-ratio:4/5;display:grid;place-items:center;background:repeating-linear-gradient(45deg,#7c4dff14 0 16px,transparent 16px 32px);border-bottom:2px solid var(--ink);text-align:center;padding:20px}
+  .portrait .ph2 b{font-family:"Bricolage Grotesque";font-size:1.3rem}
+  .portrait .ph2 span{font-size:0.82rem;color:var(--muted);margin-top:6px}
+  .portrait .cap{padding:13px 18px;font-weight:600;font-size:0.88rem;color:var(--muted)}.portrait .cap .serif{color:var(--red)}
+  .bio{background:var(--yellow);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:30px;display:flex;flex-direction:column;justify-content:center;gap:14px}
+  .bio p{font-size:1.06rem}.bio .serif{color:var(--red)}
+  .bio .lookrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}.bio .lookrow .pill{background:var(--paper)}
+
+  #contact .contact-box{background:var(--purple);color:#fff;border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:32px;text-align:center}
   .contact-box h3{font-size:1.8rem;margin-bottom:8px}
-  .contact-box .mail{display:inline-block;margin-top:16px;background:#fff;color:var(--ink);font-weight:700;text-decoration:none;
-    border:2px solid var(--ink);border-radius:13px;padding:13px 22px;box-shadow:var(--shadow-sm)}
+  .contact-box .mail{display:inline-block;margin-top:16px;background:#fff;color:var(--ink);font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:13px;padding:13px 22px;box-shadow:var(--shadow-sm)}
 
   footer{border-top:2px solid var(--ink);background:var(--red);color:#fff}
   footer .wrap{padding:54px 26px 60px}
   footer .big{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(2.4rem,7vw,5rem);line-height:0.95;letter-spacing:-0.03em}
   footer .big .serif{color:var(--yellow)}
-  footer .row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-top:30px;
-    border-top:2px solid #ffffff55;padding-top:22px;font-weight:600}
+  footer .row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-top:30px;border-top:2px solid #ffffff55;padding-top:22px;font-weight:600}
   footer a{color:#fff;text-decoration:underline;text-underline-offset:3px}
 
-  /* big velocity marquee (besharm-style) */
+  /* GATE MODAL */
+  .gate{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(26,22,19,0.6);backdrop-filter:blur(4px)}
+  .gate.open{display:flex}
+  .gate-card{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:10px 10px 0 var(--ink);max-width:440px;width:100%;padding:32px;position:relative}
+  .gate-card .x{position:absolute;top:16px;right:18px;font-size:1.4rem;font-weight:800;cursor:pointer;background:none;border:none;color:var(--ink)}
+  .gate-card .key{font-size:2rem}
+  .gate-card h3{font-size:1.7rem;margin:8px 0 8px}
+  .gate-card p{color:var(--muted);font-size:0.95rem;margin-bottom:18px}
+  .gate-form{display:flex;gap:8px;margin-bottom:14px}
+  .gate-form input{flex:1;border:2px solid var(--ink);border-radius:12px;padding:12px 14px;font-family:"Inter";font-size:0.95rem}
+  .gate-form button{background:var(--red);color:#fff;border:2px solid var(--ink);border-radius:12px;font-weight:700;padding:0 18px;cursor:pointer}
+  .gate-or{text-align:center;font-weight:700;color:var(--muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:.1em;margin:14px 0}
+  .follow-row{display:flex;gap:10px}
+  .follow-btn{flex:1;text-align:center;text-decoration:none;font-weight:700;font-size:0.9rem;border:2px solid var(--ink);border-radius:12px;padding:12px;box-shadow:var(--shadow-sm)}
+  .follow-btn.tt{background:var(--ink);color:#fff}.follow-btn.ig{background:linear-gradient(45deg,#feda75,#d62976,#962fbf);color:#fff}
+  .gate-done{width:100%;margin-top:14px;background:var(--lime);border:2px solid var(--ink);border-radius:12px;font-weight:700;padding:11px;cursor:pointer}
+  .gate-note{font-size:0.74rem;color:var(--muted);margin-top:14px;text-align:center}
+
   .bigmq{border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);background:var(--ink);color:var(--bg);overflow:hidden;padding:20px 0}
   .bigmq .row{display:flex;white-space:nowrap;width:max-content;will-change:transform;animation:bigscroll 26s linear infinite}
   .bigmq span{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(2rem,6vw,4rem);letter-spacing:-0.02em;padding:0 .28em;line-height:1.05}
-  .bigmq .em{color:var(--yellow)}
-  .bigmq .out{color:transparent;-webkit-text-stroke:1.6px var(--bg)}
+  .bigmq .em{color:var(--yellow)}.bigmq .out{color:transparent;-webkit-text-stroke:1.6px var(--bg)}
   .bigmq:hover .row{animation-play-state:paused}
   @keyframes bigscroll{to{transform:translateX(-50%)}}
-
-  /* custom cursor (besharm-style) — only on fine pointers, only once JS adds it */
-  .cursor{display:none}
-  @media (pointer:fine){
-    .cursor{display:block;position:fixed;top:0;left:0;width:22px;height:22px;border:2px solid var(--ink);
-      border-radius:50%;pointer-events:none;z-index:300;transform:translate(-50%,-50%)}
-    .cursor.big{width:58px;height:58px;background:var(--red);border-color:var(--red);opacity:.9}
-    body.has-cursor,body.has-cursor a,body.has-cursor button,body.has-cursor .btn,body.has-cursor .sticky{cursor:none}
-  }
 </style>
 </head>
 <body>
@@ -218,10 +209,10 @@
   <div class="wrap">
     <div class="logo"><span class="dot"></span> Tamara Richards <span class="chip">(almost)CEO</span></div>
     <div class="navlinks">
-      <a href="#how">How I work</a>
       <a href="#work">The work</a>
-      <a href="#lab">The lab</a>
+      <a href="#cooking">What's cooking</a>
       <a href="#blog">Build log</a>
+      <a href="#tools">Tools I use</a>
       <a class="cta" href="#contact">Say hi</a>
     </div>
   </div>
@@ -229,8 +220,8 @@
 
 <div class="marquee" aria-hidden="true">
   <div class="track">
-    <b>A REWARDS APP</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>AN AI ANALYSIS TOOL</b><span class="star">✦</span><b>WHY DOESN'T THIS EXIST YET</b><span class="star">✦</span><b>AURA / ACCORD</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
-    <b>A REWARDS APP</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>AN AI ANALYSIS TOOL</b><span class="star">✦</span><b>WHY DOESN'T THIS EXIST YET</b><span class="star">✦</span><b>AURA / ACCORD</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
+    <b>SIX APPS &amp; COUNTING</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>A FRAGRANCE BRAIN</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
+    <b>SIX APPS &amp; COUNTING</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>A FRAGRANCE BRAIN</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
   </div>
 </div>
 
@@ -239,10 +230,10 @@
     <div class="reveal">
       <span class="eyebrow">● Founder of a hundred unbuilt companies</span>
       <h1 class="title">I build the idea that <span class="red">wins</span> the <span class="mark">day.</span></h1>
-      <p class="lede">My brain runs on a hundred open tabs at once — and <span class="serif">AI is what finally closes the gap</span> between a 2 a.m. idea and a thing that actually works. Some days that's an app. Some days it's a claymation sister-comedy. Every project here started as a problem that felt real to me, and AI is how I shipped the answer.</p>
+      <p class="lede">My brain runs on a hundred open tabs at once — and <span class="serif">AI is what finally closes the gap</span> between a 2 a.m. idea and a thing that actually works. The blog's open to everyone. The apps? Those you unlock.</p>
       <div class="cta-row">
-        <a class="btn red" href="#work">See what got built</a>
-        <a class="btn paper" href="#blog">Read the build log</a>
+        <a class="btn red" href="#work">See the apps</a>
+        <a class="btn" href="#blog">Read the build log</a>
       </div>
     </div>
     <aside class="hero-card reveal">
@@ -250,82 +241,90 @@
       <div class="meter-row">Ideas <div class="bar"><i style="width:100%;background:var(--red)"></i></div> ∞</div>
       <div class="meter-row">Hours <div class="bar"><i style="width:30%;background:var(--blue)"></i></div> few</div>
       <div class="meter-row">Shipped <div class="bar"><i style="width:60%;background:var(--green)"></i></div> 1/day</div>
-      <p class="note">The constraint was never ideas. It was the distance between thinking it and building it. AI shrank that distance to almost nothing.</p>
+      <p class="note">The constraint was never ideas. It was the distance between thinking it and building it.</p>
     </aside>
   </div>
 </header>
-
-<!-- HOW -->
-<section id="how">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <div><div class="tag">The operating system</div><h2>Idea → AI → <span class="serif">shipped.</span></h2></div>
-      <p>Same engine behind every project: a clear vision, and AI doing the heavy lifting before the spark fades.</p>
-    </div>
-    <div class="steps">
-      <div class="step reveal"><div class="n">1</div><h3>The idea hits</h3><p>Usually at the worst possible time. A real problem, a what-if, a "why doesn't this exist yet." I catch it before it's gone.</p></div>
-      <div class="step reveal"><div class="n">2</div><h3>AI clears the runway</h3><p>I direct the tools — LLMs, image &amp; video models, skills, prompts — to turn the idea into something buildable while the energy's high.</p></div>
-      <div class="step reveal"><div class="n">3</div><h3>One ships</h3><p>On any given day, one idea graduates from my head into the world. This portfolio is where they land.</p></div>
-    </div>
-  </div>
-</section>
 
 <!-- WORK -->
 <section id="work">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div><div class="tag">The work</div><h2>Different problems, <span class="serif">one engine.</span></h2></div>
-      <p>Apps and passion projects, each born from a problem that felt real — at least to me.</p>
+      <div><div class="tag">The work · preview &amp; unlock</div><h2>Six apps, <span class="serif">one engine.</span></h2></div>
+      <p>Peek the demo on any card. Read the build free. <b>Subscribe or follow to open the full app.</b></p>
     </div>
     <div class="grid">
-      <article class="proj pink tilt reveal">
+
+      <article class="proj pink reveal">
         <div class="top"><h3>BonnetNoona</h3><span class="status">In production</span></div>
-        <div class="thumb"><img src="assets/hero.jpg" alt="BonnetNoona claymation cast keyframe" /></div>
+        <div class="thumb"><img src="assets/hero.jpg" alt="BonnetNoona claymation cast" /><span class="peek">▶ Preview</span></div>
         <div class="pbody">
           <div class="one">A faceless claymation comedy about sisters trying (and failing) to go viral.</div>
-          <div class="prob"><b>The problem:</b> a whole world of characters in my head, and no studio, animators, or budget. AI let me direct it anyway — and keep every character on-model across hundreds of shots.</div>
-          <div class="builtwith"><span class="pill">LLM scripting</span><span class="pill">Image gen</span><span class="pill">Reference elements</span><span class="pill">Motion model</span><span class="pill">CapCut</span></div>
-          <div class="pfoot"><a class="lnk" href="posts/how-i-built-a-consistent-ai-cast.html">Read the build →</a><a class="lnk mut" href="#">Watch demo →</a></div>
+          <div class="prob"><b>The problem:</b> a whole world of characters in my head, no studio. AI let me direct it anyway, on-model across hundreds of shots.</div>
+          <div class="builtwith"><span class="pill">Image gen</span><span class="pill">Reference elements</span><span class="pill">Motion model</span><span class="pill">CapCut</span></div>
+          <div class="pfoot"><a class="lnk" href="posts/how-i-built-a-consistent-ai-cast.html">Read the build →</a><button class="lock-btn" data-app="BonnetNoona" data-href="#">🔒 Watch the film</button></div>
         </div>
       </article>
 
-      <article class="proj blue tilt reveal">
-        <div class="top"><h3>AI Analysis App</h3><span class="status">In the lab</span></div>
-        <div class="thumb placeholder"><span class="big">AI · ANALYSIS</span></div>
+      <article class="proj coral reveal">
+        <div class="top"><h3>Aurë / Accord</h3><span class="status">Beta</span></div>
+        <div class="thumb ph"><span class="big">AURÉ</span><span class="peek">Fragrance brain</span></div>
         <div class="pbody">
-          <div class="one">A prompt-powered app that turns messy input into a clear, structured read.</div>
-          <div class="prob"><b>The problem:</b> the kind of thinking I do in my head — on demand, for anyone. <span style="color:var(--muted)">Full write-up coming once I drop in the prompt + screens.</span></div>
-          <div class="builtwith"><span class="pill">Prompt engineering</span><span class="pill">LLM</span></div>
-          <div class="pfoot"><a class="lnk mut" href="#">Build log soon →</a></div>
+          <div class="one">A fragrance-intelligence &amp; scent-wardrobe app — your nose, organized.</div>
+          <div class="prob"><b>The problem:</b> scent is deeply personal and impossible to track. Aurë maps what you wear, when, and why.</div>
+          <div class="builtwith"><span class="pill">Flutter</span><span class="pill">Supabase</span><span class="pill">Claude Code</span><span class="pill">Design system</span></div>
+          <div class="pfoot"><a class="lnk" href="specs/aure.html">Read the spec →</a><button class="lock-btn" data-app="Aurë" data-href="#">🔒 Open the app</button></div>
         </div>
       </article>
 
-      <article class="proj green tilt reveal">
-        <div class="top"><h3>Rewards App</h3><span class="status">In the lab</span></div>
-        <div class="thumb placeholder"><span class="big">REWARDS</span></div>
+      <article class="proj blue reveal">
+        <div class="top"><h3>AestheticSim</h3><span class="status">Prototype</span></div>
+        <div class="thumb ph"><span class="big">FACE<br/>ANALYSIS</span><span class="peek">Clickable demo</span></div>
         <div class="pbody">
-          <div class="one">Turning everyday follow-through into something that actually feels good.</div>
-          <div class="prob"><b>The problem:</b> motivation that survives an ADHD brain. <span style="color:var(--muted)">Details + shots to be added.</span></div>
-          <div class="builtwith"><span class="pill">LLM</span><span class="pill">App build</span></div>
-          <div class="pfoot"><a class="lnk mut" href="#">Build log soon →</a></div>
+          <div class="one">An identity-preserving facial-simulation &amp; treatment-planning tool for aesthetic clinics.</div>
+          <div class="prob"><b>The problem:</b> consults are guesswork. AestheticSim gives clients a real before/after and clinicians an AI-drafted plan.</div>
+          <div class="builtwith"><span class="pill">React</span><span class="pill">Gemini</span><span class="pill">Prompt design</span></div>
+          <div class="pfoot"><a class="lnk" href="specs/aesthetic-sim.html">Read the spec →</a><button class="lock-btn" data-app="AestheticSim" data-href="#">🔒 Open the demo</button></div>
         </div>
       </article>
 
-      <article class="proj coral tilt reveal">
-        <div class="top"><h3>Aura / Accord</h3><span class="status">In the lab</span></div>
-        <div class="thumb placeholder"><span class="big">AURA</span></div>
+      <article class="proj green reveal">
+        <div class="top"><h3>Roommate Tracker</h3><span class="status">Built</span></div>
+        <div class="thumb ph"><span class="big">SPLIT</span><span class="peek">Mobile app</span></div>
         <div class="pbody">
-          <div class="one">An app for staying in tune — with yourself and the people around you.</div>
-          <div class="prob"><b>The problem:</b> a tool I wished existed. <span style="color:var(--muted)">Full write-up coming once I drop in the files.</span></div>
-          <div class="builtwith"><span class="pill">LLM</span><span class="pill">Design</span></div>
-          <div class="pfoot"><a class="lnk mut" href="#">Build log soon →</a></div>
+          <div class="one">A shared-rent tracker that ends the "who owes what" group chat forever.</div>
+          <div class="prob"><b>The problem:</b> someone always fronts the rent and loses track. This logs every payment and shows balances paying down live.</div>
+          <div class="builtwith"><span class="pill">Web app</span><span class="pill">localStorage</span><span class="pill">Claude</span></div>
+          <div class="pfoot"><a class="lnk" href="#blog">Build log soon →</a><button class="lock-btn" data-app="Roommate Tracker" data-href="#">🔒 Open the app</button></div>
         </div>
       </article>
+
+      <article class="proj purple reveal">
+        <div class="top"><h3>My Plate Planner</h3><span class="status">Built</span></div>
+        <div class="thumb ph"><span class="big">EAT</span><span class="peek">Mobile app</span></div>
+        <div class="pbody">
+          <div class="one">A meal-planner that respects your sensitivities and counts protein without the obsession.</div>
+          <div class="prob"><b>The problem:</b> generic plans ignore real dietary needs. This filters by what you can actually eat and tells you what to cook from your fridge.</div>
+          <div class="builtwith"><span class="pill">Gemini Canvas</span><span class="pill">Flutter</span><span class="pill">Local-first</span></div>
+          <div class="pfoot"><a class="lnk" href="#blog">Build log soon →</a><button class="lock-btn" data-app="My Plate Planner" data-href="#">🔒 Open the app</button></div>
+        </div>
+      </article>
+
+      <article class="proj red reveal">
+        <div class="top"><h3>Helix7</h3><span class="status">Drafting</span></div>
+        <div class="thumb ph"><span class="big">A NOVEL</span><span class="peek">From voice notes</span></div>
+        <div class="pbody">
+          <div class="one">A web novel built entirely from my voice notes — talk the story, ship the manuscript.</div>
+          <div class="prob"><b>The problem:</b> the best ideas arrive out loud and vanish. AI transcribes, outlines, and drafts them into chapters.</div>
+          <div class="builtwith"><span class="pill">Transcription</span><span class="pill">Claude</span><span class="pill">Outline → draft</span></div>
+          <div class="pfoot"><a class="lnk" href="#blog">Build log soon →</a><button class="lock-btn" data-app="Helix7" data-href="#">🔒 Read a chapter</button></div>
+        </div>
+      </article>
+
     </div>
   </div>
 </section>
 
-<!-- BIG MARQUEE -->
 <div class="bigmq" aria-hidden="true">
   <div class="row">
     <span>MORE IDEAS THAN HOURS</span><span class="em">✦</span><span class="out">SHIP ONE A DAY</span><span class="em">✦</span>
@@ -333,24 +332,20 @@
   </div>
 </div>
 
-<!-- THE LAB -->
-<section id="lab" class="lab">
+<!-- WHAT'S COOKING -->
+<section id="cooking" class="cooking">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div><div class="tag">The lab</div><h2>The ideas <span class="serif">still cooking.</span></h2></div>
-      <p>Proof the tabs are always open. Any one of these could be next.</p>
+      <div><div class="tag">What's cooking</div><h2>Ideas still <span class="serif">on the stove.</span></h2></div>
+      <p>Not shipped yet — but the tabs are always open. Follow to see which one lands next.</p>
     </div>
-    <div class="wall">
-      <span class="sticky" style="background:var(--yellow);color:#000;transform:rotate(-3deg)">a budgeting app that doesn't shame you</span>
-      <span class="sticky" style="background:var(--pink);color:#fff;transform:rotate(2deg)">AI meal-planner for picky eaters</span>
-      <span class="sticky" style="background:var(--lime);color:#000;transform:rotate(-1.5deg)">a family lore archive</span>
-      <span class="sticky" style="background:var(--blue);color:#fff;transform:rotate(3deg)">habit tracker w/ real rewards</span>
-      <span class="sticky" style="background:var(--coral);color:#fff;transform:rotate(-2.5deg)">BonnetNoona Episode 2</span>
-      <span class="sticky" style="background:#fff;color:#000;transform:rotate(1.5deg)">an AI that drafts the hard email</span>
-      <span class="sticky" style="background:var(--purple);color:#fff;transform:rotate(-2deg)">a "why didn't this exist" list</span>
-      <span class="sticky" style="background:var(--green);color:#fff;transform:rotate(2.5deg)">voice-note → to-do, automatically</span>
+    <div class="cook-grid">
+      <div class="cook reveal"><div class="emoji">🧒</div><div><h4>Child Habit + Reward App</h4><p>A chore-and-habit tracker that actually motivates kids — rewards that feel earned, not nagged.</p><span class="scook building">Building</span> <a href="specs/aurelias-rituals.html" style="margin-left:8px;color:var(--lime);font-weight:700;font-size:0.82rem;text-decoration:none;border-bottom:2px solid var(--lime)">Read the spec →</a></div></div>
+      <div class="cook reveal"><div class="emoji">🎬</div><div><h4>BonnetNoona — Episode 2</h4><p>The sisters are back. Next episode in the claymation series, in pre-production.</p><span class="scook soon">Coming soon</span></div></div>
+      <div class="cook reveal"><div class="emoji">💸</div><div><h4>A budget app that doesn't shame you</h4><p>Money tracking with zero guilt — gentle, honest, and built for an ADHD brain.</p><span class="scook concept">Concept</span></div></div>
+      <div class="cook reveal"><div class="emoji">🎙️</div><div><h4>Voice-note → to-do, automatically</h4><p>Talk your tasks out loud; they sort themselves into a real list. The capture tool I keep wishing existed.</p><span class="scook concept">Concept</span></div></div>
     </div>
-    <p class="hint">Drag one around if you want. <span class="serif">Pick the one that wins the day —</span> that's the one I build.</p>
+    <p class="gate-note" style="color:#b8b1a6;margin-top:24px">Want a vote in what gets built next? <span class="serif" style="color:var(--yellow)">Subscribe or follow</span> — I share works-in-progress there first.</p>
   </div>
 </section>
 
@@ -358,37 +353,80 @@
 <section id="blog">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div><div class="tag">The build log</div><h2>I <span class="serif">show my work.</span></h2></div>
-      <p>The exact models, tools, skills, and prompts behind each project — with shots and how-tos.</p>
+      <div><div class="tag">The build log · free to read</div><h2>I <span class="serif">show my work.</span></h2></div>
+      <p>The exact models, tools, skills, and prompts behind each project — open to everyone.</p>
     </div>
     <div class="blog-feat reveal">
       <div class="txt">
         <div class="label">Featured · BonnetNoona</div>
         <h3>How I built a perfectly consistent AI cast</h3>
-        <p>The single trick that keeps ten characters on-model across hundreds of generations — plus the canon bible, the prompt structure, and the still-then-motion workflow I use to direct it all.</p>
+        <p>The single trick that keeps ten characters on-model across hundreds of generations — plus the canon bible, the prompt structure, and the still-then-motion workflow.</p>
         <a class="btn" href="posts/how-i-built-a-consistent-ai-cast.html">Read the post →</a>
       </div>
       <div class="img" style="background-image:url('assets/process_contact.jpg')"></div>
     </div>
     <div class="blog-more">
-      <div class="stub reveal"><div class="k">Coming soon</div><h4>The AI Analysis prompt, fully explained</h4><p>The exact prompt, why it's built that way, and how to run it yourself.</p></div>
-      <div class="stub reveal"><div class="k">Coming soon</div><h4>Building the Rewards app</h4><p>From idea to working build — the tools and the prompts.</p></div>
-      <div class="stub reveal"><div class="k">Coming soon</div><h4>Aura / Accord, start to finish</h4><p>The problem, the design, and the AI workflow behind it.</p></div>
+      <div class="stub reveal"><div class="k">Coming soon</div><h4>Building AestheticSim with Gemini</h4><p>The prompt that turned a clinic idea into a working two-sided app.</p></div>
+      <div class="stub reveal"><div class="k">Coming soon</div><h4>Designing the Aurë fragrance brain</h4><p>From scent-wardrobe concept to a Flutter app + design system.</p></div>
+      <div class="stub reveal"><div class="k">Coming soon</div><h4>Talk it, ship it: Helix7</h4><p>Turning a folder of voice notes into a structured manuscript.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ABOUT / CONTACT -->
-<section id="contact">
-  <div class="wrap about">
-    <div class="card reveal">
-      <div class="tag">About</div>
-      <p>I'm Tamara Richards — a builder who finally found the right tools. For years the bottleneck was never imagination; it was <span class="serif">everything between the idea and the execution.</span></p>
-      <p>AI changed that. Now the project that lights me up on a given day actually gets made — and I document exactly how, so anyone else with a loud, busy, idea-flooded brain can do the same.</p>
+<!-- TOOLS -->
+<section id="tools">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div><div class="tag">Tools I use</div><h2>My <span class="serif">stack.</span></h2></div>
+      <p>The kit behind everything here — the tools that close the gap between idea and shipped.</p>
     </div>
+    <div class="tools-grid">
+      <a class="tool reveal" href="https://claude.ai" target="_blank" rel="noopener"><b>Claude <span class="arr">↗</span></b><span>Planning, code &amp; writing partner</span></a>
+      <a class="tool reveal" href="https://gemini.google.com" target="_blank" rel="noopener"><b>Gemini <span class="arr">↗</span></b><span>Canvas app prototyping</span></a>
+      <a class="tool reveal" href="https://higgsfield.ai" target="_blank" rel="noopener"><b>Higgsfield <span class="arr">↗</span></b><span>AI image &amp; character work</span></a>
+      <a class="tool reveal" href="https://runwayml.com" target="_blank" rel="noopener"><b>Runway <span class="arr">↗</span></b><span>AI video &amp; motion</span></a>
+      <a class="tool reveal" href="https://flutter.dev" target="_blank" rel="noopener"><b>Flutter <span class="arr">↗</span></b><span>Cross-platform app builds</span></a>
+      <a class="tool reveal" href="https://supabase.com" target="_blank" rel="noopener"><b>Supabase <span class="arr">↗</span></b><span>Backend &amp; database</span></a>
+      <a class="tool reveal" href="https://cursor.com" target="_blank" rel="noopener"><b>Cursor <span class="arr">↗</span></b><span>AI-native code editor</span></a>
+      <a class="tool reveal" href="https://www.capcut.com" target="_blank" rel="noopener"><b>CapCut <span class="arr">↗</span></b><span>Editing &amp; assembly</span></a>
+    </div>
+    <div class="repos reveal">
+      <span class="lab">Find me:</span>
+      <a class="repo" href="https://github.com/N0kam0rad" target="_blank" rel="noopener">GitHub ↗</a>
+      <a class="repo" href="https://www.linkedin.com/in/tamaralynnrichards/" target="_blank" rel="noopener">LinkedIn ↗</a>
+      <a class="repo" href="https://github.com/N0kam0rad/portfolio" target="_blank" rel="noopener">this repo ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div><div class="tag">About</div><h2>Concept queen, <span class="serif">(almost)CEO.</span></h2></div>
+      <p>Opera singer → solutions engineer → AI (ab)user. (jk. I say please and thank you.)</p>
+    </div>
+    <div class="about">
+      <div class="portrait reveal">
+        <div class="ph2"><b>Your GIF goes here</b><span>send me the 3 photos and I'll drop in the looping portrait</span></div>
+        <div class="cap">the many faces of an <span class="serif">idea machine</span></div>
+      </div>
+      <div class="bio reveal">
+        <p>I'm the <b>(almost)CEO of a million startups I never started</b> — the one who turns a 2 a.m. "wait, why doesn't this exist?" into a real idea, a process, and a plan with teeth.</p>
+        <p><b>What I'm great at:</b> the spark <em>and</em> the scaffolding. <b>What I'm looking for:</b> the people who make it real, so a few of these babies actually ship (and yes — let's monetize them).</p>
+        <div class="lookrow"><span class="pill">engineers</span><span class="pill">designers</span><span class="pill">angel investors</span><span class="pill">fellow concept-chasers</span></div>
+        <p>And the planning lift? My team can do it for <em>you</em>, too — it's me, <span class="serif">Claude(tte)</span> &amp; <span class="serif">Cha(d)t</span>, on consult.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="wrap">
     <div class="contact-box reveal">
-      <h3>Let's build something.</h3>
-      <p style="color:#efeaff">Collabs, questions, or you just want the prompt? Reach out.</p>
+      <h3>Let's build something — together.</h3>
+      <p style="color:#efeaff;max-width:52ch;margin:0 auto">Engineers, designers, angel investors, fellow idea-addicts: if you want concepts turned into shipped, monetizable things, I'm your girl.</p>
       <a class="mail" href="mailto:katrichardsfam@gmail.com">katrichardsfam@gmail.com</a>
     </div>
   </div>
@@ -399,79 +437,85 @@
     <div class="big">Got an idea?<br/><span class="serif">Let's ship it.</span></div>
     <div class="row">
       <div>Tamara Richards — (almost)CEO</div>
-      <div><a href="mailto:katrichardsfam@gmail.com">katrichardsfam@gmail.com</a> · Say it with your bonnet on.</div>
+      <div><a href="https://www.linkedin.com/in/tamaralynnrichards/" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://github.com/N0kam0rad" target="_blank" rel="noopener">GitHub</a> · <a href="https://www.tiktok.com/@tamaralynnrichard" target="_blank" rel="noopener">TikTok</a> · <a href="https://www.instagram.com/tamaranots/" target="_blank" rel="noopener">Instagram</a></div>
     </div>
+    <div class="row" style="border-top:none;padding-top:6px;font-weight:400;opacity:.85"><div></div><div><a href="mailto:katrichardsfam@gmail.com">katrichardsfam@gmail.com</a> · Say it with your bonnet on.</div></div>
   </div>
 </footer>
 
-<!-- Motion libraries (same family Besharm uses): GSAP + smooth scroll -->
+<!-- GATE MODAL -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <button class="x" id="gateX" aria-label="Close">✕</button>
+    <div class="key">🔑</div>
+    <h3>Unlock <span id="gateApp">the apps</span></h3>
+    <p>The build log's free. To open the full apps, follow along — that's the unlock. (Newsletter's coming; drop your email and I'll ping you when it's live.)</p>
+    <div class="follow-row">
+      <a class="follow-btn tt" id="ttBtn" href="https://www.tiktok.com/@tamaralynnrichard" target="_blank" rel="noopener">Follow on TikTok</a>
+      <a class="follow-btn ig" id="igBtn" href="https://www.instagram.com/tamaranots/" target="_blank" rel="noopener">Follow on Instagram</a>
+    </div>
+    <button class="gate-done" id="gateDone">I followed — unlock the apps</button>
+    <div class="gate-or">— or, for the newsletter —</div>
+    <form class="gate-form" id="gateForm">
+      <input type="email" id="gateEmail" placeholder="you@email.com" required />
+      <button type="submit">Notify me</button>
+    </form>
+    <p class="gate-note">One unlock opens every app. Newsletter coming soon — no spam, ever.</p>
+  </div>
+</div>
+
+<script>
+  // Reveal
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // --- GATE LOGIC ---
+  const KEY='tr_unlocked_v1';
+  const gate=document.getElementById('gate');
+  const gateApp=document.getElementById('gateApp');
+  function isUnlocked(){ try{return localStorage.getItem(KEY)==='1';}catch(e){return false;} }
+  function applyUnlock(){
+    document.querySelectorAll('.lock-btn').forEach(b=>{
+      b.classList.add('unlocked');
+      const label=b.getAttribute('data-label')||b.textContent.replace('🔒','🔓');
+      b.innerHTML='🔓 '+ b.textContent.replace(/^🔒\s*/,'');
+    });
+  }
+  function unlock(){ try{localStorage.setItem(KEY,'1');}catch(e){} applyUnlock(); closeGate(); }
+  function openGate(app){ gateApp.textContent=app?('“'+app+'”'):'the apps'; gate.classList.add('open'); }
+  function closeGate(){ gate.classList.remove('open'); }
+  document.getElementById('gateX').addEventListener('click',closeGate);
+  gate.addEventListener('click',e=>{ if(e.target===gate) closeGate(); });
+  document.getElementById('gateForm').addEventListener('submit',e=>{ e.preventDefault();
+    /* TODO: wire this email to your newsletter (Buttondown/Substack/Beehiiv). For now it unlocks locally. */
+    unlock();
+  });
+  document.getElementById('gateDone').addEventListener('click',unlock);
+  document.querySelectorAll('.lock-btn').forEach(b=>{
+    b.addEventListener('click',()=>{
+      if(isUnlocked()){ const href=b.getAttribute('data-href'); if(href&&href!=='#'){window.open(href,'_blank');} else {alert('This app link is coming soon — Tamara is hosting it.');} }
+      else { openGate(b.getAttribute('data-app')); }
+    });
+  });
+  if(isUnlocked()) applyUnlock();
+
+  // Card / marquee motion enhancements (graceful if libs absent)
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
-  // --- Scroll reveal (vanilla, always works even if CDNs fail) ---
-  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:0.12});
-  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-
-  // --- Card tilt on hover ---
-  document.querySelectorAll('.tilt').forEach(card=>{
-    card.addEventListener('mousemove',e=>{
-      const r=card.getBoundingClientRect();
-      const px=(e.clientX-r.left)/r.width-0.5, py=(e.clientY-r.top)/r.height-0.5;
-      card.style.transform=`perspective(900px) rotateY(${px*5}deg) rotateX(${-py*5}deg) translateY(-2px)`;
-    });
-    card.addEventListener('mouseleave',()=>{card.style.transform='';});
-  });
-
-  // --- Draggable lab stickers ---
-  document.querySelectorAll('.sticky').forEach(s=>{
-    let down=false,sx,sy,ox=0,oy=0;
-    const base=s.style.transform;
-    s.addEventListener('mousedown',e=>{down=true;sx=e.clientX;sy=e.clientY;s.style.cursor='grabbing';s.style.zIndex=50;e.preventDefault();});
-    window.addEventListener('mousemove',e=>{if(!down)return;ox=e.clientX-sx;oy=e.clientY-sy;s.style.transform=`${base} translate(${ox}px,${oy}px)`;});
-    window.addEventListener('mouseup',()=>{if(down){down=false;s.style.cursor='grab';}});
-  });
-
-  // --- Smooth scrolling (Lenis) ---
   let lenis=null;
-  if(window.Lenis){
-    lenis=new Lenis({lerp:0.1,smoothWheel:true});
-    function raf(t){lenis.raf(t);requestAnimationFrame(raf);}
-    requestAnimationFrame(raf);
-  }
-
-  // --- GSAP scroll-reactive parallax ---
+  if(window.Lenis){ lenis=new Lenis({lerp:0.1,smoothWheel:true}); function raf(t){lenis.raf(t);requestAnimationFrame(raf);} requestAnimationFrame(raf); }
   if(window.gsap&&window.ScrollTrigger){
     gsap.registerPlugin(ScrollTrigger);
     if(lenis) lenis.on('scroll',ScrollTrigger.update);
     gsap.to('.hero-card',{y:-34,ease:'none',scrollTrigger:{trigger:'header.hero',start:'top top',end:'bottom top',scrub:true}});
-    gsap.utils.toArray('.bigmq .row').forEach(row=>{
-      gsap.to(row,{xPercent:-8,ease:'none',scrollTrigger:{trigger:'.bigmq',start:'top bottom',end:'bottom top',scrub:0.6}});
-    });
   }
-
-  // --- Magnetic buttons ---
-  document.querySelectorAll('.btn, nav a.cta').forEach(b=>{
-    b.addEventListener('mousemove',e=>{
-      const r=b.getBoundingClientRect();
-      b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*0.28}px,${(e.clientY-r.top-r.height/2)*0.45}px)`;
-    });
+  document.querySelectorAll('.btn').forEach(b=>{
+    b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*0.18}px,${(e.clientY-r.top-r.height/2)*0.3}px)`;});
     b.addEventListener('mouseleave',()=>{b.style.transform='';});
   });
-
-  // --- Custom cursor (fine pointers only; falls back to normal cursor if anything errors) ---
-  (function(){
-    if(!window.matchMedia||!matchMedia('(pointer:fine)').matches) return;
-    const c=document.createElement('div');c.className='cursor';document.body.appendChild(c);
-    document.body.classList.add('has-cursor');
-    let x=innerWidth/2,y=innerHeight/2,tx=x,ty=y;
-    addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY;});
-    (function loop(){x+=(tx-x)*0.22;y+=(ty-y)*0.22;c.style.left=x+'px';c.style.top=y+'px';requestAnimationFrame(loop);})();
-    document.querySelectorAll('a,button,.btn,.sticky,.proj').forEach(el=>{
-      el.addEventListener('mouseenter',()=>c.classList.add('big'));
-      el.addEventListener('mouseleave',()=>c.classList.remove('big'));
-    });
-  })();
 </script>
 </body>
 </html>
