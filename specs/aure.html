@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aurë — Product Spec · Tamara Richards</title>
+<meta name="description" content="Mini product spec for Aurë: a fragrance-intelligence and scent-wardrobe app — what it is, why it was built, who it helps, how it monetizes, and what I learned directing an AI rebuild from React Native to Flutter." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg:#F4EEE2;--ink:#1A1613;--paper:#FFFDF8;--red:#ED3A24;--blue:#2F6BFF;--green:#11B981;
+    --coral:#FF7A3D;--purple:#7C4DFF;--yellow:#FFC835;--lime:#C2F23D;--muted:#6E665B;
+    --shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-height:1.0;letter-spacing:-0.025em}
+  .serif{font-family:"Fraunces",serif;font-style:italic;font-weight:500}
+  a{color:var(--coral)}
+  .accentbar{height:12px;display:flex}.accentbar span{flex:1}
+  .accentbar span:nth-child(1){background:var(--coral)}.accentbar span:nth-child(2){background:var(--purple)}
+  .accentbar span:nth-child(3){background:var(--green)}.accentbar span:nth-child(4){background:var(--yellow)}
+  nav{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:2px solid var(--ink)}
+  nav .in{max-width:880px;margin:0 auto;padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between}
+  nav .back{font-weight:700;text-decoration:none;color:var(--ink)}
+  nav .name{font-family:"Bricolage Grotesque";font-weight:800}
+  .article{max-width:880px;margin:0 auto;padding:0 24px}
+  header.post{padding:50px 0 26px}
+  .crumb{font-weight:700;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--coral)}
+  h1.h{font-size:clamp(2.2rem,6vw,3.4rem);margin:13px 0 12px}
+  .sub{font-size:1.2rem;color:var(--muted);max-width:60ch}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+  .pill{font-size:0.74rem;font-weight:600;border:2px solid var(--ink);border-radius:999px;padding:4px 11px;background:var(--paper)}
+  .status{background:var(--coral);color:#fff}
+  .spec{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:30px 0}
+  @media(max-width:720px){.spec{grid-template-columns:1fr}}
+  .card{background:var(--paper);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--shadow-sm);padding:24px;position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px}
+  .card.c-blue::before{background:var(--blue)}.card.c-red::before{background:var(--red)}
+  .card.c-green::before{background:var(--green)}.card.c-purple::before{background:var(--purple)}
+  .card.c-coral::before{background:var(--coral)}.card.c-yellow::before{background:var(--yellow)}
+  .card .lab{font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:8px;padding-left:8px}
+  .card h3{font-size:1.15rem;margin-bottom:8px;padding-left:8px}
+  .card p{font-size:0.98rem;padding-left:8px}
+  .card.wide{grid-column:1 / -1}
+  .tools{display:flex;flex-wrap:wrap;gap:8px;padding-left:8px;margin-top:6px}
+  .money{background:var(--ink);color:var(--bg);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--shadow);padding:28px;margin:8px 0 0}
+  .money .lab{color:var(--yellow)}
+  .money h3{color:var(--bg)}.money p,.money li{color:#d8d1c6}
+  .money ul{margin:10px 0 0 20px}.money li{margin:6px 0;font-size:0.98rem}
+  .money b{color:var(--lime)}
+  h2.learn{font-size:1.7rem;margin:42px 0 4px}
+  .cta{background:var(--purple);color:#fff;border:2px solid var(--ink);border-radius:22px;box-shadow:var(--shadow);padding:30px;text-align:center;margin:40px 0 20px}
+  .cta h3{font-size:1.7rem;margin-bottom:8px}
+  .cta p{color:#efeaff;max-width:54ch;margin:0 auto 6px}
+  .cta .serif{color:var(--yellow)}
+  .cta a{display:inline-block;margin-top:16px;background:#fff;color:var(--ink);font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:13px;padding:13px 22px;box-shadow:var(--shadow-sm)}
+  footer{border-top:2px solid var(--ink);margin-top:30px;padding:30px 0;text-align:center;color:var(--muted);font-size:0.9rem}
+</style>
+</head>
+<body>
+<div class="accentbar"><span></span><span></span><span></span><span></span></div>
+<nav><div class="in"><a class="back" href="../index.html">← All work</a><span class="name">Product Spec</span></div></nav>
+
+<article>
+<header class="post"><div class="article">
+  <div class="crumb">Product Spec · App 02</div>
+  <h1 class="h">Aurë</h1>
+  <p class="sub">A fragrance-intelligence &amp; scent-wardrobe app — fragrance treated as a wearable identity system, not a perfume catalog.</p>
+  <div class="meta"><span class="pill status">Beta</span><span class="pill">Flutter</span><span class="pill">Supabase</span><span class="pill">Motion-first</span></div>
+</div></header>
+
+<div class="article">
+  <div class="spec">
+    <div class="card c-coral">
+      <div class="lab">What it is</div>
+      <h3>The 10-second version</h3>
+      <p>An app that maps your fragrances like a wardrobe: what you wear, when, the mood and "aura" each scent gives, layering and styling logic, wear history, and context-aware suggestions. It feels like a designed emotional interface — atmospheric, editorial, sensory.</p>
+    </div>
+    <div class="card c-purple">
+      <div class="lab">Why I built it</div>
+      <h3>The spark</h3>
+      <p>Scent is one of the most personal things we own and one of the hardest to track. Existing apps are marketplaces. I wanted the opposite — a private, beautiful place to understand and style your own collection.</p>
+    </div>
+    <div class="card c-red">
+      <div class="lab">The problem it solved for me</div>
+      <h3>A real app, solo</h3>
+      <p>I had a deep product vision and no engineering team. AI let me take it from a React Native prototype all the way to a modular Flutter app with a real architecture — something I could never have hand-built alone.</p>
+    </div>
+    <div class="card c-green">
+      <div class="lab">The problem it solves for a user</div>
+      <h3>Scent, organized &amp; expressive</h3>
+      <p>Fragrance lovers juggle dozens of bottles with no memory layer. Aurë gives them a wardrobe, a wear log, and recommendations tied to mood and context — turning a messy shelf into a styling system.</p>
+    </div>
+    <div class="card c-blue wide">
+      <div class="lab">How it works</div>
+      <h3>Under the hood</h3>
+      <p>A feature-modular Flutter app: a Galaxy view (constellation + grid) to browse the collection, a Fragrance Detail screen with collapsing hero and memory/community states, City Scent (context-aware suggestions), and a Wear Log archive. Shared theme + motion tokens keep every screen feeling like one designed object. Riverpod for state, go_router for routing, Supabase as the backend target.</p>
+      <div class="tools">
+        <span class="pill">Flutter / Dart</span><span class="pill">Riverpod</span><span class="pill">go_router</span><span class="pill">Supabase</span><span class="pill">Claude Code</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="money">
+    <div class="lab">Where it's going · how it monetizes</div>
+    <h3>The business model</h3>
+    <ul>
+      <li><b>Freemium</b> — the wardrobe + wear log free; styling intelligence, layering logic, and context suggestions behind a subscription.</li>
+      <li><b>Affiliate</b> — "complete the wardrobe" recommendations link to retailers; revenue on discovery without becoming a marketplace.</li>
+      <li><b>Premium drops</b> — collabs with niche houses for limited in-app content.</li>
+    </ul>
+    <p style="margin-top:12px">Next: finish the Wear Log archive, wire Supabase, and ship a TestFlight beta to fragrance communities.</p>
+  </div>
+
+  <h2 class="learn">What I learned building it</h2>
+  <div class="spec">
+    <div class="card c-blue">
+      <div class="lab">How I directed the AI</div>
+      <h3>Old app = spec, new app = source of truth</h3>
+      <p>I was migrating from React Native to Flutter. The rule I gave the agent: treat the old prototype as a <em>reference spec only</em> and the Flutter project as the single source of truth. That one constraint stopped it from blindly porting code and let it rebuild cleanly while preserving the product logic.</p>
+    </div>
+    <div class="card c-yellow">
+      <div class="lab">How I directed the AI</div>
+      <h3>Phase it, and demand a report</h3>
+      <p>I broke the rebuild into Phases 0→7 (stabilize → foundation → features → data → backend) and gave the agent a fixed output format every pass: <em>Summary · Files changed · What's working · Blockers · Next step</em>. Phasing kept it from overbuilding; the report format made every session resumable.</p>
+    </div>
+    <div class="card c-red">
+      <div class="lab">What broke &amp; how I fixed it</div>
+      <h3>AI leaves a mess behind</h3>
+      <p>Iterative AI edits pile up duplicate app shells, dead routes, and stale scaffolding. The fix was a dedicated <em>Phase 0 cleanup</em> plus a standing rule — "the analyzer must pass cleanly after each phase, no speculative broad rewrites." Discipline beats vibes.</p>
+    </div>
+    <div class="card c-green">
+      <div class="lab">The automation win</div>
+      <h3>A reusable "continue" prompt</h3>
+      <p>Because the plan was phased and the output format fixed, I wrote one master prompt that resumes the build from wherever it left off. Open a fresh session, paste it, and the agent picks up the next phase — no re-explaining the project each time.</p>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h3>This is the work I do on consult.</h3>
+    <p>Migrations, phased AI builds, agent operating contracts — turning a big product vision into a disciplined, shippable architecture. <span class="serif">If you've got an idea sitting in your head, let's get it out.</span></p>
+    <a href="../index.html#contact">Work with me →</a>
+  </div>
+  <p style="text-align:center;color:var(--muted);font-size:0.85rem;margin-bottom:10px">Want to see Aurë? The app's behind the unlock on the <a href="../index.html#work">work page</a>.</p>
+</div>
+</article>
+<footer>Tamara Richards — (almost)CEO · Ideas, shipped with AI.</footer>
+</body>
+</html>

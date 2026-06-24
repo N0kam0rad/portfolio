@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kids' Habit + Reward App — Product Spec · Tamara Richards</title>
+<meta name="description" content="Mini product spec for a kids' routine-and-reward app: what it is, why it was built, who it helps, how it monetizes, and what I learned building a single-file app with AI." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg:#F4EEE2;--ink:#1A1613;--paper:#FFFDF8;--red:#ED3A24;--blue:#2F6BFF;--green:#11B981;
+    --coral:#FF7A3D;--purple:#7C4DFF;--yellow:#FFC835;--lime:#C2F23D;--muted:#6E665B;
+    --shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-height:1.0;letter-spacing:-0.025em}
+  .serif{font-family:"Fraunces",serif;font-style:italic;font-weight:500}
+  a{color:var(--purple)}
+  .accentbar{height:12px;display:flex}.accentbar span{flex:1}
+  .accentbar span:nth-child(1){background:var(--purple)}.accentbar span:nth-child(2){background:var(--green)}
+  .accentbar span:nth-child(3){background:var(--yellow)}.accentbar span:nth-child(4){background:var(--coral)}
+  nav{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:2px solid var(--ink)}
+  nav .in{max-width:880px;margin:0 auto;padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between}
+  nav .back{font-weight:700;text-decoration:none;color:var(--ink)}
+  nav .name{font-family:"Bricolage Grotesque";font-weight:800}
+  .article{max-width:880px;margin:0 auto;padding:0 24px}
+  header.post{padding:50px 0 26px}
+  .crumb{font-weight:700;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--purple)}
+  h1.h{font-size:clamp(2.2rem,6vw,3.4rem);margin:13px 0 12px}
+  .sub{font-size:1.2rem;color:var(--muted);max-width:60ch}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+  .pill{font-size:0.74rem;font-weight:600;border:2px solid var(--ink);border-radius:999px;padding:4px 11px;background:var(--paper)}
+  .status{background:var(--green);color:#fff}
+  .spec{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:30px 0}
+  @media(max-width:720px){.spec{grid-template-columns:1fr}}
+  .card{background:var(--paper);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--shadow-sm);padding:24px;position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px}
+  .card.c-blue::before{background:var(--blue)}.card.c-red::before{background:var(--red)}
+  .card.c-green::before{background:var(--green)}.card.c-purple::before{background:var(--purple)}
+  .card.c-coral::before{background:var(--coral)}.card.c-yellow::before{background:var(--yellow)}
+  .card .lab{font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:8px;padding-left:8px}
+  .card h3{font-size:1.15rem;margin-bottom:8px;padding-left:8px}
+  .card p{font-size:0.98rem;padding-left:8px}
+  .card.wide{grid-column:1 / -1}
+  .tools{display:flex;flex-wrap:wrap;gap:8px;padding-left:8px;margin-top:6px}
+  .money{background:var(--ink);color:var(--bg);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--shadow);padding:28px;margin:8px 0 0}
+  .money .lab{color:var(--yellow)}
+  .money h3{color:var(--bg)}.money p,.money li{color:#d8d1c6}
+  .money ul{margin:10px 0 0 20px}.money li{margin:6px 0;font-size:0.98rem}
+  .money b{color:var(--lime)}
+  h2.learn{font-size:1.7rem;margin:42px 0 4px}
+  .cta{background:var(--purple);color:#fff;border:2px solid var(--ink);border-radius:22px;box-shadow:var(--shadow);padding:30px;text-align:center;margin:40px 0 20px}
+  .cta h3{font-size:1.7rem;margin-bottom:8px}
+  .cta p{color:#efeaff;max-width:54ch;margin:0 auto 6px}
+  .cta .serif{color:var(--yellow)}
+  .cta a{display:inline-block;margin-top:16px;background:#fff;color:var(--ink);font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:13px;padding:13px 22px;box-shadow:var(--shadow-sm)}
+  footer{border-top:2px solid var(--ink);margin-top:30px;padding:30px 0;text-align:center;color:var(--muted);font-size:0.9rem}
+</style>
+</head>
+<body>
+<div class="accentbar"><span></span><span></span><span></span><span></span></div>
+<nav><div class="in"><a class="back" href="../index.html">← All work</a><span class="name">Product Spec</span></div></nav>
+
+<article>
+<header class="post"><div class="article">
+  <div class="crumb">Product Spec · In the lab</div>
+  <h1 class="h">Kids' Habit + Reward App</h1>
+  <p class="sub">A routine-and-reward app for kids: complete your morning and bedtime rituals, earn points, unlock daily puzzles, and save toward real prizes — with a parent approval step.</p>
+  <div class="meta"><span class="pill status">Built · in testing</span><span class="pill">Single-file app</span><span class="pill">Local-first</span><span class="pill">Gamified</span></div>
+</div></header>
+
+<div class="article">
+  <div class="spec">
+    <div class="card c-purple">
+      <div class="lab">What it is</div>
+      <h3>The 10-second version</h3>
+      <p>A playful mobile app where a child taps through their morning/bedtime routine, earns ⭐ points per step, reveals a hidden daily puzzle as they go, and saves points toward a prize wishlist. Cashing out a prize pings the parent to approve — points-as-allowance, gamified.</p>
+    </div>
+    <div class="card c-coral">
+      <div class="lab">Why I built it</div>
+      <h3>The spark</h3>
+      <p>Getting a kid through a routine is a daily battle, and most chore apps feel like spreadsheets for adults. I wanted something a child would <em>want</em> to open — rewards that feel earned, not nagged.</p>
+    </div>
+    <div class="card c-red">
+      <div class="lab">The problem it solved for me</div>
+      <h3>Motivation that sticks</h3>
+      <p>A routine tool built around delight instead of compliance — streaks, confetti, and a mystery to uncover — so the habit runs itself instead of running on reminders.</p>
+    </div>
+    <div class="card c-green">
+      <div class="lab">The problem it solves for a user</div>
+      <h3>Every parent's morning</h3>
+      <p>Parents everywhere need a low-friction way to build kids' habits and teach saving. This turns the routine into a game the child drives, with the parent holding the approval — useful far beyond one household.</p>
+    </div>
+    <div class="card c-blue wide">
+      <div class="lab">How it works</div>
+      <h3>Under the hood</h3>
+      <p>A single self-contained HTML app — no install, no accounts, runs from a home-screen shortcut. Each routine step reveals a piece of a hidden picture; finishing the routine unlocks a quiz for bonus points. Streaks, a prize wishlist with progress bars and "Shop" links, and a parent-approved cash-out. All progress saves on the device.</p>
+      <div class="tools">
+        <span class="pill">HTML / CSS / JS</span><span class="pill">localStorage</span><span class="pill">Claude</span><span class="pill">No backend</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="money">
+    <div class="lab">Where it's going · how it monetizes</div>
+    <h3>The business model</h3>
+    <ul>
+      <li><b>Freemium app</b> — core routines free; premium puzzle packs, themes, and multi-child profiles as a small subscription.</li>
+      <li><b>Affiliate</b> — the prize wishlist links to retailers (the "Shop" buttons already do).</li>
+      <li><b>Family tier</b> — multiple kids, custom routines, and a parent dashboard.</li>
+    </ul>
+    <p style="margin-top:12px">Next: a parent setup mode, multi-child support, and an App Store wrapper.</p>
+  </div>
+
+  <h2 class="learn">What I learned building it</h2>
+  <div class="spec">
+    <div class="card c-blue">
+      <div class="lab">How I directed the AI</div>
+      <h3>Start from the behavior, not the screens</h3>
+      <p>I described the <em>outcome</em> — "a kid will actually want to finish their routine" — and let the mechanics follow: points instead of dollars (more game-like), progress that survives a refresh, puzzles gated behind completing the routine. Designing for the feeling first led to better features than a feature list would have.</p>
+    </div>
+    <div class="card c-red">
+      <div class="lab">What broke &amp; how I fixed it</div>
+      <h3>One backtick = white screen</h3>
+      <p>A late version shipped a <em>blank page</em>. The culprit: nested template literals (backticks inside backticks) silently crashed the whole script. In a single-file app, one syntax slip takes everything down. The fix — rewrite with plain string concatenation, no nesting — and a habit of sanity-checking (line count, balance checks) after every big change.</p>
+    </div>
+    <div class="card c-green">
+      <div class="lab">The automation win</div>
+      <h3>A backend-free "daily" engine</h3>
+      <p>No server, but it still feels alive: a per-day storage key (<code>ritual_YYYY-M-D</code>) auto-resets progress each morning, and a day-of-year index rotates in a fresh puzzle every day. Real "daily app" behavior with zero infrastructure to run or pay for.</p>
+    </div>
+    <div class="card c-yellow">
+      <div class="lab">Tools that did the work</div>
+      <h3>One file, iterated live</h3>
+      <p>Pure HTML/CSS/JS with localStorage — no framework, no build step. I iterated version over version (points system → two puzzles → unlock animations) in fast passes, which is exactly where a single-file app shines: change, refresh, see it.</p>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h3>This is the work I do on consult.</h3>
+    <p>From "my kid won't do their routine" to a shipped, gamified app — designing for behavior, debugging the gnarly bits, and shipping with zero backend. <span class="serif">Got an idea sitting in your head? Let's get it out.</span></p>
+    <a href="../index.html#contact">Work with me →</a>
+  </div>
+  <p style="text-align:center;color:var(--muted);font-size:0.85rem;margin-bottom:10px">Note: the live app stars my own daughter, so the public demo uses placeholder data. Back to the <a href="../index.html#cooking">what's cooking</a> board.</p>
+</div>
+</article>
+<footer>Tamara Richards — (almost)CEO · Ideas, shipped with AI.</footer>
+</body>
+</html>
