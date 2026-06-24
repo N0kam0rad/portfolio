@@ -200,6 +200,25 @@
   .bigmq .em{color:var(--yellow)}.bigmq .out{color:transparent;-webkit-text-stroke:1.6px var(--bg)}
   .bigmq:hover .row{animation-play-state:paused}
   @keyframes bigscroll{to{transform:translateX(-50%)}}
+
+  /* ABOUT — bold yellow editorial (Wilde Weide vibe) */
+  #about.about-yellow{background:var(--yellow);border-top:2px solid var(--ink)}
+  .ab-top{margin-bottom:30px}
+  .ab-top .tag{font-weight:700;font-size:0.76rem;text-transform:uppercase;letter-spacing:0.16em;color:var(--red);margin-bottom:10px}
+  .ab-h{font-size:clamp(2.6rem,7.5vw,5.2rem);line-height:0.9;letter-spacing:-0.03em}
+  .ab-sub{font-size:1.12rem;margin-top:16px;max-width:54ch;font-weight:500}
+  .ab-sub em{font-style:italic;color:#7a6700}
+  .ab-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:34px;align-items:center}
+  @media(max-width:820px){.ab-grid{grid-template-columns:1fr;gap:44px}}
+  .ab-portrait{position:relative;justify-self:center;max-width:380px;width:100%}
+  .ab-portrait img{width:100%;aspect-ratio:4/5;object-fit:cover;border:3px solid var(--ink);border-radius:18px;box-shadow:12px 12px 0 var(--ink);transform:rotate(-2.5deg);display:block}
+  .ab-sticker{position:absolute;font-family:"Bricolage Grotesque";font-weight:800;border:2px solid var(--ink);border-radius:999px;padding:8px 14px;box-shadow:var(--shadow-sm);white-space:nowrap}
+  .ab-sticker.s1{background:var(--paper);color:var(--ink);font-size:0.82rem;bottom:-16px;left:-12px;transform:rotate(-4deg)}
+  .ab-sticker.s2{background:var(--red);color:#fff;font-size:0.95rem;top:-14px;right:-10px;transform:rotate(5deg)}
+  .ab-bio{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:32px;display:flex;flex-direction:column;gap:14px}
+  .ab-bio p{font-size:1.07rem}.ab-bio .serif{color:var(--red)}
+  .ab-bio .lookrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+  .ab-bio .lookrow .pill{background:var(--bg)}
 </style>
 </head>
 <body>
@@ -411,18 +430,20 @@
 </section>
 
 <!-- ABOUT -->
-<section id="about">
+<section id="about" class="about-yellow">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <div><div class="tag">About</div><h2>Concept queen, <span class="serif">(almost)CEO.</span></h2></div>
-      <p>Opera singer → solutions engineer → AI (ab)user. (jk. I say please and thank you.)</p>
+    <div class="ab-top reveal">
+      <div class="tag">About</div>
+      <h2 class="ab-h">Concept queen,<br/><span class="serif">(almost)CEO.</span></h2>
+      <p class="ab-sub">Opera singer → solutions engineer → AI (ab)user. <em>(jk. I say please and thank you.)</em></p>
     </div>
-    <div class="about">
-      <div class="portrait reveal">
-        <div class="ph2"><b>Your GIF goes here</b><span>send me the 3 photos and I'll drop in the looping portrait</span></div>
-        <div class="cap">the many faces of an <span class="serif">idea machine</span></div>
+    <div class="ab-grid">
+      <div class="ab-portrait reveal">
+        <img src="assets/tamara.gif" alt="Tamara Richards — many moods" />
+        <span class="ab-sticker s1">the many faces of an idea machine ✦</span>
+        <span class="ab-sticker s2">(almost)CEO</span>
       </div>
-      <div class="bio reveal">
+      <div class="ab-bio reveal">
         <p>I'm the <b>(almost)CEO of a million startups I never started</b> — the one who turns a 2 a.m. "wait, why doesn't this exist?" into a real idea, a process, and a plan with teeth.</p>
         <p><b>What I'm great at:</b> the spark <em>and</em> the scaffolding. <b>What I'm looking for:</b> the people who make it real, so a few of these babies actually ship (and yes — let's monetize them).</p>
         <div class="lookrow"><span class="pill">engineers</span><span class="pill">designers</span><span class="pill">angel investors</span><span class="pill">fellow concept-chasers</span></div>
