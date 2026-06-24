@@ -237,8 +237,50 @@
   @media(prefers-reduced-motion:reduce){
     .reveal{opacity:1!important;transform:none!important;transition:none!important}
     #scrollbar{display:none}
-    .marquee .track,.bigmq .row{animation:none!important}
+    .marquee .track,.bigmq .row,.f-mark .row{animation:none!important}
   }
+
+  /* ===== Besharm-style footer navigation ===== */
+  footer.fnav{background:var(--red);color:#fff;border-top:2px solid var(--ink);overflow:hidden}
+  footer.fnav .wrap{padding:66px 26px 0}
+  .f-eyebrow{font-weight:700;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.2em;opacity:.85;margin-bottom:14px}
+  .f-lead{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(2rem,5vw,3.4rem);line-height:0.98;letter-spacing:-0.025em;max-width:15ch;margin-bottom:48px}
+  .f-lead .serif{color:var(--yellow)}
+  .f-cols{display:grid;grid-template-columns:1.45fr 0.85fr;gap:46px;align-items:start;padding-bottom:50px;border-bottom:2px solid #ffffff44}
+  @media(max-width:820px){.f-cols{grid-template-columns:1fr;gap:40px}}
+
+  /* big animated nav links */
+  .f-nav{display:flex;flex-direction:column}
+  .fl{position:relative;display:flex;align-items:center;text-decoration:none;color:#fff;padding:14px 0;border-top:2px solid #ffffff33;font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(1.7rem,4.4vw,3rem);line-height:1;letter-spacing:-0.025em;transition:padding-left .38s cubic-bezier(.2,.8,.2,1),color .25s}
+  .f-nav .fl:last-child{border-bottom:2px solid #ffffff33}
+  .fl:hover{padding-left:30px;color:var(--yellow)}
+  .fl-arrow{position:absolute;left:2px;opacity:0;transform:translateX(-14px) rotate(-10deg);transition:opacity .3s,transform .38s cubic-bezier(.2,.8,.2,1);font-size:0.66em}
+  .fl:hover .fl-arrow{opacity:1;transform:translateX(0) rotate(0)}
+  .fl-in{position:relative;display:inline-block;overflow:hidden;height:1.2em}
+  .fl-in span{display:block;height:1.2em;line-height:1.2;transition:transform .42s cubic-bezier(.2,.8,.2,1)}
+  .fl-in span:nth-child(2){color:var(--yellow)}
+  .fl:hover .fl-in span{transform:translateY(-100%)}
+  .fl .num{margin-left:auto;font-family:"Inter";font-weight:700;font-size:0.72rem;letter-spacing:.06em;opacity:.6;align-self:center}
+
+  /* connect column */
+  .f-links{display:flex;flex-direction:column;margin-bottom:26px}
+  .f-links a{text-decoration:none;color:#fff;font-weight:700;font-size:1.06rem;padding:11px 0;border-top:2px solid #ffffff33;display:flex;justify-content:space-between;align-items:center;transition:padding-left .3s,color .25s}
+  .f-links a:last-child{border-bottom:2px solid #ffffff33}
+  .f-links a:hover{padding-left:14px;color:var(--yellow)}
+  .f-links a .ar{transition:transform .3s}
+  .f-links a:hover .ar{transform:translate(4px,-4px)}
+  .f-mailbig{display:inline-block;font-weight:700;text-decoration:none;color:var(--ink);background:#fff;border:2px solid var(--ink);border-radius:13px;padding:12px 20px;box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s;word-break:break-all}
+  .f-mailbig:hover{transform:translate(2px,2px);box-shadow:none}
+
+  /* giant wordmark bleeding off the bottom */
+  .f-mark{margin-top:26px;line-height:.8;white-space:nowrap;overflow:hidden}
+  .f-mark .row{display:flex;width:max-content;will-change:transform;animation:bigscroll 36s linear infinite}
+  .f-mark span{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(3.6rem,16vw,12rem);letter-spacing:-0.045em;padding:0 .2em;color:transparent;-webkit-text-stroke:2px #ffffffcc}
+  .f-mark span.fill{color:#fff;-webkit-text-stroke:0}
+  .f-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:20px 0 30px;font-weight:600;font-size:0.9rem}
+  .f-bottom a{color:#fff}
+  .f-top-btn{cursor:pointer;background:none;border:2px solid #ffffff66;color:#fff;border-radius:999px;padding:9px 17px;font-weight:700;font-size:0.82rem;display:inline-flex;gap:8px;align-items:center;transition:background .2s,border-color .2s,transform .2s}
+  .f-top-btn:hover{background:#ffffff1a;border-color:#fff;transform:translateY(-2px)}
 </style>
 </head>
 <body>
@@ -485,14 +527,42 @@
   </div>
 </section>
 
-<footer>
+<footer class="fnav">
   <div class="wrap">
-    <div class="big">Got an idea?<br/><span class="serif">Let's ship it.</span></div>
-    <div class="row">
-      <div>Tamara Richards — (almost)CEO</div>
-      <div><a href="https://www.linkedin.com/in/tamaralynnrichards/" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://github.com/N0kam0rad" target="_blank" rel="noopener">GitHub</a> · <a href="https://www.tiktok.com/@tamaralynnrichard" target="_blank" rel="noopener">TikTok</a> · <a href="https://www.instagram.com/tamaranots/" target="_blank" rel="noopener">Instagram</a></div>
+    <div class="f-eyebrow">Navigate</div>
+    <div class="f-lead">Got an idea? <span class="serif">Let's ship it.</span></div>
+    <div class="f-cols">
+      <nav class="f-nav" aria-label="Footer navigation">
+        <a class="fl" href="#about"><span class="fl-arrow">→</span><span class="fl-in"><span>About</span><span>About</span></span><span class="num">01</span></a>
+        <a class="fl" href="#work"><span class="fl-arrow">→</span><span class="fl-in"><span>The work</span><span>The work</span></span><span class="num">02</span></a>
+        <a class="fl" href="#cooking"><span class="fl-arrow">→</span><span class="fl-in"><span>What's cooking</span><span>What's cooking</span></span><span class="num">03</span></a>
+        <a class="fl" href="#blog"><span class="fl-arrow">→</span><span class="fl-in"><span>Build log</span><span>Build log</span></span><span class="num">04</span></a>
+        <a class="fl" href="#tools"><span class="fl-arrow">→</span><span class="fl-in"><span>Tools I use</span><span>Tools I use</span></span><span class="num">05</span></a>
+        <a class="fl" href="#contact"><span class="fl-arrow">→</span><span class="fl-in"><span>Say hi</span><span>Say hi</span></span><span class="num">06</span></a>
+      </nav>
+      <div class="f-side">
+        <div class="f-eyebrow">Let's connect</div>
+        <div class="f-links">
+          <a href="https://www.tiktok.com/@tamaralynnrichard" target="_blank" rel="noopener">TikTok <span class="ar">↗</span></a>
+          <a href="https://www.instagram.com/tamaranots/" target="_blank" rel="noopener">Instagram <span class="ar">↗</span></a>
+          <a href="https://github.com/N0kam0rad" target="_blank" rel="noopener">GitHub <span class="ar">↗</span></a>
+          <a href="https://www.linkedin.com/in/tamaralynnrichards/" target="_blank" rel="noopener">LinkedIn <span class="ar">↗</span></a>
+        </div>
+        <a class="f-mailbig" href="mailto:katrichardsfam@gmail.com">katrichardsfam@gmail.com</a>
+      </div>
     </div>
-    <div class="row" style="border-top:none;padding-top:6px;font-weight:400;opacity:.85"><div></div><div><a href="mailto:katrichardsfam@gmail.com">katrichardsfam@gmail.com</a> · Say it with your bonnet on.</div></div>
+  </div>
+  <div class="f-mark" aria-hidden="true">
+    <div class="row">
+      <span class="fill">Tamara Richards</span><span>✦</span><span>(almost)CEO</span><span>✦</span>
+      <span class="fill">Tamara Richards</span><span>✦</span><span>(almost)CEO</span><span>✦</span>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="f-bottom">
+      <div>© 2026 Tamara Richards — Say it with your bonnet on.</div>
+      <button class="f-top-btn" id="toTop">Back to top ↑</button>
+    </div>
   </div>
 </footer>
 
@@ -618,6 +688,10 @@
     }});
     ScrollTrigger.refresh();
   }
+
+  // Footer "back to top"
+  const toTop=document.getElementById('toTop');
+  if(toTop) toTop.addEventListener('click',()=>{ if(lenis){lenis.scrollTo(0);} else {window.scrollTo({top:0,behavior:'smooth'});} });
 
   // Magnetic buttons
   document.querySelectorAll('.btn').forEach(b=>{
