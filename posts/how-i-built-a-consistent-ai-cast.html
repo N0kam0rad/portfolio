@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How I built a perfectly consistent AI cast — Tamara Richards</title>
+<meta name="description" content="The reference-element trick, canon bible, and prompt structure I use to keep ten claymation characters on-model across hundreds of AI generations." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg:#F4EEE2;--ink:#1A1613;--paper:#FFFDF8;--red:#ED3A24;--pink:#FF4D9D;--blue:#2F6BFF;
+    --green:#11B981;--muted:#6E665B;--shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink);--lime:#C2F23D;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-height:1.0;letter-spacing:-0.025em}
+  .serif{font-family:"Fraunces",serif;font-style:italic;font-weight:500}
+  a{color:var(--red)}
+  .accentbar{height:12px;display:flex}.accentbar span{flex:1}
+  .accentbar span:nth-child(1){background:var(--red)}.accentbar span:nth-child(2){background:var(--blue)}
+  .accentbar span:nth-child(3){background:var(--green)}.accentbar span:nth-child(4){background:var(--pink)}
+  nav{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:2px solid var(--ink)}
+  nav .in{max-width:820px;margin:0 auto;padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between}
+  nav .back{font-weight:700;text-decoration:none;color:var(--ink)}
+  nav .name{font-family:"Bricolage Grotesque";font-weight:800}
+  .article{max-width:760px;margin:0 auto;padding:0 24px}
+  header.post{padding:54px 0 30px}
+  .crumb{font-weight:700;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--red)}
+  h1.h{font-size:clamp(2.2rem,6vw,3.6rem);margin:14px 0 16px}
+  .meta{color:var(--muted);font-weight:600;font-size:0.92rem;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .tagrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+  .pill{font-size:0.74rem;font-weight:600;border:2px solid var(--ink);border-radius:999px;padding:4px 11px;background:var(--paper)}
+  .lead{font-size:1.22rem;color:var(--ink);margin:26px 0 6px;font-weight:500}
+  .hero-img{width:100%;border:2px solid var(--ink);border-radius:20px;box-shadow:var(--shadow);margin:28px 0;display:block}
+  .article h2{font-size:1.7rem;margin:42px 0 12px}
+  .article h3{font-size:1.2rem;margin:26px 0 8px}
+  .article p{margin:14px 0;font-size:1.06rem}
+  .article ul,.article ol{margin:14px 0 14px 22px}
+  .article li{margin:7px 0;font-size:1.05rem}
+  .callout{background:var(--lime);border:2px solid var(--ink);border-radius:16px;box-shadow:var(--shadow-sm);
+    padding:20px 22px;margin:26px 0;font-weight:600}
+  .callout b{font-family:"Bricolage Grotesque"}
+  pre{background:var(--ink);color:#F4EEE2;border-radius:16px;padding:20px 22px;overflow-x:auto;margin:20px 0;
+    border:2px solid var(--ink);box-shadow:var(--shadow-sm)}
+  code{font-family:"JetBrains Mono",monospace;font-size:0.86rem;line-height:1.6}
+  p code,li code{background:#00000010;color:var(--ink);padding:2px 6px;border-radius:6px;font-size:0.84em}
+  .imgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0}
+  @media(max-width:560px){.imgrid{grid-template-columns:1fr}}
+  .imgrid img,.imgrid img{width:100%}
+  .imgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0}
+  .imgrid img{width:100%;border:2px solid var(--ink);border-radius:14px;display:block}
+  .step-num{font-family:"Bricolage Grotesque";font-weight:800;color:var(--red)}
+  .endcard{background:var(--paper);border:2px solid var(--ink);border-radius:20px;box-shadow:var(--shadow);
+    padding:28px;margin:46px 0 20px;text-align:center}
+  .endcard .serif{color:var(--red);font-size:1.3rem}
+  .endcard a.btn{display:inline-block;margin-top:14px;background:var(--ink);color:var(--bg);font-weight:700;
+    text-decoration:none;border:2px solid var(--ink);border-radius:12px;padding:12px 22px;box-shadow:var(--shadow-sm)}
+  footer{border-top:2px solid var(--ink);margin-top:40px;padding:30px 0;text-align:center;color:var(--muted);font-size:0.9rem}
+</style>
+</head>
+<body>
+<div class="accentbar"><span></span><span></span><span></span><span></span></div>
+<nav><div class="in"><a class="back" href="../index.html">← Back</a><span class="name">Tamara Richards · Build Log</span></div></nav>
+
+<article>
+<header class="post"><div class="article">
+  <div class="crumb">Build Log · BonnetNoona</div>
+  <h1 class="h">How I built a perfectly consistent AI cast</h1>
+  <div class="meta"><span>By Tamara Richards</span><span>·</span><span>~6 min read</span></div>
+  <div class="tagrow">
+    <span class="pill">LLM scripting</span><span class="pill">Image generation</span><span class="pill">Reference elements</span><span class="pill">Motion model</span><span class="pill">CapCut</span>
+  </div>
+</div></header>
+
+<div class="article">
+  <p class="lead">The hardest part of making an AI film isn't getting one good frame. It's getting the <span class="serif">same character</span> to show up, on-model, in frame number three hundred. Here's the exact system I use to keep ten characters consistent across a whole series.</p>
+
+  <img class="hero-img" src="../assets/process_contact.jpg" alt="Contact sheet of the full BonnetNoona cast, each character on-model" />
+
+  <h2>The project</h2>
+  <p><b>BonnetNoona</b> is a faceless claymation comedy series about sisters building an influencer brand and gloriously failing. Six human characters, four pets, soft puffy 3D claymation, warm mockumentary lighting, shot vertical for TikTok. The whole thing lives or dies on one thing: do the characters stay <em>themselves</em> from shot to shot?</p>
+
+  <div class="callout"><b>The one trick:</b> stop describing your characters and start <em>referencing</em> them. A saved reference element + a locked canon doc beats a perfect prompt every time.</div>
+
+  <h2><span class="step-num">01</span> &nbsp;Write the canon before you generate anything</h2>
+  <p>Before a single image, I write a <b>canon bible</b> — the single source of truth for the whole series. It locks the stuff a model loves to drift on: each character's exact color, skin tone, scale relative to the others, personality, and the things that must <em>never</em> happen.</p>
+  <p>A few real lines from mine:</p>
+  <ul>
+    <li><b>Tamara</b> — deep purple bonnet, the Producer, tallest in the cast.</li>
+    <li><b>Kalila</b> — warm medium-brown, <em>do not darken</em>; pleasant and mildly bored, <em>never</em> angry.</li>
+    <li><b>CoCo</b> — WHITE curly poodle, PINK ears, knee-height — not brown, not tan, not a lapdog.</li>
+  </ul>
+  <p>Those "nots" are doing real work. Half of consistency is telling the model what to stop guessing.</p>
+
+  <h2><span class="step-num">02</span> &nbsp;Lock each character as a reusable reference</h2>
+  <p>This is the part that actually solves consistency. Each character gets generated once as a clean front-facing reference, then <b>saved as a reusable element</b> with its own ID. From then on I don't re-describe their face — I summon them by reference, so the bonnet, skin tone, and proportions come back identical every time.</p>
+  <p>In the prompt it looks like this — drop the element ID in, then describe only the <em>action</em>:</p>
+<pre><code>&lt;&lt;&lt;tamara-element-id&gt;&gt;&gt; Tamara in her deep purple satin bonnet,
+striding in mid-direction with one finger up, holding CoCo's leash.
+Producer energy. Cozy living room, handheld mockumentary framing.
+[ + global style block ]</code></pre>
+
+  <div class="imgrid">
+    <img src="../assets/char_tamara.jpg" alt="Tamara reference" />
+    <img src="../assets/pet_coco.jpg" alt="CoCo reference" />
+  </div>
+
+  <h2><span class="step-num">03</span> &nbsp;Paste the same style block into every shot</h2>
+  <p>Consistency isn't just faces — it's the <em>look</em>. I keep one global style block and paste it, unchanged, into every single still. It carries the medium, the lighting, and a long list of "no"s:</p>
+<pre><code>Soft puffy 3D claymation, matte clay surfaces, rounded forms,
+satin bonnets, cozy interior, warm mockumentary lighting.
+Warm brown matte clay skin, uniform tone per character.
+No flat emoji/vector, no photoreal, no glam, no harsh caricature. 9:16.</code></pre>
+  <p>Boring? Yes. But the model has no memory between generations — the style block <em>is</em> its memory.</p>
+
+  <h2><span class="step-num">04</span> &nbsp;Stills first, motion only where the joke lives</h2>
+  <p>I generate everything as stills, then only animate the shots where movement carries the comedy — the dog yanking someone out of frame, a secret giggle, the chaos peak. Everything else holds as a still with a slow push-in. It's cheaper, faster, and far more controllable than animating end to end.</p>
+
+  <h2><span class="step-num">05</span> &nbsp;Assemble and stamp the buttons</h2>
+  <p>Final assembly happens in CapCut: stills and clips on a timeline at ~2.5–3s each, caption "buttons" dropped on-beat (<code>PRODUCER MODE: ACTIVATED</code>, <code>THE QUEEN DECLINES</code>), snap zooms on the talking beats, and a freeze-frame end card.</p>
+
+  <h2>What I'd tell anyone starting</h2>
+  <p>You do not need to be technical. You need a clear vision and the patience to write your "nots" down once. The reference-element trick is the whole game — lock your characters, reuse them relentlessly, and let the canon doc be the memory the model doesn't have.</p>
+
+  <div class="endcard">
+    <p class="serif">Say it with your bonnet on.</p>
+    <p style="color:var(--muted);margin-top:6px">Want the full canon template or the prompt cards? Reach out.</p>
+    <a class="btn" href="../index.html#contact">Get in touch →</a>
+  </div>
+</div>
+</article>
+
+<footer>Tamara Richards — (almost)CEO · Ideas, shipped with AI.</footer>
+</body>
+</html>
