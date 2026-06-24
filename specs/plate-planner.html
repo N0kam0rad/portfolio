@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Plate Planner — Product Spec · Tamara Richards</title>
+<meta name="description" content="Mini product spec for My Plate Planner: a meal-planning & grocery app that respects dietary needs and tracks protein — what it is, why, who it helps, monetization, and build lessons." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg:#F4EEE2;--ink:#1A1613;--paper:#FFFDF8;--red:#ED3A24;--blue:#2F6BFF;--green:#11B981;
+    --coral:#FF7A3D;--purple:#7C4DFF;--yellow:#FFC835;--lime:#C2F23D;--muted:#6E665B;
+    --shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-height:1.0;letter-spacing:-0.025em}
+  .serif{font-family:"Fraunces",serif;font-style:italic;font-weight:500}
+  a{color:var(--purple)}
+  .accentbar{height:12px;display:flex}.accentbar span{flex:1}
+  .accentbar span:nth-child(1){background:var(--purple)}.accentbar span:nth-child(2){background:var(--green)}
+  .accentbar span:nth-child(3){background:var(--coral)}.accentbar span:nth-child(4){background:var(--yellow)}
+  nav{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:2px solid var(--ink)}
+  nav .in{max-width:880px;margin:0 auto;padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between}
+  nav .back{font-weight:700;text-decoration:none;color:var(--ink)}
+  nav .name{font-family:"Bricolage Grotesque";font-weight:800}
+  .article{max-width:880px;margin:0 auto;padding:0 24px}
+  header.post{padding:50px 0 26px}
+  .crumb{font-weight:700;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--purple)}
+  h1.h{font-size:clamp(2.2rem,6vw,3.4rem);margin:13px 0 12px}
+  .sub{font-size:1.2rem;color:var(--muted);max-width:60ch}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+  .pill{font-size:0.74rem;font-weight:600;border:2px solid var(--ink);border-radius:999px;padding:4px 11px;background:var(--paper)}
+  .status{background:var(--purple);color:#fff}
+  .spec{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:30px 0}
+  @media(max-width:720px){.spec{grid-template-columns:1fr}}
+  .card{background:var(--paper);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--shadow-sm);padding:24px;position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px}
+  .card.c-blue::before{background:var(--blue)}.card.c-red::before{background:var(--red)}
+  .card.c-green::before{background:var(--green)}.card.c-purple::before{background:var(--purple)}
+  .card.c-coral::before{background:var(--coral)}.card.c-yellow::before{background:var(--yellow)}
+  .card .lab{font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:8px;padding-left:8px}
+  .card h3{font-size:1.15rem;margin-bottom:8px;padding-left:8px}
+  .card p{font-size:0.98rem;padding-left:8px}
+  .card.wide{grid-column:1 / -1}
+  .tools{display:flex;flex-wrap:wrap;gap:8px;padding-left:8px;margin-top:6px}
+  .money{background:var(--ink);color:var(--bg);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--shadow);padding:28px;margin:8px 0 0}
+  .money .lab{color:var(--yellow)}
+  .money h3{color:var(--bg)}.money p,.money li{color:#d8d1c6}
+  .money ul{margin:10px 0 0 20px}.money li{margin:6px 0;font-size:0.98rem}
+  .money b{color:var(--lime)}
+  h2.learn{font-size:1.7rem;margin:42px 0 4px}
+  .cta{background:var(--purple);color:#fff;border:2px solid var(--ink);border-radius:22px;box-shadow:var(--shadow);padding:30px;text-align:center;margin:40px 0 20px}
+  .cta h3{font-size:1.7rem;margin-bottom:8px}
+  .cta p{color:#efeaff;max-width:54ch;margin:0 auto 6px}
+  .cta .serif{color:var(--yellow)}
+  .cta a{display:inline-block;margin-top:16px;background:#fff;color:var(--ink);font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:13px;padding:13px 22px;box-shadow:var(--shadow-sm)}
+  footer{border-top:2px solid var(--ink);margin-top:30px;padding:30px 0;text-align:center;color:var(--muted);font-size:0.9rem}
+</style>
+</head>
+<body>
+<div class="accentbar"><span></span><span></span><span></span><span></span></div>
+<nav><div class="in"><a class="back" href="../index.html">← All work</a><span class="name">Product Spec</span></div></nav>
+
+<article>
+<header class="post"><div class="article">
+  <div class="crumb">Product Spec · App 05</div>
+  <h1 class="h">My Plate Planner</h1>
+  <p class="sub">A meal-planner that actually respects your dietary needs — filters by what you can eat, tells you what to cook from your fridge, and tracks protein without the obsession.</p>
+  <div class="meta"><span class="pill status">Built</span><span class="pill">Mobile app</span><span class="pill">Local-first</span><span class="pill">Diet-aware</span></div>
+</div></header>
+
+<div class="article">
+  <div class="spec">
+    <div class="card c-purple">
+      <div class="lab">What it is</div>
+      <h3>The 10-second version</h3>
+      <p>A meal-planning and grocery app built around a real dietary profile (halal/kosher, sensitivities like onion-free, foods you avoid). It generates a per-store weekly grocery list with quantities, suggests recipes from ingredients you already have, runs meal-prep checklists, and keeps a gentle protein tally.</p>
+    </div>
+    <div class="card c-coral">
+      <div class="lab">Why I built it</div>
+      <h3>The spark</h3>
+      <p>Generic meal plans ignore the constraints that actually matter — allergies, sensitivities, halal/kosher, things you just won't eat. I wanted a planner that started from <em>my</em> rules and never broke them.</p>
+    </div>
+    <div class="card c-red">
+      <div class="lab">The problem it solved for me</div>
+      <h3>A plan I could actually follow</h3>
+      <p>One place that turned a high-protein goal plus a long list of restrictions into a real weekly menu, a sorted grocery run, and a prep schedule — no spreadsheets, no re-checking every label.</p>
+    </div>
+    <div class="card c-green">
+      <div class="lab">The problem it solves for a user</div>
+      <h3>Anyone with food rules</h3>
+      <p>Allergies, religious requirements, picky eaters, macro goals — a huge audience underserved by one-size-fits-all apps. This filters everything through their real constraints automatically.</p>
+    </div>
+    <div class="card c-blue wide">
+      <div class="lab">How it works</div>
+      <h3>Under the hood</h3>
+      <p>A dietary-profile setup drives the whole app. A smart grocery list groups items by store with weekly quantities; a "What Can I Make?" fridge mode suggests recipes from what you have; a meal tracker shows a simple protein bar; meal-prep checklists with timers; and a supplement schedule. Local-first, no account needed.</p>
+      <div class="tools">
+        <span class="pill">Gemini Canvas</span><span class="pill">Flutter / React Native</span><span class="pill">Local storage</span><span class="pill">Claude (planning)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="money">
+    <div class="lab">Where it's going · how it monetizes</div>
+    <h3>The business model</h3>
+    <ul>
+      <li><b>Freemium</b> — core planning free; advanced filters, multi-profile households, and macro tracking as a subscription.</li>
+      <li><b>Grocery affiliate</b> — one-tap carts to delivery services (Shipt, Amazon Fresh, Instacart).</li>
+      <li><b>Creator packs</b> — dietitian- and creator-made recipe/meal-plan bundles sold in-app.</li>
+    </ul>
+    <p style="margin-top:12px">Next: a real recipe database, the ready-to-paste store carts, and reminder notifications.</p>
+  </div>
+
+  <h2 class="learn">What I learned building it</h2>
+  <div class="spec">
+    <div class="card c-blue">
+      <div class="lab">How I directed the AI</div>
+      <h3>Constraints before recipes</h3>
+      <p>I told the AI to treat the dietary profile as the foundation — every recipe and grocery item filters through it — rather than generating a generic plan and bolting restrictions on after. Designing from the constraint outward made the "What Can I Make?" mode the standout feature.</p>
+    </div>
+    <div class="card c-red">
+      <div class="lab">What broke &amp; how I fixed it</div>
+      <h3>It kept ignoring my rules</h3>
+      <p>Early drafts cheerfully suggested onion in a recipe I'd flagged onion-free. Lesson: an AI will drift past a stated rule unless the rule is <em>structural</em>. I had it bake sensitivities into the data model and swap offending ingredients (onion → capers) automatically, not just mention them.</p>
+    </div>
+    <div class="card c-green">
+      <div class="lab">The automation win</div>
+      <h3>Plan → grocery list, automatically</h3>
+      <p>The weekly menu generates the shopping list with quantities, grouped by the exact stores I use. The boring part — "what do I actually need to buy, and where" — happens on its own from the plan.</p>
+    </div>
+    <div class="card c-yellow">
+      <div class="lab">Tools that did the work</div>
+      <h3>Claude to plan, Gemini to build</h3>
+      <p>I used Claude to nail the plan, product spec, and the exact build prompt, then handed that prompt to Gemini Canvas to scaffold the app. Right tool for each job: one for thinking, one for generating the UI.</p>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h3>This is the work I do on consult.</h3>
+    <p>Turning messy real-world constraints into a clean, rule-respecting product — and knowing which AI to point at which part of the job. <span class="serif">Got an idea sitting in your head? Let's get it out.</span></p>
+    <a href="../index.html#contact">Work with me →</a>
+  </div>
+  <p style="text-align:center;color:var(--muted);font-size:0.85rem;margin-bottom:10px">Note: the source plan contains personal health details, so the public demo uses placeholder data. Back to the <a href="../index.html#work">work page</a>.</p>
+</div>
+</article>
+<footer>Tamara Richards — (almost)CEO · Ideas, shipped with AI.</footer>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ACCORD — Product Spec · Tamara Richards</title>
+<meta name="description" content="Mini product spec for ACCORD: a morning-ritual automation that ends in a weather-based scent recommendation — what it is, why, who it helps, monetization, and build lessons." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg:#F4EEE2;--ink:#1A1613;--paper:#FFFDF8;--red:#ED3A24;--blue:#2F6BFF;--green:#11B981;
+    --coral:#FF7A3D;--purple:#7C4DFF;--yellow:#FFC835;--lime:#C2F23D;--muted:#6E665B;
+    --shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-height:1.0;letter-spacing:-0.025em}
+  .serif{font-family:"Fraunces",serif;font-style:italic;font-weight:500}
+  a{color:#df5e1f}
+  .accentbar{height:12px;display:flex}.accentbar span{flex:1}
+  .accentbar span:nth-child(1){background:var(--coral)}.accentbar span:nth-child(2){background:var(--purple)}
+  .accentbar span:nth-child(3){background:var(--yellow)}.accentbar span:nth-child(4){background:var(--blue)}
+  nav{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:2px solid var(--ink)}
+  nav .in{max-width:880px;margin:0 auto;padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between}
+  nav .back{font-weight:700;text-decoration:none;color:var(--ink)}
+  nav .name{font-family:"Bricolage Grotesque";font-weight:800}
+  .article{max-width:880px;margin:0 auto;padding:0 24px}
+  header.post{padding:50px 0 26px}
+  .crumb{font-weight:700;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.14em;color:#df5e1f}
+  h1.h{font-size:clamp(2.2rem,6vw,3.4rem);margin:13px 0 12px}
+  .sub{font-size:1.2rem;color:var(--muted);max-width:60ch}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+  .pill{font-size:0.74rem;font-weight:600;border:2px solid var(--ink);border-radius:999px;padding:4px 11px;background:var(--paper)}
+  .status{background:var(--coral);color:#fff}
+  .spec{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:30px 0}
+  @media(max-width:720px){.spec{grid-template-columns:1fr}}
+  .card{background:var(--paper);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--shadow-sm);padding:24px;position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px}
+  .card.c-blue::before{background:var(--blue)}.card.c-red::before{background:var(--red)}
+  .card.c-green::before{background:var(--green)}.card.c-purple::before{background:var(--purple)}
+  .card.c-coral::before{background:var(--coral)}.card.c-yellow::before{background:var(--yellow)}
+  .card .lab{font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:8px;padding-left:8px}
+  .card h3{font-size:1.15rem;margin-bottom:8px;padding-left:8px}
+  .card p{font-size:0.98rem;padding-left:8px}
+  .card.wide{grid-column:1 / -1}
+  .tools{display:flex;flex-wrap:wrap;gap:8px;padding-left:8px;margin-top:6px}
+  .money{background:var(--ink);color:var(--bg);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--shadow);padding:28px;margin:8px 0 0}
+  .money .lab{color:var(--yellow)}
+  .money h3{color:var(--bg)}.money p,.money li{color:#d8d1c6}
+  .money ul{margin:10px 0 0 20px}.money li{margin:6px 0;font-size:0.98rem}
+  .money b{color:var(--lime)}
+  h2.learn{font-size:1.7rem;margin:42px 0 4px}
+  .cta{background:var(--purple);color:#fff;border:2px solid var(--ink);border-radius:22px;box-shadow:var(--shadow);padding:30px;text-align:center;margin:40px 0 20px}
+  .cta h3{font-size:1.7rem;margin-bottom:8px}
+  .cta p{color:#efeaff;max-width:54ch;margin:0 auto 6px}
+  .cta .serif{color:var(--yellow)}
+  .cta a{display:inline-block;margin-top:16px;background:#fff;color:var(--ink);font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:13px;padding:13px 22px;box-shadow:var(--shadow-sm)}
+  footer{border-top:2px solid var(--ink);margin-top:30px;padding:30px 0;text-align:center;color:var(--muted);font-size:0.9rem}
+</style>
+</head>
+<body>
+<div class="accentbar"><span></span><span></span><span></span><span></span></div>
+<nav><div class="in"><a class="back" href="../index.html">← All work</a><span class="name">Product Spec</span></div></nav>
+
+<article>
+<header class="post"><div class="article">
+  <div class="crumb">Product Spec · Companion to Aurë</div>
+  <h1 class="h">ACCORD</h1>
+  <p class="sub">A morning-ritual automation that ends in a scent recommendation — dismiss your alarm, run your ritual, and get the perfume of the day, chosen for the weather.</p>
+  <div class="meta"><span class="pill status">In the lab</span><span class="pill">iOS Shortcuts</span><span class="pill">Automation</span><span class="pill">Companion app</span></div>
+</div></header>
+
+<div class="article">
+  <div class="spec">
+    <div class="card c-coral">
+      <div class="lab">What it is</div>
+      <h3>The 10-second version</h3>
+      <p>An on-phone automation: dismissing your morning alarm kicks off your ritual (wake → workout → shower → layer perfume) and delivers the day's scent pick — based on the weather — as a notification with the "why," a daily message, and eventually a home-screen widget. It's the daily ritual layer to <a href="aure.html">Aurë</a>'s scent wardrobe.</p>
+    </div>
+    <div class="card c-purple">
+      <div class="lab">Why I built it</div>
+      <h3>The spark</h3>
+      <p>A wardrobe tells you what you <em>own</em>; it doesn't help you <em>choose</em> at 7 a.m. I wanted the decision made for me, woven into a routine I already do, so fragrance becomes a ritual instead of a guess.</p>
+    </div>
+    <div class="card c-red">
+      <div class="lab">The problem it solved for me</div>
+      <h3>A frictionless morning ritual</h3>
+      <p>One trigger that strings my whole morning together and ends with "wear this today" — no app to open, no decision fatigue.</p>
+    </div>
+    <div class="card c-green">
+      <div class="lab">The problem it solves for a user</div>
+      <h3>Habit + delight, on autopilot</h3>
+      <p>Anyone building a morning routine (and any fragrance lover) gets a gentle, context-aware nudge that makes the routine feel intentional and rewarding — without another app to babysit.</p>
+    </div>
+    <div class="card c-blue wide">
+      <div class="lab">How it works</div>
+      <h3>Under the hood</h3>
+      <p>Built natively with iOS Shortcuts: an alarm-dismissal trigger fires the ritual sequence, pulls the local weather, maps conditions to a scent recommendation, and surfaces it as a notification (with reasoning), a daily text, and a widget. No app store, no backend — it runs entirely on the phone.</p>
+      <div class="tools">
+        <span class="pill">iOS Shortcuts</span><span class="pill">Weather data</span><span class="pill">On-device automation</span><span class="pill">Claude (logic)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="money">
+    <div class="lab">Where it's going · how it monetizes</div>
+    <h3>The business model</h3>
+    <ul>
+      <li><b>Hook for Aurë</b> — the free daily ritual that drives people into the paid scent-wardrobe app.</li>
+      <li><b>Premium recs</b> — smarter, personalized scent matching as a subscription feature.</li>
+      <li><b>Brand partnerships</b> — sponsored "scent of the day" placements with fragrance houses.</li>
+    </ul>
+    <p style="margin-top:12px">Next: fold the recommendation engine into Aurë so the ritual and the wardrobe share one brain.</p>
+  </div>
+
+  <h2 class="learn">What I learned building it</h2>
+  <div class="spec">
+    <div class="card c-blue">
+      <div class="lab">How I directed the AI</div>
+      <h3>Design the trigger and the payoff</h3>
+      <p>I led with the two ends — what fires it (alarm dismissal) and what you get (a scent pick with a reason) — and let the steps in between fall out of that. Anchoring on the trigger and the delivery kept the automation from sprawling.</p>
+    </div>
+    <div class="card c-red">
+      <div class="lab">What broke &amp; how I fixed it</div>
+      <h3>The platform fought the widget</h3>
+      <p>iOS Shortcuts can't do everything a real app can — the home-screen widget was the hard part. Instead of forcing it, I shipped the notification + daily message first (which Shortcuts handles cleanly) and treated the widget as "take what we can get for v1." Ship the 90% that works.</p>
+    </div>
+    <div class="card c-green">
+      <div class="lab">The automation win</div>
+      <h3>A real product with no code</h3>
+      <p>Alarm → ritual → weather → scent rec is a genuinely useful daily automation built entirely from native Shortcuts — no app, no server, no cost. Proof that "automation" doesn't always mean "build an app."</p>
+    </div>
+    <div class="card c-yellow">
+      <div class="lab">Tools that did the work</div>
+      <h3>Use the OS you already have</h3>
+      <p>The phone's own automation layer was the platform. Lesson: before building software, check what the device can already do — sometimes the fastest path to a shipped idea is the tool in your pocket.</p>
+    </div>
+  </div>
+
+  <div class="cta">
+    <h3>This is the work I do on consult.</h3>
+    <p>Spotting where an idea can ship as an <em>automation</em> instead of an app — and scoping it down to the part that actually works today. <span class="serif">Got an idea sitting in your head? Let's get it out.</span></p>
+    <a href="../index.html#contact">Work with me →</a>
+  </div>
+  <p style="text-align:center;color:var(--muted);font-size:0.85rem;margin-bottom:10px">Back to the <a href="../index.html#work">work page</a>.</p>
+</div>
+</article>
+<footer>Tamara Richards — (almost)CEO · Ideas, shipped with AI.</footer>
+</body>
+</html>
