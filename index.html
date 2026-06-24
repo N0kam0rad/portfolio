@@ -191,6 +191,24 @@
   footer .row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-top:30px;
     border-top:2px solid #ffffff55;padding-top:22px;font-weight:600}
   footer a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+
+  /* big velocity marquee (besharm-style) */
+  .bigmq{border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);background:var(--ink);color:var(--bg);overflow:hidden;padding:20px 0}
+  .bigmq .row{display:flex;white-space:nowrap;width:max-content;will-change:transform;animation:bigscroll 26s linear infinite}
+  .bigmq span{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(2rem,6vw,4rem);letter-spacing:-0.02em;padding:0 .28em;line-height:1.05}
+  .bigmq .em{color:var(--yellow)}
+  .bigmq .out{color:transparent;-webkit-text-stroke:1.6px var(--bg)}
+  .bigmq:hover .row{animation-play-state:paused}
+  @keyframes bigscroll{to{transform:translateX(-50%)}}
+
+  /* custom cursor (besharm-style) — only on fine pointers, only once JS adds it */
+  .cursor{display:none}
+  @media (pointer:fine){
+    .cursor{display:block;position:fixed;top:0;left:0;width:22px;height:22px;border:2px solid var(--ink);
+      border-radius:50%;pointer-events:none;z-index:300;transform:translate(-50%,-50%)}
+    .cursor.big{width:58px;height:58px;background:var(--red);border-color:var(--red);opacity:.9}
+    body.has-cursor,body.has-cursor a,body.has-cursor button,body.has-cursor .btn,body.has-cursor .sticky{cursor:none}
+  }
 </style>
 </head>
 <body>
@@ -307,6 +325,14 @@
   </div>
 </section>
 
+<!-- BIG MARQUEE -->
+<div class="bigmq" aria-hidden="true">
+  <div class="row">
+    <span>MORE IDEAS THAN HOURS</span><span class="em">✦</span><span class="out">SHIP ONE A DAY</span><span class="em">✦</span>
+    <span>MORE IDEAS THAN HOURS</span><span class="em">✦</span><span class="out">SHIP ONE A DAY</span><span class="em">✦</span>
+  </div>
+</div>
+
 <!-- THE LAB -->
 <section id="lab" class="lab">
   <div class="wrap">
@@ -378,12 +404,16 @@
   </div>
 </footer>
 
+<!-- Motion libraries (same family Besharm uses): GSAP + smooth scroll -->
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
-  // Scroll reveal
+  // --- Scroll reveal (vanilla, always works even if CDNs fail) ---
   const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:0.12});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
-  // Card tilt on hover
+  // --- Card tilt on hover ---
   document.querySelectorAll('.tilt').forEach(card=>{
     card.addEventListener('mousemove',e=>{
       const r=card.getBoundingClientRect();
@@ -393,7 +423,7 @@
     card.addEventListener('mouseleave',()=>{card.style.transform='';});
   });
 
-  // Draggable lab stickers
+  // --- Draggable lab stickers ---
   document.querySelectorAll('.sticky').forEach(s=>{
     let down=false,sx,sy,ox=0,oy=0;
     const base=s.style.transform;
@@ -401,6 +431,47 @@
     window.addEventListener('mousemove',e=>{if(!down)return;ox=e.clientX-sx;oy=e.clientY-sy;s.style.transform=`${base} translate(${ox}px,${oy}px)`;});
     window.addEventListener('mouseup',()=>{if(down){down=false;s.style.cursor='grab';}});
   });
+
+  // --- Smooth scrolling (Lenis) ---
+  let lenis=null;
+  if(window.Lenis){
+    lenis=new Lenis({lerp:0.1,smoothWheel:true});
+    function raf(t){lenis.raf(t);requestAnimationFrame(raf);}
+    requestAnimationFrame(raf);
+  }
+
+  // --- GSAP scroll-reactive parallax ---
+  if(window.gsap&&window.ScrollTrigger){
+    gsap.registerPlugin(ScrollTrigger);
+    if(lenis) lenis.on('scroll',ScrollTrigger.update);
+    gsap.to('.hero-card',{y:-34,ease:'none',scrollTrigger:{trigger:'header.hero',start:'top top',end:'bottom top',scrub:true}});
+    gsap.utils.toArray('.bigmq .row').forEach(row=>{
+      gsap.to(row,{xPercent:-8,ease:'none',scrollTrigger:{trigger:'.bigmq',start:'top bottom',end:'bottom top',scrub:0.6}});
+    });
+  }
+
+  // --- Magnetic buttons ---
+  document.querySelectorAll('.btn, nav a.cta').forEach(b=>{
+    b.addEventListener('mousemove',e=>{
+      const r=b.getBoundingClientRect();
+      b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*0.28}px,${(e.clientY-r.top-r.height/2)*0.45}px)`;
+    });
+    b.addEventListener('mouseleave',()=>{b.style.transform='';});
+  });
+
+  // --- Custom cursor (fine pointers only; falls back to normal cursor if anything errors) ---
+  (function(){
+    if(!window.matchMedia||!matchMedia('(pointer:fine)').matches) return;
+    const c=document.createElement('div');c.className='cursor';document.body.appendChild(c);
+    document.body.classList.add('has-cursor');
+    let x=innerWidth/2,y=innerHeight/2,tx=x,ty=y;
+    addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY;});
+    (function loop(){x+=(tx-x)*0.22;y+=(ty-y)*0.22;c.style.left=x+'px';c.style.top=y+'px';requestAnimationFrame(loop);})();
+    document.querySelectorAll('a,button,.btn,.sticky,.proj').forEach(el=>{
+      el.addEventListener('mouseenter',()=>c.classList.add('big'));
+      el.addEventListener('mouseleave',()=>c.classList.remove('big'));
+    });
+  })();
 </script>
 </body>
 </html>
