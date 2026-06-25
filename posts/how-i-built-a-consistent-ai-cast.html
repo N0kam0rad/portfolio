@@ -4,19 +4,23 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>How I built a perfectly consistent AI cast — Tamara Richards</title>
-<meta name="description" content="The reference-element trick, canon bible, and prompt structure I use to keep ten claymation characters on-model across hundreds of AI generations." />
+<meta name="description" content="The reference-element trick, canon bible, style block, and shot-by-shot system I use to keep a claymation cast on-model across hundreds of AI generations — every mood, every art style." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
 <style>
   :root{--bg:#F4EEE2;--ink:#1A1613;--paper:#FFFDF8;--red:#ED3A24;--pink:#FF4D9D;--blue:#2F6BFF;
-    --green:#11B981;--muted:#6E665B;--shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink);--lime:#C2F23D;}
+    --green:#11B981;--muted:#6E665B;--shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink);
+    --lime:#C2F23D;--purple:#7C3AED;--yellow:#FFD43B;}
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
+  /* scroll fix: no global smooth-scroll (it made the page feel laggy/"stuck"),
+     and kill any sideways overflow that makes vertical swipes fight back */
+  html,body{overflow-x:hidden;width:100%}
   body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased}
-  h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-height:1.0;letter-spacing:-0.025em}
+  h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-height:1.02;letter-spacing:-0.025em}
   .serif{font-family:"Fraunces",serif;font-style:italic;font-weight:500}
   a{color:var(--red)}
+  img{max-width:100%}
   .accentbar{height:12px;display:flex}.accentbar span{flex:1}
   .accentbar span:nth-child(1){background:var(--red)}.accentbar span:nth-child(2){background:var(--blue)}
   .accentbar span:nth-child(3){background:var(--green)}.accentbar span:nth-child(4){background:var(--pink)}
@@ -32,8 +36,8 @@
   .tagrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
   .pill{font-size:0.74rem;font-weight:600;border:2px solid var(--ink);border-radius:999px;padding:4px 11px;background:var(--paper)}
   .lead{font-size:1.22rem;color:var(--ink);margin:26px 0 6px;font-weight:500}
-  .hero-img{width:100%;border:2px solid var(--ink);border-radius:20px;box-shadow:var(--shadow);margin:28px 0;display:block}
-  .article h2{font-size:1.7rem;margin:42px 0 12px}
+  .cap{color:var(--muted);font-size:0.86rem;font-weight:600;margin:0 0 22px;text-align:center}
+  .article h2{font-size:1.7rem;margin:44px 0 12px}
   .article h3{font-size:1.2rem;margin:26px 0 8px}
   .article p{margin:14px 0;font-size:1.06rem}
   .article ul,.article ol{margin:14px 0 14px 22px}
@@ -44,18 +48,55 @@
   pre{background:var(--ink);color:#F4EEE2;border-radius:16px;padding:20px 22px;overflow-x:auto;margin:20px 0;
     border:2px solid var(--ink);box-shadow:var(--shadow-sm)}
   code{font-family:"JetBrains Mono",monospace;font-size:0.86rem;line-height:1.6}
+  pre code{white-space:pre-wrap;word-break:break-word}
   p code,li code{background:#00000010;color:var(--ink);padding:2px 6px;border-radius:6px;font-size:0.84em}
-  .imgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0}
-  @media(max-width:560px){.imgrid{grid-template-columns:1fr}}
-  .imgrid img,.imgrid img{width:100%}
-  .imgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0}
-  .imgrid img{width:100%;border:2px solid var(--ink);border-radius:14px;display:block}
+
+  .herostrip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0 8px}
+  .herostrip img{width:100%;border:2px solid var(--ink);border-radius:16px;box-shadow:var(--shadow-sm);display:block;background:var(--paper)}
+  .hero-img{width:100%;border:2px solid var(--ink);border-radius:20px;box-shadow:var(--shadow);margin:18px 0 8px;display:block}
+
+  .stepwrap{border-top:2px solid var(--ink);margin-top:46px;padding-top:6px}
   .step-num{font-family:"Bricolage Grotesque";font-weight:800;color:var(--red)}
-  .endcard{background:var(--paper);border:2px solid var(--ink);border-radius:20px;box-shadow:var(--shadow);
-    padding:28px;margin:46px 0 20px;text-align:center}
+
+  .castgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:22px 0 6px}
+  @media(max-width:620px){.castgrid{grid-template-columns:1fr 1fr}}
+  .castcard{background:var(--paper);border:2px solid var(--ink);border-radius:16px;box-shadow:var(--shadow-sm);overflow:hidden}
+  .castcard .tag{font-family:"Bricolage Grotesque";font-weight:800;font-size:0.95rem;padding:9px 12px 0}
+  .castcard .desc{font-size:0.82rem;color:var(--muted);font-weight:500;padding:2px 12px 12px;line-height:1.45}
+  .swatch{height:8px;width:100%}
+
+  .imgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:24px 0}
+  @media(max-width:560px){.imgrid{grid-template-columns:1fr 1fr}}
+  .imgrid figure{margin:0}
+  .imgrid img{width:100%;border:2px solid var(--ink);border-radius:14px;display:block;background:var(--paper)}
+  .imgrid figcaption{font-size:0.78rem;color:var(--muted);font-weight:600;margin-top:6px;text-align:center}
+
+  .exprgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0 6px}
+  @media(max-width:560px){.exprgrid{grid-template-columns:1fr 1fr}}
+  .exprgrid figure{margin:0;border:2px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--paper);box-shadow:var(--shadow-sm)}
+  .exprgrid img{width:100%;display:block}
+  .exprgrid figcaption{font-family:"Bricolage Grotesque";font-weight:800;font-size:0.8rem;text-align:center;padding:7px 4px;border-top:2px solid var(--ink)}
+  .stylerow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0 4px}
+  @media(max-width:560px){.stylerow{grid-template-columns:1fr 1fr}}
+  .stylerow figure{margin:0;border:2px solid var(--ink);border-radius:12px;overflow:hidden;background:var(--paper)}
+  .stylerow img{width:100%;display:block}
+  .stylerow figcaption{font-size:0.72rem;font-weight:600;color:var(--muted);text-align:center;padding:6px 3px;border-top:2px solid var(--ink)}
+
+  .scene{border:2px solid var(--ink);border-radius:18px;background:var(--paper);box-shadow:var(--shadow-sm);padding:18px;margin:22px 0}
+  .scene .shotlbl{font-family:"Bricolage Grotesque";font-weight:800;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--blue)}
+  .scene h3{margin:4px 0 10px}
+  .shotrow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0 4px}
+  @media(max-width:560px){.shotrow{grid-template-columns:1fr}}
+  .shot{border:2px solid var(--ink);border-radius:12px;overflow:hidden;background:var(--bg)}
+  .shot .slot{aspect-ratio:9/16;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:14px;background:repeating-linear-gradient(45deg,#fff8,#fff8 10px,#0000 10px,#0000 20px),var(--bg)}
+  .shot .slot b{font-family:"Bricolage Grotesque";font-size:0.82rem}
+  .shot .slot span{font-size:0.72rem;color:var(--muted);font-weight:600;line-height:1.35}
+  .shot .cm{font-size:0.74rem;color:var(--muted);font-weight:600;padding:8px 10px;border-top:2px solid var(--ink);background:var(--paper)}
+  .button-tag{display:inline-block;background:var(--ink);color:var(--yellow);font-family:"JetBrains Mono",monospace;font-weight:600;font-size:0.74rem;padding:3px 8px;border-radius:6px;margin:2px 4px 2px 0}
+
+  .endcard{background:var(--paper);border:2px solid var(--ink);border-radius:20px;box-shadow:var(--shadow);padding:28px;margin:50px 0 20px;text-align:center}
   .endcard .serif{color:var(--red);font-size:1.3rem}
-  .endcard a.btn{display:inline-block;margin-top:14px;background:var(--ink);color:var(--bg);font-weight:700;
-    text-decoration:none;border:2px solid var(--ink);border-radius:12px;padding:12px 22px;box-shadow:var(--shadow-sm)}
+  .endcard a.btn{display:inline-block;margin-top:14px;background:var(--ink);color:var(--bg);font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:12px;padding:12px 22px;box-shadow:var(--shadow-sm)}
   footer{border-top:2px solid var(--ink);margin-top:40px;padding:30px 0;text-align:center;color:var(--muted);font-size:0.9rem}
 </style>
 </head>
@@ -67,45 +108,116 @@
 <header class="post"><div class="article">
   <div class="crumb">Build Log · BonnetNoona</div>
   <h1 class="h">How I built a perfectly consistent AI cast</h1>
-  <div class="meta"><span>By Tamara Richards</span><span>·</span><span>~6 min read</span></div>
+  <div class="meta"><span>By Tamara Richards</span><span>·</span><span>~8 min read</span></div>
   <div class="tagrow">
-    <span class="pill">LLM scripting</span><span class="pill">Image generation</span><span class="pill">Reference elements</span><span class="pill">Motion model</span><span class="pill">CapCut</span>
+    <span class="pill">LLM scripting</span><span class="pill">Image generation</span><span class="pill">Reference elements</span><span class="pill">Canon bible</span><span class="pill">Expression packs</span><span class="pill">CapCut</span>
   </div>
 </div></header>
 
 <div class="article">
-  <p class="lead">The hardest part of making an AI film isn't getting one good frame. It's getting the <span class="serif">same character</span> to show up, on-model, in frame number three hundred. Here's the exact system I use to keep ten characters consistent across a whole series.</p>
+  <p class="lead">The hardest part of making an AI film isn't getting one good frame. It's getting the <span class="serif">same character</span> — same face, same bonnet, same braids — to show up in frame number three hundred, furious in one shot and sobbing in the next. Here's the exact system I use to keep a whole cast on-model across an entire series.</p>
 
-  <img class="hero-img" src="../assets/process_contact.jpg" alt="Contact sheet of the full BonnetNoona cast, each character on-model" />
+  <div class="herostrip">
+    <img src="../assets/tam_angry.jpg" alt="Tamara, furious" />
+    <img src="../assets/tam_happy.jpg" alt="Tamara, delighted" />
+    <img src="../assets/tam_cry.jpg" alt="Tamara, crying" />
+  </div>
+  <p class="cap">One character — Tamara — three moods, zero drift. Same braids, same bonnet, same nose studs every time.</p>
 
   <h2>The project</h2>
-  <p><b>BonnetNoona</b> is a faceless claymation comedy series about sisters building an influencer brand and gloriously failing. Six human characters, four pets, soft puffy 3D claymation, warm mockumentary lighting, shot vertical for TikTok. The whole thing lives or dies on one thing: do the characters stay <em>themselves</em> from shot to shot?</p>
+  <p><b>BonnetNoona</b> is a faceless claymation comedy series about sisters trying to build an influencer brand and gloriously failing at it. Soft puffy 3D clay, warm mockumentary lighting, shot vertical for TikTok. The whole thing lives or dies on one question: do the characters stay <em>themselves</em> from shot to shot?</p>
+  <p>Early on, they didn't. Skin tones drifted. Bonnets changed colour. Tamara would walk into the next shot with a different nose and lose her braids entirely. So I stopped trusting the prompt to remember things and built a system that does the remembering for me. It comes down to five moves.</p>
 
-  <div class="callout"><b>The one trick:</b> stop describing your characters and start <em>referencing</em> them. A saved reference element + a locked canon doc beats a perfect prompt every time.</div>
+  <div class="callout"><b>The one trick:</b> stop <em>describing</em> your characters and start <em>referencing</em> them. A saved reference element plus a locked canon doc beats a perfect prompt every single time.</div>
 
-  <h2><span class="step-num">01</span> &nbsp;Write the canon before you generate anything</h2>
-  <p>Before a single image, I write a <b>canon bible</b> — the single source of truth for the whole series. It locks the stuff a model loves to drift on: each character's exact color, skin tone, scale relative to the others, personality, and the things that must <em>never</em> happen.</p>
-  <p>A few real lines from mine:</p>
-  <ul>
-    <li><b>Tamara</b> — deep purple bonnet, the Producer, tallest in the cast.</li>
-    <li><b>Kalila</b> — warm medium-brown, <em>do not darken</em>; pleasant and mildly bored, <em>never</em> angry.</li>
-    <li><b>CoCo</b> — WHITE curly poodle, PINK ears, knee-height — not brown, not tan, not a lapdog.</li>
-  </ul>
-  <p>Those "nots" are doing real work. Half of consistency is telling the model what to stop guessing.</p>
+  <!-- MEET THE CAST -->
+  <div class="stepwrap">
+  <h2>Meet the cast</h2>
+  <p>Ten regulars: six sisters and four pets. Each one has a single locked look. Here are the ones who carry most of the show — the descriptions below are the exact details I refuse to let the model improvise.</p>
 
-  <h2><span class="step-num">02</span> &nbsp;Lock each character as a reusable reference</h2>
-  <p>This is the part that actually solves consistency. Each character gets generated once as a clean front-facing reference, then <b>saved as a reusable element</b> with its own ID. From then on I don't re-describe their face — I summon them by reference, so the bonnet, skin tone, and proportions come back identical every time.</p>
-  <p>In the prompt it looks like this — drop the element ID in, then describe only the <em>action</em>:</p>
-<pre><code>&lt;&lt;&lt;tamara-element-id&gt;&gt;&gt; Tamara in her deep purple satin bonnet,
-striding in mid-direction with one finger up, holding CoCo's leash.
-Producer energy. Cozy living room, handheld mockumentary framing.
-[ + global style block ]</code></pre>
-
-  <div class="imgrid">
-    <img src="../assets/char_tamara.jpg" alt="Tamara reference" />
-    <img src="../assets/pet_coco.jpg" alt="CoCo reference" />
+  <div class="castgrid">
+    <div class="castcard"><div class="swatch" style="background:var(--purple)"></div>
+      <div class="tag">Tamara</div>
+      <div class="desc">Deep purple satin bonnet with long auburn braids spilling out, gold hoops, two gold nose studs, little purple neck-scarf, cream off-shoulder top. The big sister.</div></div>
+    <div class="castcard"><div class="swatch" style="background:var(--pink)"></div>
+      <div class="tag">Kalila</div>
+      <div class="desc">Black bonnet with a hot-pink ruffle trim and tiny music-note print, pink-striped pajamas, nose ring. Default face: unbothered.</div></div>
+    <div class="castcard"><div class="swatch" style="background:var(--green)"></div>
+      <div class="tag">NoonaJu / LaJuana</div>
+      <div class="desc">Forest-green bonnet with gold trim, long braids, deeper skin tone. The dramatic one.</div></div>
+    <div class="castcard"><div class="swatch" style="background:#8B1E3F"></div>
+      <div class="tag">Mikayla</div>
+      <div class="desc">Burgundy bonnet, tan loungewear, full-body energy. The little hype-woman.</div></div>
+    <div class="castcard"><div class="swatch" style="background:var(--green)"></div>
+      <div class="tag">Yadiel</div>
+      <div class="desc">Green satin durag, low-key skeptical expression. The one watching it all unfold.</div></div>
+    <div class="castcard"><div class="swatch" style="background:#FFB3C7"></div>
+      <div class="tag">CoCo</div>
+      <div class="desc">WHITE curly poodle, PINK ears, gold collar, knee-height. Not brown, not tan, not a lapdog.</div></div>
+  </div>
+  <p style="font-size:0.92rem;color:var(--muted)">Mira (the kid), Peppa (the orange tabby with an attitude), and Shadow (the round grey cat) round out the house. The lineup below was the first full pass — Tamara's look later got refined to the braided version you see up top.</p>
+  <img class="hero-img" src="../assets/process_contact.jpg" alt="Contact sheet of the full BonnetNoona cast — six humans and four pets" />
+  <p class="cap">The working lineup. Every one of these became a saved reference I can summon by ID instead of re-describing.</p>
   </div>
 
+  <!-- STEP 01 -->
+  <div class="stepwrap">
+  <h2><span class="step-num">01</span> &nbsp;Write the canon before you generate anything</h2>
+  <p>Before a single image, I write a <b>canon bible</b> — the one source of truth for the whole series. It locks the stuff a model loves to drift on: each character's exact colour, skin tone, scale relative to the others, personality, and the things that must <em>never</em> happen.</p>
+  <p>A few real lines from mine:</p>
+  <ul>
+    <li><b>Tamara</b> — deep purple satin bonnet, long auburn box-braids past the shoulder, gold hoops, two gold nose studs, purple neck-scarf, cream off-shoulder top. Warm brown skin. Big-sister warmth.</li>
+    <li><b>Kalila</b> — black bonnet with a hot-pink ruffle trim and a music-note print, pink-and-white striped pajamas, nose ring; medium-brown skin, <em>do not darken</em>. Resting expression is unbothered, never sweet.</li>
+    <li><b>CoCo</b> — WHITE curly poodle, PINK ears, knee-height — not brown, not tan, not a lapdog.</li>
+  </ul>
+  <p>Those "nots" are doing real work. Half of consistency is just telling the model what to stop guessing.</p>
+  </div>
+
+  <!-- STEP 02 -->
+  <div class="stepwrap">
+  <h2><span class="step-num">02</span> &nbsp;Lock each character as a reusable reference</h2>
+  <p>This is the part that actually solves consistency. Each character gets generated once as a clean reference, then <b>saved as a reusable element</b> with its own ID. From then on I never re-describe a face — I summon them by reference, so the bonnet, braids, skin tone, and proportions come back identical every time.</p>
+
+  <div class="imgrid">
+    <figure><img src="../assets/char_tamara.jpg" alt="Tamara reference element" /><figcaption>Tamara — locked reference</figcaption></figure>
+    <figure><img src="../assets/char_kalila.jpg" alt="Kalila reference element" /><figcaption>Kalila — locked reference</figcaption></figure>
+    <figure><img src="../assets/pet_coco.jpg" alt="CoCo reference element" /><figcaption>CoCo — locked reference</figcaption></figure>
+  </div>
+
+  <p>In the prompt it looks like this — drop the element ID in, then describe only the <em>action</em>:</p>
+<pre><code>&lt;&lt;&lt;tamara-element-id&gt;&gt;&gt; Tamara in her deep purple satin bonnet,
+auburn braids down, striding in mid-direction with one finger up,
+holding CoCo's leash. Big-sister energy. Cozy living room,
+handheld mockumentary framing. [ + global style block ]</code></pre>
+  </div>
+
+  <!-- EXPRESSION PACK -->
+  <div class="stepwrap">
+  <h2>The payoff: one locked character, every mood</h2>
+  <p>Once Tamara is a saved reference, I can throw any emotion at her and she stays unmistakably herself. This is an <b>expression pack</b> — the same locked character, generated fresh for each beat. I build one per main character so I've got a face ready for every joke before I ever start a scene.</p>
+
+  <div class="exprgrid">
+    <figure><img src="../assets/tam_angry.jpg" alt="Tamara angry" /><figcaption>Furious</figcaption></figure>
+    <figure><img src="../assets/tam_scared.jpg" alt="Tamara scared" /><figcaption>Panicked</figcaption></figure>
+    <figure><img src="../assets/tam_cry.jpg" alt="Tamara crying" /><figcaption>Sobbing</figcaption></figure>
+    <figure><img src="../assets/tam_happy.jpg" alt="Tamara delighted" /><figcaption>Delighted</figcaption></figure>
+    <figure><img src="../assets/tam_worried.jpg" alt="Tamara worried" /><figcaption>Worried</figcaption></figure>
+    <figure><img src="../assets/tam_mischief.jpg" alt="Tamara scheming" /><figcaption>Scheming</figcaption></figure>
+  </div>
+
+  <h3>…and she survives a total style swap</h3>
+  <p>The real stress test: keep the character locked, then change the entire art style. Same Tamara — same bonnet, braids, hoops, nose studs, the hand-to-cheek smirk — rendered four completely different ways. If the reference is doing its job, she's recognisable in all of them.</p>
+  <div class="stylerow">
+    <figure><img src="../assets/style_clay.jpg" alt="Tamara in 3D clay style" /><figcaption>3D claymation (show canon)</figcaption></figure>
+    <figure><img src="../assets/style_ink.jpg" alt="Tamara in ink engraving style" /><figcaption>Ink / engraving</figcaption></figure>
+    <figure><img src="../assets/style_comic.jpg" alt="Tamara in comic style" /><figcaption>Comic colour</figcaption></figure>
+    <figure><img src="../assets/style_flat.jpg" alt="Tamara in flat cartoon style" /><figcaption>Flat cartoon</figcaption></figure>
+  </div>
+  <p style="font-size:0.92rem;color:var(--muted)">BonnetNoona ships in the clay style on the left — the rest are stress tests. But proving she holds across styles is how I know the reference is locked tight enough to trust across hundreds of shots.</p>
+  </div>
+
+  <!-- STEP 03 -->
+  <div class="stepwrap">
   <h2><span class="step-num">03</span> &nbsp;Paste the same style block into every shot</h2>
   <p>Consistency isn't just faces — it's the <em>look</em>. I keep one global style block and paste it, unchanged, into every single still. It carries the medium, the lighting, and a long list of "no"s:</p>
 <pre><code>Soft puffy 3D claymation, matte clay surfaces, rounded forms,
@@ -113,15 +225,57 @@ satin bonnets, cozy interior, warm mockumentary lighting.
 Warm brown matte clay skin, uniform tone per character.
 No flat emoji/vector, no photoreal, no glam, no harsh caricature. 9:16.</code></pre>
   <p>Boring? Yes. But the model has no memory between generations — the style block <em>is</em> its memory.</p>
+  </div>
 
-  <h2><span class="step-num">04</span> &nbsp;Stills first, motion only where the joke lives</h2>
-  <p>I generate everything as stills, then only animate the shots where movement carries the comedy — the dog yanking someone out of frame, a secret giggle, the chaos peak. Everything else holds as a still with a slow push-in. It's cheaper, faster, and far more controllable than animating end to end.</p>
+  <!-- STEP 04 -->
+  <div class="stepwrap">
+  <h2><span class="step-num">04</span> &nbsp;Build a scene shot-by-shot, not all at once</h2>
+  <p>Here's where the system earns its keep. I never try to generate a whole scene in one go. I break it into shots, reuse the same reference IDs across every one, pull the right face from the expression pack, and only animate the beats where movement carries the joke.</p>
 
+  <h3>Lock the set, too</h3>
+  <p>Characters aren't the only thing that drifts — rooms do, too. So each sister's space gets locked the same way: I build the room once, then save it as an environment reference at a few fixed camera angles. Here's Kalila's room — same space, three locked views, ready for a character to drop into.</p>
+  <div class="imgrid">
+    <figure><img src="../assets/set_kalila_bed.jpg" alt="Kalila's room, bed view" /><figcaption>Bed view</figcaption></figure>
+    <figure><img src="../assets/set_kalila_desk.jpg" alt="Kalila's room, desk webcam view" /><figcaption>Desk / webcam view</figcaption></figure>
+    <figure><img src="../assets/set_kalila_closet.jpg" alt="Kalila's room, closet view" /><figcaption>Closet view</figcaption></figure>
+  </div>
+  <p style="font-size:0.92rem;color:var(--muted)">Real BonnetNoona sets, straight from the production library. Every character's room is built out like this before anyone steps into frame.</p>
+
+  <h3>Then build the scene shot by shot</h3>
+  <p>With the cast and the sets both locked, a scene is just assembly — drop the right character (and the right face from the expression pack) into the right room, one shot at a time. Below is one scene — the "CoCo drags Tamara out of the shot" bit — built the way I actually build it.</p>
+
+  <div class="scene">
+    <div class="shotlbl">Scene · "The interview that didn't happen"</div>
+    <h3>Three shots, one consistent cast</h3>
+    <div class="shotrow">
+      <div class="shot">
+        <div class="slot"><b>Shot 1 — still</b><span>Tamara mid-sentence to camera, CoCo sitting calm at her feet. Slow push-in.</span></div>
+        <div class="cm">Refs: <code>tamara</code> + <code>coco</code>. Held still — the comedy is the calm before.</div>
+      </div>
+      <div class="shot">
+        <div class="slot"><b>Shot 2 — motion</b><span>CoCo spots something off-frame and bolts; leash yanks. This one gets animated.</span></div>
+        <div class="cm">Same two refs, motion model. The only animated shot in the scene.</div>
+      </div>
+      <div class="shot">
+        <div class="slot"><b>Shot 3 — still</b><span>Empty chair, swinging mic, Kalila leans in unbothered: "Anyway."</span></div>
+        <div class="cm">Ref: <code>kalila</code>. Punchline lands on a still.</div>
+      </div>
+    </div>
+    <p style="font-size:0.86rem;color:var(--muted);margin:10px 0 0">Drop your exported stills/clips into the three slots above. Because all three pull the same locked references, the cast stays identical even though the shots were generated separately.</p>
+  </div>
+
+  <p>When you're stamping the buttons later, the captions ride these beats:</p>
+  <p><span class="button-tag">PRODUCER MODE: ACTIVATED</span><span class="button-tag">THE QUEEN DECLINES</span><span class="button-tag">ANYWAY.</span></p>
+  </div>
+
+  <!-- STEP 05 -->
+  <div class="stepwrap">
   <h2><span class="step-num">05</span> &nbsp;Assemble and stamp the buttons</h2>
-  <p>Final assembly happens in CapCut: stills and clips on a timeline at ~2.5–3s each, caption "buttons" dropped on-beat (<code>PRODUCER MODE: ACTIVATED</code>, <code>THE QUEEN DECLINES</code>), snap zooms on the talking beats, and a freeze-frame end card.</p>
+  <p>Final assembly happens in CapCut: stills and clips on a timeline at ~2.5–3s each, caption "buttons" dropped on-beat, snap zooms on the talking beats, and a freeze-frame end card. The references and expression packs did the heavy lifting upstream, so the edit is just rhythm.</p>
+  </div>
 
   <h2>What I'd tell anyone starting</h2>
-  <p>You do not need to be technical. You need a clear vision and the patience to write your "nots" down once. The reference-element trick is the whole game — lock your characters, reuse them relentlessly, and let the canon doc be the memory the model doesn't have.</p>
+  <p>You do not need to be technical. You need a clear vision and the patience to write your "nots" down once. The reference-element trick is the whole game — lock your characters, build an expression pack for each, reuse them relentlessly, and let the canon doc be the memory the model doesn't have.</p>
 
   <div class="endcard">
     <p class="serif">Say it with your bonnet on.</p>
