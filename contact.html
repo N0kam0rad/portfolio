@@ -169,6 +169,29 @@
   .contact-box h3{font-size:1.8rem;margin-bottom:8px}
   .contact-box .mail{display:inline-block;margin-top:16px;background:#fff;color:var(--ink);font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:13px;padding:13px 22px;box-shadow:var(--shadow-sm)}
 
+  /* ===== work-with-me: services + form ===== */
+  .svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:30px 0 40px}
+  @media(max-width:760px){.svc-grid{grid-template-columns:1fr}}
+  .svc{background:var(--paper);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--shadow-sm);padding:22px;position:relative;overflow:hidden}
+  .svc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px}
+  .svc.c-red::before{background:var(--red)}.svc.c-blue::before{background:var(--blue)}
+  .svc.c-green::before{background:var(--green)}.svc.c-purple::before{background:var(--purple)}
+  .svc h3{font-size:1.18rem;margin:0 0 6px;padding-left:8px}
+  .svc p{font-size:0.94rem;color:var(--muted);padding-left:8px}
+  .contact-form{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:30px;display:grid;gap:15px}
+  .contact-form .frow{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+  @media(max-width:620px){.contact-form .frow{grid-template-columns:1fr}}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-weight:700;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted)}
+  .field input,.field select,.field textarea{border:2px solid var(--ink);border-radius:12px;padding:12px 14px;font-family:"Inter",sans-serif;font-size:0.96rem;background:var(--bg);color:var(--ink)}
+  .field textarea{min-height:130px;resize:vertical}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;box-shadow:var(--shadow-sm)}
+  .contact-form .submit{justify-self:start;background:var(--red);color:#fff;border:2px solid var(--ink);border-radius:13px;font-weight:700;font-size:1rem;padding:14px 26px;cursor:pointer;box-shadow:var(--shadow);transition:transform .12s,box-shadow .12s}
+  .contact-form .submit:hover{transform:translate(2px,2px);box-shadow:var(--shadow-sm)}
+  .hp{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden}
+  .contact-alt{margin-top:22px;text-align:center;color:var(--muted);font-size:0.92rem}
+  .contact-alt a{color:var(--ink);font-weight:700}
+
   footer{border-top:2px solid var(--ink);background:var(--red);color:#fff}
   footer .wrap{padding:54px 26px 60px}
   footer .big{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(2.4rem,7vw,5rem);line-height:0.95;letter-spacing:-0.03em}
@@ -348,11 +371,42 @@
 
 <section id="contact">
   <div class="wrap">
-    <div class="contact-box reveal">
-      <h3>Let's build something — together.</h3>
-      <p style="color:#efeaff;max-width:52ch;margin:0 auto">Engineers, designers, angel investors, fellow idea-addicts: if you want concepts turned into shipped, monetizable things, I'm your girl.</p>
-      <a class="mail" href="mailto:richards.tlynn@gmail.com">richards.tlynn@gmail.com</a>
+    <div class="sec-head reveal">
+      <div><div class="tag">Work with me</div><h2>Got an idea? <span class="serif">Let's build it.</span></h2></div>
+      <p>Concept-to-shipped, on consult. Tell me what you're chasing and I'll come back with a plan.</p>
     </div>
+
+    <div class="svc-grid">
+      <div class="svc c-red reveal"><h3>Partner &amp; build</h3><p>You bring the spark; I bring the scaffolding. We scope it, prototype it, and ship a demoable, monetizable thing — together.</p></div>
+      <div class="svc c-blue reveal"><h3>Consultation</h3><p>Turn a fuzzy idea into a real process and plan: product direction, AI workflow, and the fastest path from a 2 a.m. thought to shipped.</p></div>
+      <div class="svc c-purple reveal"><h3>LinkedIn optimization</h3><p>A profile and presence that reads as credible to engineers, founders, and investors — positioning, story, and proof.</p></div>
+      <div class="svc c-green reveal"><h3>GitHub-page optimization</h3><p>A portfolio or repo that lands with technical people: clean README, a real demo, and a build log that shows the work.</p></div>
+    </div>
+
+    <form class="contact-form reveal" action="https://formsubmit.co/richards.tlynn@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="New inquiry from the portfolio" />
+      <input type="hidden" name="_captcha" value="false" />
+      <input type="hidden" name="_template" value="table" />
+      <input type="hidden" name="_next" value="https://n0kam0rad.github.io/portfolio/contact.html" />
+      <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <div class="frow">
+        <div class="field"><label for="cf-name">Your name</label><input id="cf-name" type="text" name="name" required placeholder="Jane Maker" /></div>
+        <div class="field"><label for="cf-email">Email</label><input id="cf-email" type="email" name="email" required placeholder="you@email.com" /></div>
+      </div>
+      <div class="field"><label for="cf-need">What do you need?</label>
+        <select id="cf-need" name="what_you_need">
+          <option>Partner &amp; build a project</option>
+          <option>Consultation</option>
+          <option>LinkedIn optimization</option>
+          <option>GitHub-page optimization</option>
+          <option>Something else</option>
+        </select>
+      </div>
+      <div class="field"><label for="cf-msg">Tell me about it</label><textarea id="cf-msg" name="message" required placeholder="The idea, the goal, the timeline — whatever you've got."></textarea></div>
+      <button class="submit" type="submit">Send it →</button>
+    </form>
+
+    <p class="contact-alt">Prefer email? <a href="mailto:richards.tlynn@gmail.com">richards.tlynn@gmail.com</a></p>
   </div>
 </section>
 
