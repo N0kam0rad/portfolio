@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Helix7 — Demo · Tamara Richards</title>
+<meta name="description" content="Helix7 — A web novel built entirely from voice notes — talk the story, ship the manuscript. A hosted, playable demo is on the way; follow to get notified when it drops." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg:#F4EEE2;--ink:#1A1613;--paper:#FFFDF8;--red:#ED3A24;--blue:#2F6BFF;--green:#11B981;
+    --coral:#FF7A3D;--purple:#7C4DFF;--yellow:#FFC835;--lime:#C2F23D;--muted:#6E665B;--pink:#FF4D9D;
+    --accent:var(--red);--shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+  h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-height:1.0;letter-spacing:-0.025em}
+  .serif{font-family:"Fraunces",serif;font-style:italic;font-weight:500}
+  a{color:inherit}
+  .accentbar{height:12px;display:flex}.accentbar span{flex:1}
+  .accentbar span:nth-child(1){background:var(--accent)}.accentbar span:nth-child(2){background:var(--ink)}
+  .accentbar span:nth-child(3){background:var(--accent)}.accentbar span:nth-child(4){background:var(--ink)}
+  nav{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:2px solid var(--ink)}
+  nav .in{max-width:820px;margin:0 auto;padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between}
+  nav .back{font-weight:700;text-decoration:none;color:var(--ink)}
+  nav .name{font-family:"Bricolage Grotesque";font-weight:800}
+  main{max-width:820px;margin:0 auto;padding:0 24px;width:100%;flex:1}
+  header.h{padding:56px 0 30px}
+  .crumb{font-weight:700;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--accent)}
+  h1.t{font-size:clamp(2.4rem,7vw,3.8rem);margin:13px 0 14px}
+  .sub{font-size:1.18rem;color:var(--muted);max-width:56ch}
+  .status{display:inline-block;margin-top:18px;font-weight:700;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;background:var(--accent);color:#fff;border:2px solid var(--ink);border-radius:999px;padding:5px 13px;box-shadow:var(--shadow-sm)}
+  .card{background:var(--paper);border:2px solid var(--ink);border-radius:22px;box-shadow:var(--shadow);padding:32px;margin:14px 0 28px;position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:var(--accent)}
+  .card .big{font-size:2.4rem;line-height:1}
+  .card h2{font-size:1.5rem;margin:14px 0 10px}
+  .card p{font-size:1.02rem;color:var(--ink);margin-bottom:10px}
+  .card p.note{color:var(--muted);font-size:0.95rem}
+  .follow{margin-top:22px}
+  .follow .lab{font-weight:700;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:10px}
+  .follow-row{display:flex;gap:10px;flex-wrap:wrap}
+  .fbtn{flex:1;min-width:150px;text-align:center;text-decoration:none;font-weight:700;font-size:0.92rem;border:2px solid var(--ink);border-radius:13px;padding:13px;box-shadow:var(--shadow-sm);transition:transform .12s}
+  .fbtn:hover{transform:translate(2px,2px);box-shadow:none}
+  .fbtn.tt{background:var(--ink);color:#fff}
+  .fbtn.ig{background:linear-gradient(45deg,#feda75,#d62976,#962fbf);color:#fff}
+  .links{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:40px}
+  .lnk{font-weight:700;font-size:0.95rem;text-decoration:none;border-bottom:3px solid var(--accent);padding-bottom:1px}
+  .ghost{font-weight:700;font-size:0.95rem;text-decoration:none;border:2px solid var(--ink);border-radius:11px;padding:9px 15px;background:var(--paper);box-shadow:var(--shadow-sm)}
+  footer{border-top:2px solid var(--ink);background:var(--ink);color:var(--bg);text-align:center;padding:26px 24px;font-size:0.9rem}
+  footer a{color:var(--yellow)}
+</style>
+</head>
+<body>
+<div class="accentbar"><span></span><span></span><span></span><span></span></div>
+<nav><div class="in"><a class="back" href="../portfolio.html">← All work</a><span class="name">Live demo</span></div></nav>
+<main>
+  <header class="h">
+    <div class="crumb">Read a chapter · Helix7</div>
+    <h1 class="t">Helix7</h1>
+    <p class="sub">A web novel built entirely from voice notes — talk the story, ship the manuscript.</p>
+    <span class="status">Hosted demo on the way</span>
+  </header>
+  <div class="card">
+    <div class="big">🚀</div>
+    <h2>The playable demo is being hosted.</h2>
+    <p>This one isn't a placeholder for long — Helix7's a chapter is getting its own hosted home so you can read it right here. </p>
+    <p class="note">In the meantime, the full build story is free to read — the why, the how, and what broke along the way.</p>
+    <div class="follow">
+      <div class="lab">Follow to get the drop</div>
+      <div class="follow-row">
+        <a class="fbtn tt" href="https://www.tiktok.com/@tamaralynnrichard" target="_blank" rel="noopener">Follow on TikTok</a>
+        <a class="fbtn ig" href="https://www.instagram.com/tamaranots/" target="_blank" rel="noopener">Follow on Instagram</a>
+      </div>
+    </div>
+  </div>
+  <div class="links">
+    <a class="lnk" href="../specs/helix7.html">Read the spec →</a>
+    <a class="ghost" href="../portfolio.html">← Back to all work</a>
+  </div>
+</main>
+<footer>Tamara Richards — (almost)CEO · <a href="../portfolio.html">portfolio</a> · Say it with your bonnet on.</footer>
+</body>
+</html>

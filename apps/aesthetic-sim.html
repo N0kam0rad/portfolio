@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AestheticSim Studio — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          serif: ['Fraunces', 'Georgia', 'serif'],
+          sans: ['Inter', 'system-ui', 'sans-serif'],
+        },
+        boxShadow: {
+          sm: '0 1px 2px rgba(28,25,23,0.04), 0 4px 16px -8px rgba(28,25,23,0.10)',
+          DEFAULT: '0 2px 4px rgba(28,25,23,0.05), 0 12px 32px -12px rgba(28,25,23,0.12)',
+          md: '0 4px 8px rgba(28,25,23,0.05), 0 16px 40px -16px rgba(28,25,23,0.13)',
+          lg: '0 8px 16px rgba(28,25,23,0.06), 0 24px 56px -20px rgba(28,25,23,0.16)',
+          xl: '0 12px 24px rgba(28,25,23,0.07), 0 32px 72px -24px rgba(28,25,23,0.18)',
+          '2xl': '0 24px 64px -16px rgba(28,25,23,0.22)',
+          inner: 'inset 0 2px 8px rgba(28,25,23,0.05)',
+        },
+      },
+    },
+  };
+</script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  html { scroll-behavior: smooth; }
+  body {
+    -webkit-font-smoothing: antialiased;
+    background-color: #FAF8F4;
+    background-image:
+      radial-gradient(1200px 600px at 100% -10%, rgba(180,131,40,0.06), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(28,25,23,0.04), transparent 60%);
+    min-height: 100vh;
+  }
+  /* serif optical niceness */
+  h1, h2, h3, h4, .font-serif { font-optical-sizing: auto; letter-spacing: -0.01em; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .animate-in.fade-in { animation: fadeIn .5s ease both; }
+  .slide-in-from-bottom-5 { animation: fadeIn .4s ease both; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useRef } = React;
+
+// --- Icon wrapper around lucide (replaces lucide-react) ---
+function Icon({ name, size = 18, className = '', strokeWidth = 2, ...rest }) {
+  const node = (window.lucide && window.lucide.icons && window.lucide.icons[name]) || null;
+  const children = node
+    ? node.map((child, i) => {
+        const [tag, attrs] = child;
+        return React.createElement(tag, { key: i, ...attrs });
+      })
+    : null;
+  return React.createElement(
+    'svg',
+    {
+      xmlns: 'http://www.w3.org/2000/svg',
+      width: size, height: size, viewBox: '0 0 24 24',
+      fill: 'none', stroke: 'currentColor',
+      strokeWidth, strokeLinecap: 'round', strokeLinejoin: 'round',
+      className, ...rest,
+    },
+    children
+  );
+}
+
+// ============================================================================
+// 1. MOCK DATABASE & INITIAL STATE
+// ============================================================================
+const MOCK_PRICING = [
+  { id: 'tx_1', treatment_key: 'botox', label: 'Neuromodulator (Tox)', unit_label: 'units', price_low: 12, price_high: 16, longevity: '3-4 mos', downtime: 'None', priority: 1 },
+  { id: 'tx_2', treatment_key: 'filler_midface', label: 'HA Filler (Midface)', unit_label: 'syringes', price_low: 700, price_high: 900, longevity: '12-18 mos', downtime: 'Mild swelling (2-3 days)', priority: 2 },
+  { id: 'tx_3', treatment_key: 'filler_lips', label: 'HA Filler (Lips)', unit_label: 'syringes', price_low: 650, price_high: 800, longevity: '6-12 mos', downtime: 'Swelling (2-5 days)', priority: 3 },
+  { id: 'tx_4', treatment_key: 'sculptra', label: 'Biostimulator (Sculptra)', unit_label: 'vials', price_low: 800, price_high: 1000, longevity: '24 mos', downtime: 'Mild bruising', priority: 2 },
+  { id: 'tx_5', treatment_key: 'sofwave', label: 'Energy Device (Sofwave)', unit_label: 'session', price_low: 1200, price_high: 2500, longevity: '12-24 mos', downtime: 'Minimal', priority: 4 }
+];
+const MOCK_DB_INITIAL = {
+  organization: { id: 'org_1', name: 'Luxe Aesthetics Clinic', accent_color: 'amber-700' },
+  pricing: MOCK_PRICING,
+  clients: [
+    { id: 'client_jane', full_name: 'Jane Doe', email: 'jane@example.com', consent_granted: true,
+      photos: [ { view_type: 'Front', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800' } ] },
+    { id: 'client_michael', full_name: 'Michael Chen', email: 'michael@example.com', consent_granted: true, photos: [{ view_type: 'Front', url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=800' }] },
+    { id: 'client_sarah', full_name: 'Sarah Smith', email: 'sarah@example.com', consent_granted: true, photos: [{ view_type: 'Front', url: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&q=80&w=800' }] },
+    { id: 'client_emma', full_name: 'Emma Johnson', email: 'emma@example.com', consent_granted: false, photos: [] }
+  ],
+  consultations: [
+    { id: 'cons_jane', client_id: 'client_jane', provider_name: 'Dr. Sarah', state: 'needs_review', created_at: '2026-06-11' },
+    { id: 'cons_michael', client_id: 'client_michael', provider_name: 'Dr. Sarah', state: 'approved', created_at: '2026-06-05' },
+    { id: 'cons_sarah', client_id: 'client_sarah', provider_name: 'Dr. Sarah', state: 'analyzing', created_at: '2026-06-12' },
+    { id: 'cons_emma', client_id: 'client_emma', provider_name: 'Dr. Sarah', state: 'invited', created_at: '2026-06-12' }
+  ],
+  simulations: [
+    { id: 'sim_j1', consultation_id: 'cons_jane', preset: 'Full Balancing', before_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800', after_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800', identity_ok: true, guardrails_ok: true, confidence: 0.94 },
+    { id: 'sim_m1', consultation_id: 'cons_michael', preset: 'Neuromodulator', before_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=800', after_url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=800', identity_ok: true, guardrails_ok: true, confidence: 0.98 }
+  ],
+  treatment_plans: [
+    {
+      id: 'plan_jane', consultation_id: 'cons_jane', status: 'draft',
+      analysis: [
+        { id: 1, region: 'Midface', finding: 'Mild volume loss resulting in early nasolabial shadowing.' },
+        { id: 2, region: 'Upper Face', finding: 'Dynamic rhytids present in frontalis and glabella.' },
+        { id: 3, region: 'Skin Quality', finding: 'Generally healthy, slight textural irregularity.' }
+      ],
+      items: [
+        { id: 'ti_1', treatment: 'Neuromodulator (Tox)', units: 45, price_low: 12, price_high: 16, rationale: 'Soften dynamic lines in forehead and glabella while maintaining expression.', enabled: true },
+        { id: 'ti_2', treatment: 'HA Filler (Midface)', units: 2, price_low: 700, price_high: 900, rationale: 'Restore structural support to malar region, lifting nasolabial folds.', enabled: true },
+        { id: 'ti_3', treatment: 'Biostimulator (Sculptra)', units: 2, price_low: 800, price_high: 1000, rationale: 'Long-term collagen synthesis for overall tissue firmness.', enabled: false }
+      ],
+      phasing: { phase1: 'Tox & Midface Structure', phase2: 'Skin Quality / Biostimulator', phase3: 'Maintenance' }
+    },
+    {
+      id: 'plan_michael', consultation_id: 'cons_michael', status: 'approved',
+      analysis: [ { id: 1, region: 'Upper Face', finding: 'Strong dynamic muscle movement causing deep resting lines.' } ],
+      items: [ { id: 'ti_m1', treatment: 'Neuromodulator (Tox)', units: 60, price_low: 12, price_high: 16, rationale: 'Standard male dosing to smooth upper face rhytids.', enabled: true } ],
+      phasing: { phase1: 'Neuromodulator Treatment', phase2: 'Review at 14 days', phase3: 'Maintenance at 4 months' }
+    }
+  ]
+};
+
+// ============================================================================
+// 2. SHARED UI COMPONENTS
+// ============================================================================
+const ImageSlider = ({ beforeSrc, afterSrc, cssFilter = 'contrast(1.03) brightness(1.02)' }) => {
+  const [position, setPosition] = useState(50);
+  const sliderRef = useRef(null);
+  const handleMove = (clientX) => {
+    if (!sliderRef.current) return;
+    const rect = sliderRef.current.getBoundingClientRect();
+    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    setPosition((x / rect.width) * 100);
+  };
+  return (
+    <div
+      ref={sliderRef}
+      className="relative w-full aspect-[3/4] bg-stone-100 rounded-2xl overflow-hidden cursor-ew-resize select-none border border-stone-200/80 shadow-inner"
+      onMouseMove={(e) => handleMove(e.clientX)}
+      onTouchMove={(e) => handleMove(e.touches[0].clientX)}
+    >
+      <div className="absolute inset-0 w-full h-full">
+        <img src={afterSrc} alt="Simulated" className="w-full h-full object-cover" style={{ filter: cssFilter }} draggable="false" />
+        <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur text-stone-800 text-[10px] uppercase font-bold tracking-widest px-3 py-1.5 rounded-full shadow-sm">Simulated</div>
+      </div>
+      <div className="absolute inset-0 w-full h-full border-r-[3px] border-white shadow-[2px_0_15px_rgba(0,0,0,0.2)]" style={{ clipPath: `polygon(0 0, ${position}% 0, ${position}% 100%, 0 100%)` }}>
+        <img src={beforeSrc} alt="Current" className="w-full h-full object-cover" draggable="false" />
+        <div className="absolute bottom-4 left-4 bg-stone-900/90 backdrop-blur text-white text-[10px] uppercase font-bold tracking-widest px-3 py-1.5 rounded-full shadow-sm">Current</div>
+      </div>
+      <div className="absolute top-0 bottom-0 w-[3px] bg-white shadow-[0_0_15px_rgba(0,0,0,0.4)] flex items-center justify-center" style={{ left: `calc(${position}% - 1.5px)` }}>
+        <div className="w-11 h-11 bg-white rounded-full shadow-xl flex items-center justify-center border border-stone-200">
+          <Icon name="Sliders" size={16} className="text-stone-700 rotate-90" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================================
+// 3. CLIENT EXPERIENCE
+// ============================================================================
+const ClientApp = ({ db, clientId, onUpdateDb }) => {
+  const [view, setView] = useState('dashboard');
+  const client = db.clients.find(c => c.id === clientId);
+  const consultation = db.consultations.find(c => c.client_id === clientId);
+
+  const handleConsent = () => onUpdateDb(prev => ({
+    ...prev, clients: prev.clients.map(c => c.id === clientId ? { ...c, consent_granted: true } : c)
+  }));
+  const handleUploadComplete = () => onUpdateDb(prev => ({
+    ...prev, consultations: prev.consultations.map(c => c.id === consultation.id ? { ...c, state: 'analyzing' } : c)
+  }));
+
+  if (consultation?.state === 'invited') {
+    if (!client.consent_granted) {
+      return (
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 font-sans">
+          <div className="max-w-md w-full bg-white p-10 rounded-3xl shadow-lg border border-stone-200/70 text-center">
+             <div className="w-14 h-14 bg-amber-50 ring-1 ring-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-6"><Icon name="ShieldAlert" className="text-amber-700" size={26}/></div>
+             <h1 className="text-2xl font-serif font-semibold text-stone-800 mb-3">Clinical Consent</h1>
+             <p className="text-stone-500 text-sm mb-8 leading-relaxed">
+               Your aesthetician at Luxe Aesthetics has invited you to a secure facial assessment. We require your consent to store and process your photos using our secure identity-preserving simulation tool.
+             </p>
+             <div className="bg-stone-50 p-4 rounded-xl border border-stone-100 text-left mb-8 flex items-start gap-3">
+               <input type="checkbox" id="consent" className="mt-1 w-5 h-5 accent-stone-900" />
+               <label htmlFor="consent" className="text-xs text-stone-600 leading-relaxed">I consent to the capture, processing, and secure storage of my facial images for the purpose of cosmetic visualization. I understand this is not a medical diagnosis.</label>
+             </div>
+             <button onClick={handleConsent} className="w-full py-3.5 bg-stone-900 text-white font-medium rounded-xl hover:bg-stone-800 hover:-translate-y-0.5 transition-all shadow-md">Acknowledge & Continue</button>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 font-sans">
+        <div className="max-w-3xl w-full">
+          <h1 className="text-3xl font-serif font-semibold text-stone-800 mb-2">Clinical Photography</h1>
+          <p className="text-stone-500 mb-8">Please upload 4 required views. Ensure you are well-lit, expressionless, with hair pulled back.</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            {['Front (Neutral)', 'Front (Smiling)', 'Left Profile', 'Right Profile'].map(v => (
+              <div key={v} className="aspect-[3/4] bg-white border-2 border-dashed border-stone-200 rounded-2xl flex flex-col items-center justify-center p-4 text-center cursor-pointer hover:bg-stone-50 hover:border-amber-300 transition group">
+                <Icon name="Camera" size={24} className="text-stone-400 group-hover:text-amber-600 mb-2 transition" />
+                <span className="text-xs font-bold uppercase tracking-wider text-stone-500">{v}</span>
+              </div>
+            ))}
+          </div>
+          <button onClick={handleUploadComplete} className="w-full md:w-auto px-8 py-3.5 bg-stone-900 text-white font-medium rounded-xl hover:bg-stone-800 hover:-translate-y-0.5 transition-all shadow-md flex items-center justify-center gap-2">
+            <Icon name="Upload" size={18} /> Submit to Provider
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const isApproved = consultation?.state === 'approved' || consultation?.state === 'client_reviewing';
+  return (
+    <div className="min-h-screen font-sans flex flex-col">
+      <header className="bg-white/80 backdrop-blur border-b border-stone-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+        <h1 className="text-xl font-serif font-semibold text-stone-800">Luxe Aesthetics <span className="text-stone-400 font-sans font-light text-sm ml-2">Client Portal</span></h1>
+        <div className="flex items-center gap-4">
+           <button onClick={() => setView('dashboard')} className={`text-sm font-medium ${view === 'dashboard' ? 'text-stone-900' : 'text-stone-500 hover:text-stone-900'}`}>Dashboard</button>
+           <button onClick={() => setView('plan')} disabled={!isApproved} className={`text-sm font-medium transition ${!isApproved ? 'text-stone-300 cursor-not-allowed' : view === 'plan' ? 'text-stone-900' : 'text-stone-500 hover:text-stone-900'}`}>My Assessment</button>
+           <div className="w-9 h-9 bg-stone-100 ring-1 ring-stone-200 rounded-full flex items-center justify-center ml-4"><Icon name="User" size={16} className="text-stone-600"/></div>
+        </div>
+      </header>
+      <main className="flex-grow p-6 max-w-5xl mx-auto w-full">
+        {view === 'dashboard' && (
+          <div className="space-y-8 animate-in fade-in">
+            <h2 className="text-3xl font-serif font-semibold text-stone-800 pt-2">Welcome, {client.full_name.split(' ')[0]}</h2>
+            {!isApproved ? (
+               <div className="bg-white border border-stone-200/70 rounded-3xl p-8 flex items-start gap-6 shadow-md">
+                 <div className="w-12 h-12 bg-amber-50 ring-1 ring-amber-100 rounded-2xl flex items-center justify-center shrink-0"><Icon name="Clock" size={24} className="text-amber-700" /></div>
+                 <div>
+                   <h3 className="text-lg font-semibold text-stone-800 mb-1">Your assessment is under review</h3>
+                   <p className="text-stone-500 text-sm max-w-xl leading-relaxed">Our AI has mapped your facial structure, and {consultation.provider_name} is currently customizing your clinical plan. You will receive an email when your secure visualizations are ready.</p>
+                 </div>
+               </div>
+            ) : (
+               <div className="bg-gradient-to-br from-stone-900 to-stone-800 rounded-3xl p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl text-white">
+                 <div className="flex items-start gap-6">
+                   <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0"><Icon name="CheckCircle2" size={24} className="text-green-400" /></div>
+                   <div>
+                     <h3 className="text-lg font-semibold text-white mb-1">Your assessment is ready</h3>
+                     <p className="text-stone-400 text-sm max-w-xl leading-relaxed">{consultation.provider_name} has finalized your structural analysis and aesthetic simulations.</p>
+                   </div>
+                 </div>
+                 <button onClick={() => setView('plan')} className="px-6 py-3 bg-white text-stone-900 font-medium rounded-xl hover:bg-stone-100 transition whitespace-nowrap shadow-sm">View My Plan</button>
+               </div>
+            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <div className="bg-white p-6 rounded-3xl border border-stone-200/70 shadow-sm">
+                 <h4 className="text-sm font-bold uppercase tracking-widest text-stone-400 mb-6">Upcoming</h4>
+                 <div className="flex items-center gap-4">
+                   <div className="w-14 h-14 bg-stone-50 rounded-2xl border border-stone-100 flex flex-col items-center justify-center">
+                     <span className="text-[10px] font-bold text-amber-700 uppercase">Jul</span>
+                     <span className="text-lg font-serif font-semibold text-stone-800">14</span>
+                   </div>
+                   <div>
+                     <p className="font-medium text-stone-800">Virtual Consultation Follow-up</p>
+                     <p className="text-sm text-stone-500">10:00 AM • Video Call</p>
+                   </div>
+                 </div>
+               </div>
+               <div className="bg-white p-6 rounded-3xl border border-stone-200/70 shadow-sm flex flex-col justify-center">
+                  <h4 className="text-sm font-bold uppercase tracking-widest text-stone-400 mb-4">Questions?</h4>
+                  <p className="text-sm text-stone-500 mb-4">Message your clinician securely through our portal.</p>
+                  <button className="flex items-center gap-2 text-stone-800 font-medium hover:text-amber-700 transition w-fit"><Icon name="MessageSquare" size={18}/> Open Messages</button>
+               </div>
+            </div>
+          </div>
+        )}
+        {view === 'plan' && isApproved && (
+          <div className="animate-in fade-in space-y-12 pb-20">
+            <div className="text-center max-w-2xl mx-auto mb-4 pt-6">
+               <h2 className="text-4xl font-serif font-semibold text-stone-800 mb-4">Facial Harmony Assessment</h2>
+               <p className="text-lg text-stone-500">Prepared exclusively for {client.full_name} by {consultation.provider_name}.</p>
+            </div>
+            <section className="space-y-6">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400 border-b border-stone-200 pb-3">Aesthetic Visualizations</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 {db.simulations.filter(s => s.consultation_id === consultation.id).map(sim => (
+                   <div key={sim.id} className="space-y-3">
+                     <ImageSlider beforeSrc={sim.before_url} afterSrc={sim.after_url} />
+                     <h4 className="font-serif text-lg text-stone-800">{sim.preset} Simulation</h4>
+                     <p className="text-xs text-stone-500 flex items-center gap-1"><Icon name="ShieldCheck" size={12}/> Identity preservation validated</p>
+                   </div>
+                 ))}
+              </div>
+            </section>
+            <section className="space-y-6">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400 border-b border-stone-200 pb-3">Recommended Treatment Plan</h3>
+              <div className="bg-white border border-stone-200/70 rounded-3xl overflow-hidden shadow-md">
+                <div className="p-8">
+                  {db.treatment_plans.find(p => p.consultation_id === consultation.id)?.items.filter(i => i.enabled).map((item, idx) => (
+                     <div key={idx} className="flex gap-6 py-6 border-b border-stone-100 last:border-0 last:pb-0 first:pt-0">
+                        <div className="w-1/4 shrink-0">
+                          <p className="font-serif text-lg text-stone-800 mb-1">{item.treatment}</p>
+                          <p className="text-xs font-bold uppercase text-amber-700 bg-amber-50 inline-block px-2 py-0.5 rounded">Priority {idx + 1}</p>
+                        </div>
+                        <div className="w-3/4 grid grid-cols-2 gap-4">
+                           <div>
+                             <p className="text-xs font-bold uppercase tracking-wider text-stone-400 mb-1">Rationale</p>
+                             <p className="text-sm text-stone-700 leading-relaxed">{item.rationale}</p>
+                           </div>
+                           <div className="flex flex-col items-end">
+                             <p className="text-xs font-bold uppercase tracking-wider text-stone-400 mb-1">Estimated Cost</p>
+                             <p className="text-sm font-medium text-stone-800">${item.units * item.price_low} - ${item.units * item.price_high}</p>
+                           </div>
+                        </div>
+                     </div>
+                  ))}
+                </div>
+                <div className="bg-stone-50 p-6 flex justify-between items-center border-t border-stone-200">
+                   <div>
+                     <p className="text-xs font-bold uppercase tracking-wider text-stone-500">Phase 1 Total Estimate</p>
+                     <p className="text-2xl font-serif font-semibold text-stone-800">
+                       ${db.treatment_plans.find(p => p.consultation_id === consultation.id)?.items.filter(i => i.enabled).reduce((s, i) => s + (i.units * i.price_low), 0)}
+                       <span className="text-stone-400 text-lg mx-2">-</span>
+                       ${db.treatment_plans.find(p => p.consultation_id === consultation.id)?.items.filter(i => i.enabled).reduce((s, i) => s + (i.units * i.price_high), 0)}
+                     </p>
+                   </div>
+                   <div className="flex gap-3">
+                     <button className="px-6 py-3 bg-white border border-stone-200 text-stone-700 font-medium rounded-xl hover:bg-stone-50 transition">Ask a Question</button>
+                     <button className="px-6 py-3 bg-stone-900 text-white font-medium rounded-xl hover:bg-stone-800 transition shadow-sm">Accept & Book</button>
+                   </div>
+                </div>
+              </div>
+            </section>
+            <p className="text-center text-xs text-stone-400 max-w-xl mx-auto mt-12 leading-relaxed">
+              This visualization is designed to communicate potential aesthetic outcomes and does not guarantee specific results. This is a cosmetic planning tool, not a medical diagnosis.
+            </p>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+};
+
+// ============================================================================
+// 4. CLINICIAN EXPERIENCE (CRM & Review Tool)
+// ============================================================================
+const ClinicianApp = ({ db, onUpdateDb }) => {
+  const [view, setView] = useState('dashboard');
+  const [selectedConsultationId, setSelectedConsultationId] = useState(null);
+  const cols = {
+    new: db.consultations.filter(c => c.state === 'analyzing'),
+    review: db.consultations.filter(c => c.state === 'needs_review'),
+    approved: db.consultations.filter(c => c.state === 'approved' || c.state === 'client_reviewing')
+  };
+  const handleOpenReview = (consId) => { setSelectedConsultationId(consId); setView('review'); };
+
+  if (view === 'dashboard') {
+    return (
+      <div className="min-h-screen font-sans flex flex-col">
+        <header className="bg-stone-900 px-6 py-4 flex items-center justify-between text-white">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center"><Icon name="Building" size={16}/></div>
+            <h1 className="text-lg font-serif">{db.organization.name} <span className="text-stone-400 text-sm font-sans ml-2">Clinician Portal</span></h1>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2 text-sm text-stone-300"><Icon name="Activity" size={16}/> <span>{cols.review.length} Pending Reviews</span></div>
+            <div className="w-8 h-8 bg-stone-700 rounded-full flex items-center justify-center"><Icon name="User" size={16}/></div>
+          </div>
+        </header>
+        <main className="flex-grow p-8 max-w-7xl mx-auto w-full overflow-x-auto">
+          <h2 className="text-2xl font-serif font-semibold text-stone-800 mb-8">Consultation Pipeline</h2>
+          <div className="flex gap-6 min-w-[1000px] h-[calc(100vh-200px)]">
+            <div className="w-1/3 flex flex-col gap-4">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400 flex items-center justify-between">
+                <span>AI Processing</span> <span className="bg-stone-200 text-stone-600 px-2 py-0.5 rounded-full">{cols.new.length}</span>
+              </h3>
+              <div className="flex-grow bg-stone-100/70 rounded-2xl p-3 space-y-3 border border-stone-200 border-dashed">
+                 {cols.new.map(cons => {
+                   const c = db.clients.find(cl => cl.id === cons.client_id);
+                   return (
+                     <div key={cons.id} className="bg-white p-4 rounded-xl shadow-sm border border-stone-200 opacity-70">
+                        <div className="flex items-center gap-3">
+                           <div className="w-10 h-10 bg-stone-100 rounded-full overflow-hidden shrink-0">{c.photos[0] && <img src={c.photos[0].url} className="w-full h-full object-cover" alt="" />}</div>
+                           <div>
+                             <p className="font-medium text-stone-800 text-sm">{c.full_name}</p>
+                             <p className="text-xs text-stone-400 flex items-center gap-1"><Icon name="Activity" size={12}/> Generating masks...</p>
+                           </div>
+                        </div>
+                     </div>
+                   )
+                 })}
+              </div>
+            </div>
+            <div className="w-1/3 flex flex-col gap-4">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-amber-700 flex items-center justify-between">
+                <span>Needs Review</span> <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">{cols.review.length}</span>
+              </h3>
+              <div className="flex-grow bg-amber-50/40 rounded-2xl p-3 space-y-3 border border-amber-200">
+                 {cols.review.map(cons => {
+                   const c = db.clients.find(cl => cl.id === cons.client_id);
+                   return (
+                     <div key={cons.id} className="bg-white p-4 rounded-xl shadow-sm border border-amber-300/80 hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer" onClick={() => handleOpenReview(cons.id)}>
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                             <div className="w-10 h-10 bg-stone-100 rounded-full overflow-hidden shrink-0">{c.photos[0] && <img src={c.photos[0].url} className="w-full h-full object-cover" alt="" />}</div>
+                             <div>
+                               <p className="font-medium text-stone-800 text-sm">{c.full_name}</p>
+                               <p className="text-xs text-amber-600 font-medium">Draft Ready</p>
+                             </div>
+                          </div>
+                        </div>
+                        <button className="w-full py-2 bg-stone-900 text-white text-xs font-medium rounded-lg hover:bg-stone-800 transition">Review & Edit</button>
+                     </div>
+                   )
+                 })}
+              </div>
+            </div>
+            <div className="w-1/3 flex flex-col gap-4">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400 flex items-center justify-between">
+                <span>Plan Sent / Approved</span> <span className="bg-stone-200 text-stone-600 px-2 py-0.5 rounded-full">{cols.approved.length}</span>
+              </h3>
+              <div className="flex-grow bg-stone-50 rounded-2xl p-3 space-y-3 border border-stone-200">
+                 {cols.approved.map(cons => {
+                   const c = db.clients.find(cl => cl.id === cons.client_id);
+                   return (
+                     <div key={cons.id} className="bg-white p-4 rounded-xl shadow-sm border border-stone-200">
+                        <div className="flex items-center gap-3">
+                           <div className="w-10 h-10 bg-stone-100 rounded-full overflow-hidden shrink-0">{c.photos[0] && <img src={c.photos[0].url} className="w-full h-full object-cover" alt="" />}</div>
+                           <div>
+                             <p className="font-medium text-stone-800 text-sm">{c.full_name}</p>
+                             <p className="text-xs text-stone-400 flex items-center gap-1"><Icon name="Check" size={12} className="text-green-500"/> Approved</p>
+                           </div>
+                        </div>
+                     </div>
+                   )
+                 })}
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (view === 'review') {
+    const consultation = db.consultations.find(c => c.id === selectedConsultationId);
+    const client = db.clients.find(c => c.id === consultation.client_id);
+    const sim = db.simulations.find(s => s.consultation_id === consultation.id);
+    const originalPlan = db.treatment_plans.find(p => p.consultation_id === consultation.id);
+    const [draftPlan, setDraftPlan] = useState(JSON.parse(JSON.stringify(originalPlan)));
+    const handleItemToggle = (itemId) => setDraftPlan(prev => ({ ...prev, items: prev.items.map(i => i.id === itemId ? { ...i, enabled: !i.enabled } : i) }));
+    const handleItemChange = (itemId, field, value) => setDraftPlan(prev => ({ ...prev, items: prev.items.map(i => i.id === itemId ? { ...i, [field]: value } : i) }));
+    const handleApprove = () => {
+      onUpdateDb(prev => {
+        const next = { ...prev };
+        next.consultations = next.consultations.map(c => c.id === consultation.id ? { ...c, state: 'approved' } : c);
+        next.treatment_plans = next.treatment_plans.map(p => p.id === draftPlan.id ? { ...draftPlan, status: 'approved' } : p);
+        return next;
+      });
+      setView('dashboard');
+    };
+    let low = 0, high = 0;
+    draftPlan.items.filter(i => i.enabled).forEach(i => { low += (i.units * i.price_low); high += (i.units * i.price_high); });
+    const totals = { low, high };
+    return (
+      <div className="min-h-screen font-sans flex flex-col h-screen overflow-hidden">
+        <header className="bg-white/90 backdrop-blur border-b border-stone-200 px-4 py-3 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-4">
+             <button onClick={() => setView('dashboard')} className="p-2 hover:bg-stone-100 rounded-lg transition"><Icon name="ChevronLeft" size={20} className="text-stone-500"/></button>
+             <div>
+               <h1 className="text-lg font-serif font-semibold text-stone-800">Reviewing: {client.full_name}</h1>
+               <p className="text-xs text-stone-500 flex items-center gap-1">AI Draft Generated • Validation Passed <Icon name="CheckCircle2" size={12} className="text-green-500"/></p>
+             </div>
+          </div>
+          <div className="flex gap-3">
+             <button className="px-4 py-2 bg-white border border-stone-300 text-stone-700 text-sm font-medium rounded-lg hover:bg-stone-50 transition">Save Draft</button>
+             <button onClick={handleApprove} className="px-6 py-2 bg-stone-900 text-white text-sm font-medium rounded-lg hover:bg-stone-800 transition shadow-sm">Approve & Send to Client</button>
+          </div>
+        </header>
+        <div className="flex flex-grow overflow-hidden">
+           <div className="w-1/2 bg-stone-100/70 border-r border-stone-200 p-6 overflow-y-auto flex flex-col gap-6">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-stone-500">Clinical Evidence</h3>
+              <div className="bg-white p-4 rounded-2xl border border-stone-200/70 shadow-sm">
+                <div className="flex justify-between items-center mb-3">
+                  <h4 className="font-serif text-stone-800">AI Simulation: {sim?.preset || 'Baseline'}</h4>
+                  <div className="flex gap-2">
+                     <span className="text-[10px] bg-green-50 text-green-700 px-2 py-1 rounded font-bold uppercase tracking-wider flex items-center gap-1"><Icon name="ShieldCheck" size={12}/> ID OK</span>
+                     <span className="text-[10px] bg-blue-50 text-blue-700 px-2 py-1 rounded font-bold uppercase tracking-wider">Conf: {sim?.confidence * 100}%</span>
+                  </div>
+                </div>
+                {sim && <ImageSlider beforeSrc={sim.before_url} afterSrc={sim.after_url} />}
+              </div>
+              <div className="bg-white p-4 rounded-2xl border border-stone-200/70 shadow-sm">
+                <h4 className="font-serif text-stone-800 mb-3">Patient Photos (6/6)</h4>
+                <div className="grid grid-cols-3 gap-2">
+                   {[1,2,3,4,5,6].map(i => (
+                     <div key={i} className="aspect-square bg-stone-100 rounded-lg border border-stone-200 overflow-hidden">
+                        {i === 1 && client.photos[0] ? <img src={client.photos[0].url} className="w-full h-full object-cover"/> : <div className="w-full h-full flex items-center justify-center text-stone-300"><Icon name="Camera" size={20}/></div>}
+                     </div>
+                   ))}
+                </div>
+              </div>
+           </div>
+           <div className="w-1/2 bg-white p-8 overflow-y-auto">
+              <div className="max-w-xl mx-auto space-y-10">
+                 <div>
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 pb-2 mb-4 flex justify-between">
+                      <span>Facial Analysis</span> <span className="text-amber-600 flex items-center gap-1"><Icon name="Activity" size={12}/> AI Generated</span>
+                    </h3>
+                    <div className="space-y-4">
+                       {draftPlan.analysis.map((an, idx) => (
+                         <div key={an.id} className="group relative bg-stone-50 border border-stone-200 rounded-xl p-4 focus-within:ring-2 focus-within:ring-amber-500/20 focus-within:border-amber-300 transition">
+                            <div className="flex justify-between items-center mb-1">
+                               <label className="text-xs font-bold text-stone-700">{an.region}</label>
+                               <button className="text-stone-300 hover:text-red-500 transition opacity-0 group-hover:opacity-100"><Icon name="Trash2" size={14}/></button>
+                            </div>
+                            <textarea className="w-full bg-transparent text-sm text-stone-600 border-none p-0 focus:ring-0 resize-none" rows={2} value={an.finding}
+                               onChange={(e) => { const newAn = [...draftPlan.analysis]; newAn[idx].finding = e.target.value; setDraftPlan({...draftPlan, analysis: newAn}); }} />
+                         </div>
+                       ))}
+                       <button className="text-sm font-medium text-amber-700 flex items-center gap-1 hover:underline"><Icon name="Plus" size={16}/> Add Region</button>
+                    </div>
+                 </div>
+                 <div>
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 pb-2 mb-4 flex justify-between">
+                      <span>Treatment Plan</span> <span className="text-stone-400">Total: ${totals.low} - ${totals.high}</span>
+                    </h3>
+                    <div className="space-y-4">
+                       {draftPlan.items.map((item) => {
+                          const dbItem = db.pricing.find(p => p.label === item.treatment) || {};
+                          return (
+                           <div key={item.id} className={`border rounded-2xl overflow-hidden transition ${item.enabled ? 'border-amber-300 shadow-sm' : 'border-stone-200 opacity-60 bg-stone-50'}`}>
+                              <div className="flex items-center justify-between p-4 bg-white border-b border-stone-100">
+                                 <div className="flex items-center gap-3">
+                                    <input type="checkbox" checked={item.enabled} onChange={() => handleItemToggle(item.id)} className="w-5 h-5 accent-amber-600 cursor-pointer" />
+                                    <div>
+                                      <p className="font-serif text-stone-800 font-medium">{item.treatment}</p>
+                                      <p className="text-xs text-stone-500">${item.price_low}-${item.price_high} / {dbItem.unit_label || 'unit'}</p>
+                                    </div>
+                                 </div>
+                                 <div className="flex items-center gap-2">
+                                    <input type="number" className="w-16 p-1 text-sm border border-stone-300 rounded-lg text-center" value={item.units}
+                                      onChange={(e) => handleItemChange(item.id, 'units', Number(e.target.value))} disabled={!item.enabled} />
+                                    <span className="text-xs font-medium text-stone-500 uppercase">{dbItem.unit_label || 'u'}</span>
+                                 </div>
+                              </div>
+                              {item.enabled && (
+                                <div className="p-4 bg-stone-50">
+                                   <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-1 block">Clinical Rationale (Visible to Client)</label>
+                                   <textarea className="w-full bg-white text-sm text-stone-700 border border-stone-200 rounded-lg p-2 focus:ring-amber-500 focus:border-amber-500 transition resize-none" rows={2} value={item.rationale}
+                                      onChange={(e) => handleItemChange(item.id, 'rationale', e.target.value)} />
+                                </div>
+                              )}
+                           </div>
+                          )
+                       })}
+                       <button className="text-sm font-medium text-amber-700 flex items-center gap-1 hover:underline"><Icon name="Plus" size={16}/> Add Treatment from Pricing List</button>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+      </div>
+    );
+  }
+};
+
+// ============================================================================
+// 5. MAIN SHELL & STATE MANAGER
+// ============================================================================
+function App() {
+  const [db, setDb] = useState(MOCK_DB_INITIAL);
+  const [impersonating, setImpersonating] = useState(null);
+  const DevRoleSwitcher = () => (
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+      {impersonating && (
+        <button onClick={() => setImpersonating(null)} className="px-4 py-2 bg-white text-stone-800 text-xs font-bold uppercase tracking-widest rounded-full shadow-lg border border-stone-200 flex items-center gap-2 hover:bg-stone-50">
+          <Icon name="Eye" size={14}/> Change Role
+        </button>
+      )}
+      {!impersonating && (
+        <div className="bg-white/95 backdrop-blur p-5 rounded-3xl shadow-2xl border border-stone-200 w-80 flex flex-col gap-3 slide-in-from-bottom-5">
+          <h3 className="text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Prototype Impersonator</h3>
+          <button onClick={() => setImpersonating({role: 'clinician'})} className="w-full py-3 bg-stone-900 text-white rounded-xl text-sm font-medium flex items-center justify-center gap-2 hover:bg-stone-800 hover:-translate-y-0.5 transition-all shadow-md">
+             <Icon name="Building" size={16}/> View as Clinician / Admin
+          </button>
+          <div className="border-t border-stone-100 my-2 pt-3">
+            <p className="text-xs text-stone-500 mb-2 font-medium">View as Client in State:</p>
+            {db.clients.map(c => {
+               const cons = db.consultations.find(cons => cons.client_id === c.id);
+               return (
+                 <button key={c.id} onClick={() => setImpersonating({role: 'client', id: c.id})} className="w-full text-left py-2 px-3 hover:bg-stone-50 rounded-lg flex justify-between items-center group transition">
+                    <span className="text-sm text-stone-700 font-medium group-hover:text-stone-900">{c.full_name}</span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded">{cons?.state || 'none'}</span>
+                 </button>
+               )
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+  return (
+    <React.Fragment>
+      {!impersonating && (
+        <div className="min-h-screen flex items-center justify-center font-sans p-6">
+           <div className="text-center max-w-lg animate-in fade-in">
+             <div className="w-20 h-20 rounded-3xl mx-auto mb-7 flex items-center justify-center shadow-xl bg-gradient-to-br from-stone-800 to-stone-950 ring-1 ring-white/10">
+               <span className="text-white font-serif text-4xl">A</span>
+             </div>
+             <p className="text-xs font-bold uppercase tracking-[0.25em] text-amber-700 mb-3">Aesthetic Intelligence</p>
+             <h1 className="text-5xl font-serif font-semibold text-stone-800 mb-3">AestheticSim Studio</h1>
+             <p className="text-stone-500 mb-8 text-lg">An identity-preserving facial simulation &amp; treatment-planning platform for modern aesthetic clinics.</p>
+             <p className="text-sm text-stone-400">Select a role from the menu in the bottom-right to explore the prototype.</p>
+           </div>
+        </div>
+      )}
+      {impersonating?.role === 'clinician' && <ClinicianApp db={db} onUpdateDb={setDb} />}
+      {impersonating?.role === 'client' && <ClientApp db={db} clientId={impersonating.id} onUpdateDb={setDb} />}
+      <DevRoleSwitcher />
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
