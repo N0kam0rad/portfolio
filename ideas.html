@@ -285,6 +285,32 @@
   /* ===== multipage additions ===== */
   .navlinks a.active{text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px}
   .more-row{display:flex;justify-content:center;margin-top:36px}
+
+  /* ===== left drawer navigation ===== */
+  .menu-btn{display:inline-flex;align-items:center;gap:9px;font-family:"Inter";font-weight:700;font-size:0.9rem;background:var(--paper);border:2px solid var(--ink);border-radius:11px;padding:8px 14px;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s}
+  .menu-btn:hover{transform:translate(2px,2px);box-shadow:none}
+  .menu-bars{display:inline-flex;flex-direction:column;gap:3px}
+  .menu-bars span{display:block;width:18px;height:2.5px;background:var(--ink);border-radius:2px;transition:transform .3s ease,opacity .2s ease}
+  body.drawer-open .menu-bars span:nth-child(1){transform:translateY(5.5px) rotate(45deg)}
+  body.drawer-open .menu-bars span:nth-child(2){opacity:0}
+  body.drawer-open .menu-bars span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg)}
+  @media(max-width:560px){nav .navcta{display:none}}
+
+  .drawer-overlay{position:fixed;inset:0;background:rgba(26,22,19,0.5);backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s ease;z-index:90}
+  body.drawer-open .drawer-overlay{opacity:1;visibility:visible}
+  .drawer{position:fixed;top:0;left:0;height:100%;width:min(86vw,340px);background:var(--bg);border-right:2px solid var(--ink);box-shadow:8px 0 0 rgba(26,22,19,0.12);transform:translateX(-100%);transition:transform .36s cubic-bezier(.22,.8,.2,1);z-index:95;display:flex;flex-direction:column;padding:20px 22px 26px;overflow-y:auto}
+  body.drawer-open .drawer{transform:none}
+  .drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:14px;border-bottom:2px solid var(--ink)}
+  .drawer-title{font-family:"Bricolage Grotesque";font-weight:800;font-size:1.05rem;text-transform:uppercase;letter-spacing:0.06em}
+  .drawer-x{background:none;border:none;font-size:1.4rem;font-weight:800;cursor:pointer;color:var(--ink);line-height:1}
+  .drawer-nav{display:flex;flex-direction:column}
+  .drawer-nav a{text-decoration:none;color:var(--ink);font-family:"Bricolage Grotesque";font-weight:800;font-size:1.5rem;letter-spacing:-0.02em;padding:13px 2px;border-bottom:2px solid #00000014;transition:padding-left .25s ease,color .2s ease}
+  .drawer-nav a:hover{padding-left:12px;color:var(--red)}
+  .drawer-nav a[aria-current="page"]{color:var(--red)}
+  .drawer-nav a[aria-current="page"]::before{content:"\2192 \00a0";font-size:0.7em}
+  .drawer-foot{margin-top:auto;padding-top:18px;display:flex;flex-wrap:wrap;gap:8px}
+  .drawer-foot a{font-size:0.78rem;font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:999px;padding:6px 12px;background:var(--paper)}
+  @media(prefers-reduced-motion:reduce){.drawer,.drawer-overlay,.menu-bars span{transition:none}}
 </style>
 </head>
 <body>
@@ -292,17 +318,33 @@
 
 <nav>
   <div class="wrap">
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span class="menu-bars"><span></span><span></span><span></span></span> Menu</button>
     <a class="logo" href="index.html" style="text-decoration:none"><span class="dot"></span> Tamara Richards <span class="chip">(almost)CEO</span></a>
-    <div class="navlinks">
-      <a href="index.html">Home</a>
-      <a href="portfolio.html">Portfolio</a>
-      <a href="blog.html">Blog</a>
-      <a href="tools.html">Tools</a>
-      <a href="ideas.html" class="active">Ideas</a>
-      <a class="cta" href="contact.html">Work with me</a>
-    </div>
+    <a class="cta navcta" href="contact.html">Work with me</a>
   </div>
 </nav>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-head">
+    <span class="drawer-title">Menu</span>
+    <button class="drawer-x" id="drawerX" aria-label="Close menu">✕</button>
+  </div>
+  <nav class="drawer-nav" aria-label="Primary">
+    <a href="index.html">Home</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="blog.html">Blog</a>
+    <a href="tools.html">Tools</a>
+    <a href="ideas.html" aria-current="page">Ideas</a>
+    <a href="contact.html">Work with me</a>
+  </nav>
+  <div class="drawer-foot">
+    <a href="https://www.tiktok.com/@tamaralynnrichard" target="_blank" rel="noopener">TikTok ↗</a>
+    <a href="https://www.instagram.com/tamaranots/" target="_blank" rel="noopener">Instagram ↗</a>
+    <a href="https://github.com/N0kam0rad" target="_blank" rel="noopener">GitHub ↗</a>
+    <a href="https://www.linkedin.com/in/tamaralynnrichards/" target="_blank" rel="noopener">LinkedIn ↗</a>
+  </div>
+</aside>
 
 <section id="cooking" class="cooking">
   <div class="wrap">
@@ -389,6 +431,21 @@
     b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*0.18}px,${(e.clientY-r.top-r.height/2)*0.3}px)`;});
     b.addEventListener('mouseleave',()=>{b.style.transform='';});
   });
+</script>
+<script>
+  // Left drawer navigation
+  (function(){
+    const mb=document.getElementById('menuBtn'), dr=document.getElementById('drawer'),
+          ov=document.getElementById('drawerOverlay'), dx=document.getElementById('drawerX');
+    if(!mb||!dr) return;
+    const open=()=>{document.body.classList.add('drawer-open');mb.setAttribute('aria-expanded','true');dr.setAttribute('aria-hidden','false');};
+    const close=()=>{document.body.classList.remove('drawer-open');mb.setAttribute('aria-expanded','false');dr.setAttribute('aria-hidden','true');};
+    mb.addEventListener('click',()=>document.body.classList.contains('drawer-open')?close():open());
+    if(ov) ov.addEventListener('click',close);
+    if(dx) dx.addEventListener('click',close);
+    dr.querySelectorAll('a').forEach(a=>a.addEventListener('click',close));
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape') close(); });
+  })();
 </script>
 </body>
 </html>
