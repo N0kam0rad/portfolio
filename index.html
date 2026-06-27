@@ -380,6 +380,35 @@
     .pit{opacity:1;pointer-events:auto;transform:none;animation:none!important}
   }
 </style>
+<style>
+  /* ===== UX overrides: full-viewport hero, custom cursor, peering eyes, glass nav ===== */
+  /* 1 + 5 — hero fills the viewport (minus nav), content centered */
+  .hero.hero-centered{min-height:calc(100vh - 66px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:14px 0 24px}
+  .hero-centered .wrap{display:flex;flex-direction:column;align-items:center;width:100%}
+  .hero-centered .title{margin:6px 0 12px}
+  .hero-centered .lede{margin:0 auto 4px}
+  .hero-centered .brain-figure{width:auto;max-width:100%;margin:6px auto 2px}
+  .hero-centered .brain-stack{padding-top:0;aspect-ratio:928/1152;height:clamp(230px,44vh,560px);width:auto;max-width:100%}
+  .hero-centered .brain-hint{margin-top:6px}
+  .hero .marquee{width:100%;margin-top:10px;border-top:2px solid var(--ink)}
+  .hero-centered .cta-row{margin-top:16px}
+  /* 4 — sticky glass nav, above content (but below the drawer) */
+  nav{z-index:100;background:rgba(244,238,226,0.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  /* 6 — left drawer: rounded right edge, stacked above the nav when open */
+  .drawer{border-radius:0 16px 16px 0;z-index:130}
+  .drawer-overlay{z-index:120}
+  /* 5 — full-viewport sections, footer wordmark contained */
+  #about.about-yellow{min-height:100vh;padding:80px 0}
+  #work{padding-top:80px}
+  footer{overflow:hidden}
+  .f-mark span{font-size:clamp(3rem,10vw,9rem)}
+  /* 2 — custom Tamara-head cursor (hero only) */
+  #tamara-cursor{position:fixed;width:60px;height:60px;border-radius:50%;background:url('assets/brain-closed.png') center/cover;pointer-events:none;z-index:9999;display:none;transform:translate(-50%,-50%);transition:opacity .15s}
+  /* 3 — peering eyes (slide in from the left after the hero exits) */
+  #peering-eyes{position:fixed;left:0;top:50%;z-index:85;width:62px;height:56px;overflow:hidden;border-radius:0 40px 40px 0;background:url('assets/brain-closed.png') center 28%/92px auto no-repeat;cursor:pointer;transform:translateY(-50%) translateX(-100%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);box-shadow:4px 0 12px rgba(0,0,0,.15)}
+  #peering-eyes.show{transform:translateY(-50%) translateX(0)}
+  @media (hover:none),(max-width:760px){#tamara-cursor,#peering-eyes{display:none!important}}
+</style>
 </head>
 <body>
 <div class="accentbar"><span></span><span></span><span></span><span></span><span></span><span></span></div>
@@ -414,13 +443,6 @@
   </div>
 </aside>
 
-<div class="marquee" aria-hidden="true">
-  <div class="track">
-    <b>ALWAYS SHIPPING</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>A FRAGRANCE BRAIN</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
-    <b>ALWAYS SHIPPING</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>A FRAGRANCE BRAIN</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
-  </div>
-</div>
-
 <header class="hero hero-centered">
   <div class="wrap">
     <div class="hero-lead reveal">
@@ -440,6 +462,12 @@
       </div>
       <figcaption class="brain-hint">Hover my brain ✦ pick a thought</figcaption>
     </figure>
+    <div class="marquee" aria-hidden="true">
+      <div class="track">
+        <b>ALWAYS SHIPPING</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>A FRAGRANCE BRAIN</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
+        <b>ALWAYS SHIPPING</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>A FRAGRANCE BRAIN</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
+      </div>
+    </div>
     <div class="cta-row">
       <a class="btn red" href="portfolio.html">See the apps</a>
       <a class="btn" href="blog.html">Read the build log</a>
@@ -654,6 +682,33 @@
       e.preventDefault();
       fig.classList.toggle('is-open');
     });
+  })();
+</script>
+<script>
+  /* UX overrides: custom cursor + peering-eyes drawer trigger (extends existing drawer) */
+  (function(){
+    var fine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+    var hero = document.querySelector('.hero');
+    function openDrawer(){
+      document.body.classList.add('drawer-open');
+      var mb=document.getElementById('menuBtn'); if(mb) mb.setAttribute('aria-expanded','true');
+      var dr=document.getElementById('drawer'); if(dr) dr.setAttribute('aria-hidden','false');
+    }
+    if(hero && fine){
+      var cur=document.createElement('div'); cur.id='tamara-cursor'; document.body.appendChild(cur);
+      hero.addEventListener('mouseenter',function(){ cur.style.display='block'; document.body.style.cursor='none'; });
+      hero.addEventListener('mouseleave',function(){ cur.style.display='none'; document.body.style.cursor=''; });
+      document.addEventListener('mousemove',function(e){ cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px'; });
+
+      var eyes=document.createElement('div'); eyes.id='peering-eyes';
+      eyes.setAttribute('role','button'); eyes.setAttribute('aria-label','Open menu'); eyes.tabIndex=0;
+      document.body.appendChild(eyes);
+      var io=new IntersectionObserver(function(es){ eyes.classList.toggle('show', !es[0].isIntersecting); },{threshold:0.05});
+      io.observe(hero);
+      eyes.addEventListener('mouseenter',openDrawer);
+      eyes.addEventListener('click',openDrawer);
+      eyes.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openDrawer(); } });
+    }
   })();
 </script>
 </body>
