@@ -13,7 +13,7 @@
     --bg:#F4EEE2; --ink:#1A1613; --paper:#FFFDF8; --red:#ED3A24;
     --pink:#FF4D9D; --blue:#2F6BFF; --green:#11B981; --coral:#FF7A3D;
     --purple:#7C4DFF; --yellow:#FFC835; --lime:#C2F23D; --muted:#6E665B;
-    --shadow:6px 6px 0 var(--ink); --shadow-sm:4px 4px 0 var(--ink); --maxw:1180px;
+    --shadow:6px 6px 0 var(--ink); --shadow-sm:4px 4px 0 var(--ink); --maxw:1180px; --nav-height:66px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -66,7 +66,7 @@
   .bar i{display:block;height:100%}
   .hero-card .note{margin-top:6px;font-size:0.82rem;color:var(--muted)}
 
-  section{padding:62px 0;border-top:2px solid var(--ink)}
+  section{padding:62px 0;border-top:2px solid var(--ink);scroll-margin-top:var(--nav-height,66px)}
   .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;flex-wrap:wrap;margin-bottom:34px}
   .sec-head .tag{font-weight:700;font-size:0.76rem;text-transform:uppercase;letter-spacing:0.16em;color:var(--red);margin-bottom:10px}
   .sec-head h2{font-size:clamp(2.1rem,5.2vw,3.6rem)}
@@ -348,7 +348,7 @@
 <nav>
   <div class="wrap">
     <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span class="menu-bars"><span></span><span></span><span></span></span> Menu</button>
-    <a class="logo" href="index.html" style="text-decoration:none"><span class="dot"></span> Tamara Richards <span class="chip">(almost)CEO</span></a>
+    <a class="logo" href="index.html" style="text-decoration:none"><span class="dot"></span> Tamara Richards <span class="chip">The (almost) CEO</span></a>
     <a class="cta navcta" href="contact.html">Work with me</a>
   </div>
 </nav>
@@ -419,8 +419,8 @@
   </div>
   <div class="f-mark" aria-hidden="true">
     <div class="row">
-      <span class="fill">Tamara Richards</span><span>✦</span><span>(almost)CEO</span><span>✦</span>
-      <span class="fill">Tamara Richards</span><span>✦</span><span>(almost)CEO</span><span>✦</span>
+      <span class="fill">Tamara Richards</span><span>✦</span><span>The (almost) CEO</span><span>✦</span>
+      <span class="fill">Tamara Richards</span><span>✦</span><span>The (almost) CEO</span><span>✦</span>
     </div>
   </div>
   <div class="wrap">

@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Tamara Richards — (almost)CEO · Ideas, shipped with AI</title>
-<meta name="description" content="Tamara Richards — (almost)CEO. Opera singer turned solutions engineer turned AI power-user: who I am and a preview of the apps and passion projects I ship with AI." />
+<title>Tamara Richards, The (almost) CEO · Ideas, shipped with AI</title>
+<meta name="description" content="Tamara Richards, The (almost) CEO. Opera singer turned solutions engineer turned AI power-user: who I am and a preview of the apps and passion projects I ship with AI." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -66,7 +66,7 @@
   .bar i{display:block;height:100%}
   .hero-card .note{margin-top:6px;font-size:0.82rem;color:var(--muted)}
 
-  section{padding:62px 0;border-top:2px solid var(--ink)}
+  section{padding:62px 0;border-top:2px solid var(--ink);scroll-margin-top:var(--nav-height,66px)}
   .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;flex-wrap:wrap;margin-bottom:34px}
   .sec-head .tag{font-weight:700;font-size:0.76rem;text-transform:uppercase;letter-spacing:0.16em;color:var(--red);margin-bottom:10px}
   .sec-head h2{font-size:clamp(2.1rem,5.2vw,3.6rem)}
@@ -411,6 +411,36 @@
   .snap-section{min-height:100svh;scroll-margin-top:var(--nav-height,66px);display:grid;align-items:center;padding-block:clamp(48px,8vh,92px)}
   footer{overflow:hidden}
   .f-mark span{font-size:clamp(3rem,10vw,9rem)}
+  /* About copy emphasis (new bio) */
+  .ab-turn{font-size:1.25rem}
+  .ab-turn .serif{color:var(--red)}
+  .ab-welcome{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:1.2rem;letter-spacing:-0.01em}
+  @media(max-width:600px){.ab-extra{display:none}}
+
+  /* ===== theme-park brain motion (CSS only) ===== */
+  /* closed head settles in with a tiny overshoot */
+  .brain-stack{animation:brainSettle 1.1s cubic-bezier(.2,.9,.25,1.2) both}
+  @keyframes brainSettle{0%{opacity:0;transform:translateY(-30px) scale(1.09)}68%{opacity:1;transform:translateY(4px) scale(.99)}100%{transform:none}}
+  /* lid / ride-entrance opening: the open head overshoots as it appears */
+  .brain-figure.is-open .brain-img.open,.brain-figure:hover .brain-img.open,.brain-figure:focus-within .brain-img.open{animation:lidOpen .55s cubic-bezier(.2,1.5,.4,1) both, faceGif 2.6s .55s ease-in-out infinite}
+  @keyframes lidOpen{0%{transform:scale(.94) translateY(7px)}62%{transform:scale(1.03) translateY(-3px)}100%{transform:none}}
+  /* sparkle accents twinkle in when the brain opens */
+  .brain-stack::before,.brain-stack::after{position:absolute;z-index:6;pointer-events:none;font-weight:800;opacity:0;transition:opacity .3s ease;-webkit-text-stroke:1.5px var(--ink)}
+  .brain-stack::before{content:"✦";top:3%;right:7%;font-size:27px;color:var(--yellow)}
+  .brain-stack::after{content:"✦";top:33%;left:3%;font-size:18px;color:var(--lime)}
+  .brain-figure.is-open .brain-stack::before,.brain-figure:hover .brain-stack::before,.brain-figure:focus-within .brain-stack::before{opacity:1;animation:twinkle 1.5s ease-in-out infinite}
+  .brain-figure.is-open .brain-stack::after,.brain-figure:hover .brain-stack::after,.brain-figure:focus-within .brain-stack::after{opacity:1;animation:twinkle 1.8s .2s ease-in-out infinite}
+  @keyframes twinkle{0%,100%{transform:scale(.7) rotate(-8deg)}50%{transform:scale(1.15) rotate(12deg)}}
+  /* thought tabs: signpost pin + "light up" as they pop */
+  .pit::before{content:"";position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:8px;height:8px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 2px var(--bg)}
+  .brain-figure.is-open .pit,.brain-figure:hover .pit,.brain-figure:focus-within .pit{animation:pitWiggle 1.6s ease-in-out infinite, pitGlow .7s ease both}
+  @keyframes pitGlow{0%{box-shadow:3px 3px 0 var(--ink)}40%{box-shadow:3px 3px 0 var(--ink),0 0 13px 3px #c2f23dcc}100%{box-shadow:3px 3px 0 var(--ink)}}
+  @media(prefers-reduced-motion:reduce){
+    .brain-stack{animation:none}
+    .brain-figure.is-open .brain-img.open,.brain-figure:hover .brain-img.open,.brain-figure:focus-within .brain-img.open{animation:none}
+    .brain-stack::before,.brain-stack::after{display:none}
+    .brain-figure.is-open .pit,.brain-figure:hover .pit,.brain-figure:focus-within .pit{animation:none}
+  }
   /* 4b — fixed "open me" drawer tab (replaces the peering-eyes trigger) */
   #drawerTab{position:fixed;left:0;top:50%;z-index:110;writing-mode:vertical-rl;transform:translateY(-50%);
     background:var(--ink);color:var(--bg);border:2px solid var(--ink);border-left:none;border-radius:0 12px 12px 0;
@@ -433,7 +463,7 @@
 <nav>
   <div class="wrap">
     <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span class="menu-bars"><span></span><span></span><span></span></span> Menu</button>
-    <a class="logo" href="index.html" style="text-decoration:none"><span class="dot"></span> Tamara Richards <span class="chip">(almost)CEO</span></a>
+    <a class="logo" href="index.html" style="text-decoration:none"><span class="dot"></span> Tamara Richards <span class="chip">The (almost) CEO</span></a>
     <a class="cta navcta" href="contact.html">Work with me</a>
   </div>
 </nav>
@@ -479,7 +509,7 @@
       <figcaption class="brain-hint">Hover my brain ✦ pick a thought</figcaption>
     </figure>
     <div class="hero-lead reveal">
-      <span class="eyebrow">● Tamara Richards · (almost)CEO</span>
+      <span class="eyebrow">● Tamara Richards, The (almost) CEO</span>
       <h1 class="title">I build the idea that <span class="red">wins</span> the <span class="mark">day.</span></h1>
       <p class="lede">My brain runs on a hundred open tabs at once — and <span class="serif">AI is what finally closes the gap</span> between a 2 a.m. idea and a thing that actually works.</p>
       <div class="cta-row">
@@ -500,7 +530,7 @@
   <div class="wrap">
     <div class="ab-top reveal">
       <div class="tag">About</div>
-      <h2 class="ab-h">Concept queen,<br/><span class="serif">(almost)CEO.</span></h2>
+      <h2 class="ab-h">Concept queen,<br/><span class="serif">The (almost) CEO.</span></h2>
       <p class="ab-sub">Opera singer → solutions engineer → AI (ab)user. <em>(jk. I say please and thank you.)</em></p>
     </div>
     <div class="ab-grid">
@@ -508,7 +538,7 @@
       <div class="ab-portrait reveal">
         <img src="assets/tamara.gif" alt="Tamara Richards — the many faces of an idea machine" loading="lazy" />
         <span class="ab-sticker s1">the many faces of an idea machine ✦</span>
-        <span class="ab-sticker s2">(almost)CEO</span>
+        <span class="ab-sticker s2">The (almost) CEO</span>
       </div>
       <div class="ab-stats reveal">
         <h3>On any given day…</h3>
@@ -519,10 +549,12 @@
       </div>
       </div>
       <div class="ab-bio reveal">
-        <p>I'm the <b>(almost)CEO of a million startups I never started</b> — the one who turns a 2 a.m. "wait, why doesn't this exist?" into a real idea, a process, and a plan with teeth.</p>
-        <p><b>What I'm great at:</b> the spark <em>and</em> the scaffolding. <b>What I'm looking for:</b> the people who make it real, so a few of these babies actually ship (and yes — let's monetize them).</p>
-        <div class="lookrow"><span class="pill">engineers</span><span class="pill">designers</span><span class="pill">angel investors</span><span class="pill">fellow concept-chasers</span></div>
-        <p>And the planning lift? My team can do it for <em>you</em>, too — it's me, <span class="serif">Claude(tte)</span> &amp; <span class="serif">Cha(d)t</span>, on consult.</p>
+        <p>I'm an opera singer turned Solutions Engineer, professional tinkerer, and mom of two: one human child and one fur child with main-character energy.</p>
+        <p class="ab-extra">I've always had ideas. A lot of them. App ideas, story ideas, business ideas, tools-I-wish-existed ideas. For years, most of them stayed exactly where they started: in my notes app, in voice memos, in late-night "what if…" spirals, because I didn't know how to build them or who to ask.</p>
+        <p class="ab-turn"><span class="serif">Then AI changed the shape of the room.</span></p>
+        <p>It didn't magically turn me into an engineer overnight. It did something more interesting: it gave me a way to prototype, test, explain, organize, and build enough of the thing to stand in the room with people who speak the technical languages. AI does not replace a real team, real craft, or real expertise. But it does let people like me bring clearer ideas to the table, create agents, build workflows, test products, and turn dreams into something with buttons.</p>
+        <p>This portfolio is a tour of my brain: the apps, experiments, stories, systems, and prototypes I've built by pairing AI with taste, curiosity, strategy, and a refusal to let good ideas rot in a notebook.</p>
+        <p class="ab-welcome"><b>Welcome to my brain. Enter at your own risk.</b></p>
       </div>
     </div>
   </div>
@@ -593,8 +625,8 @@
   </div>
   <div class="f-mark" aria-hidden="true">
     <div class="row">
-      <span class="fill">Tamara Richards</span><span>✦</span><span>(almost)CEO</span><span>✦</span>
-      <span class="fill">Tamara Richards</span><span>✦</span><span>(almost)CEO</span><span>✦</span>
+      <span class="fill">Tamara Richards</span><span>✦</span><span>The (almost) CEO</span><span>✦</span>
+      <span class="fill">Tamara Richards</span><span>✦</span><span>The (almost) CEO</span><span>✦</span>
     </div>
   </div>
   <div class="wrap">
@@ -694,19 +726,7 @@
   })();
 </script>
 <script>
-  // Brain hero: tap/click opens it on touch devices (hover handles desktop)
-  (function(){
-    var fig=document.querySelector('.brain-figure');
-    if(!fig) return;
-    fig.addEventListener('click',function(e){
-      if(e.target.closest('.pit')) return;   // let post-it links navigate
-      e.preventDefault();
-      fig.classList.toggle('is-open');
-    });
-  })();
-</script>
-<script>
-  /* Custom hero cursor + "open me" drawer tab + sequential, scroll-triggered brain open */
+  /* Custom hero cursor + "open me" drawer tab + brain open/close behavior */
   (function(){
     var fine=window.matchMedia('(hover:hover) and (pointer:fine)').matches;
     var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -728,21 +748,34 @@
       tab.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openIt(); } });
     }
 
-    // Brain auto-opens once when the hero is meaningfully in view — sequential, after the head settles.
-    // (Hover, focus, and tap already open it via CSS + the existing click handler.)
+    // ===== Brain: single source of truth (no duplicate listeners) =====
+    // Hover/focus open temporarily (CSS). Click/tap and Enter/Space PIN it open. The scroll
+    // "welcome" opens it briefly, then releases — so it is never stuck open after the intro.
     var fig=document.querySelector('.brain-figure');
-    if(fig && !reduce && 'IntersectionObserver' in window){
-      var opened=false;
-      var bo=new IntersectionObserver(function(es){
-        es.forEach(function(en){
-          if(!opened && en.isIntersecting && en.intersectionRatio>=0.5){
-            opened=true;
-            setTimeout(function(){ fig.classList.add('is-open'); }, 700);
-            bo.disconnect();
-          }
-        });
-      },{threshold:[0,0.5,1]});
-      bo.observe(fig);
+    if(fig){
+      var pinned=false;
+      var setOpen=function(on){ fig.classList.toggle('is-open', on); };
+      fig.addEventListener('click',function(e){
+        if(e.target.closest('.pit')) return;          // let post-it links navigate
+        e.preventDefault(); pinned=!pinned; setOpen(pinned);
+      });
+      fig.setAttribute('tabindex','0');
+      fig.addEventListener('keydown',function(e){
+        if((e.key==='Enter'||e.key===' ') && !e.target.closest('.pit')){ e.preventDefault(); pinned=!pinned; setOpen(pinned); }
+      });
+      if(!reduce && 'IntersectionObserver' in window){
+        var played=false;
+        var bo=new IntersectionObserver(function(es){
+          es.forEach(function(en){
+            if(!played && en.isIntersecting && en.intersectionRatio>=0.5){
+              played=true; bo.disconnect();
+              setTimeout(function(){ setOpen(true); }, 550);                 // pause, then the lid opens
+              setTimeout(function(){ if(!pinned) setOpen(false); }, 2700);   // release back to rest
+            }
+          });
+        },{threshold:[0,0.5,1]});
+        bo.observe(fig);
+      }
     }
   })();
 </script>
