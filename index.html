@@ -383,15 +383,15 @@
 <style>
   /* ===== UX overrides: full-viewport hero, custom cursor, peering eyes, glass nav ===== */
   /* 1 + 5 — hero fills the viewport (minus nav), content centered */
-  .hero.hero-centered{min-height:calc(100vh - 66px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:14px 0 24px}
+  .hero.hero-centered{min-height:calc(100vh - 66px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:8px 0 16px}
   .hero-centered .wrap{display:flex;flex-direction:column;align-items:center;width:100%}
-  .hero-centered .title{margin:6px 0 12px}
-  .hero-centered .lede{margin:0 auto 4px}
-  .hero-centered .brain-figure{width:auto;max-width:100%;margin:6px auto 2px}
-  .hero-centered .brain-stack{padding-top:0;aspect-ratio:928/1152;height:clamp(230px,44vh,560px);width:auto;max-width:100%}
-  .hero-centered .brain-hint{margin-top:6px}
-  .hero .marquee{width:100%;margin-top:10px;border-top:2px solid var(--ink)}
-  .hero-centered .cta-row{margin-top:16px}
+  .hero-centered .title{font-size:clamp(2.1rem,4.6vw,4.4rem);line-height:1.03;margin:0 0 10px}
+  .hero-centered .lede{margin:0 auto 2px}
+  .hero-centered .brain-figure{width:auto;max-width:100%;margin:2px auto 0}
+  .hero-centered .brain-stack{padding-top:0;aspect-ratio:928/1152;height:clamp(220px,38vh,480px);width:auto;max-width:100%}
+  .hero-centered .brain-hint{margin-top:4px}
+  .hero .marquee{width:100%;margin-top:8px;border-top:2px solid var(--ink)}
+  .hero-centered .cta-row{margin-top:12px}
   /* 4 — sticky glass nav, above content (but below the drawer) */
   nav{z-index:100;background:rgba(244,238,226,0.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
   /* 6 — left drawer: rounded right edge, stacked above the nav when open */
