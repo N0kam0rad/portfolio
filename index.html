@@ -13,7 +13,7 @@
     --bg:#F4EEE2; --ink:#1A1613; --paper:#FFFDF8; --red:#ED3A24;
     --pink:#FF4D9D; --blue:#2F6BFF; --green:#11B981; --coral:#FF7A3D;
     --purple:#7C4DFF; --yellow:#FFC835; --lime:#C2F23D; --muted:#6E665B;
-    --shadow:6px 6px 0 var(--ink); --shadow-sm:4px 4px 0 var(--ink); --maxw:1180px;
+    --shadow:6px 6px 0 var(--ink); --shadow-sm:4px 4px 0 var(--ink); --maxw:1180px; --nav-height:66px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -381,33 +381,48 @@
   }
 </style>
 <style>
-  /* ===== UX overrides: full-viewport hero, custom cursor, peering eyes, glass nav ===== */
-  /* 1 + 5 — hero fills the viewport (minus nav), content centered */
-  .hero.hero-centered{min-height:calc(100vh - 66px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:8px 0 16px}
-  .hero-centered .wrap{display:flex;flex-direction:column;align-items:center;width:100%}
-  .hero-centered .title{font-size:clamp(2.1rem,4.6vw,4.4rem);line-height:1.03;margin:0 0 10px}
-  .hero-centered .lede{margin:0 auto 2px}
-  .hero-centered .brain-figure{width:auto;max-width:100%;margin:2px auto 0}
-  .hero-centered .brain-stack{padding-top:0;aspect-ratio:928/1152;height:clamp(220px,38vh,480px);width:auto;max-width:100%}
-  .hero-centered .brain-hint{margin-top:4px}
-  .hero .marquee{width:100%;margin-top:8px;border-top:2px solid var(--ink)}
-  .hero-centered .cta-row{margin-top:12px}
-  /* 4 — sticky glass nav, above content (but below the drawer) */
+  /* ===== UX v2 — image-first two-column hero, snap sections, "open me" drawer tab ===== */
+  /* 1 — hero fills the viewport (minus accent bar + nav); image-first two columns */
+  .hero.hero-centered{min-height:calc(100svh - var(--nav-height,66px) - 12px);display:flex;flex-direction:column;justify-content:center;text-align:left;padding:clamp(8px,2.5vh,24px) 0 0}
+  .hero-centered .wrap{display:grid;grid-template-columns:1.04fr 0.96fr;gap:clamp(22px,4vw,54px);align-items:center;width:100%}
+  .hero-centered .hero-lead{max-width:none}
+  .hero-centered .title{font-size:clamp(2.3rem,4.4vw,4.4rem);line-height:1.02;margin:0 0 14px}
+  .hero-centered .lede{margin:0;max-width:46ch;font-size:clamp(1rem,1.35vw,1.2rem)}
+  .hero-centered .cta-row{justify-content:flex-start;margin-top:22px}
+  .hero-centered .brain-figure{width:100%;max-width:none;margin:0}
+  .hero-centered .brain-stack{padding-top:0;aspect-ratio:928/1152;width:auto;height:min(70svh,620px);max-width:100%;margin:0 auto}
+  .hero-centered .brain-hint{margin-top:6px;text-align:center}
+  .hero .marquee{width:100%;margin-top:clamp(14px,3vh,28px);border-top:2px solid var(--ink)}
+  @media(max-width:880px){
+    .hero.hero-centered{text-align:center}
+    .hero-centered .wrap{grid-template-columns:1fr;gap:16px;justify-items:center}
+    .hero-centered .lede{margin:0 auto;max-width:54ch}
+    .hero-centered .cta-row{justify-content:center}
+    .hero-centered .brain-stack{height:min(46svh,420px)}
+  }
+  /* 4 — sticky glass nav (above content, below the drawer) */
   nav{z-index:100;background:rgba(244,238,226,0.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-  /* 6 — left drawer: rounded right edge, stacked above the nav when open */
+  /* 6 — left drawer */
   .drawer{border-radius:0 16px 16px 0;z-index:130}
   .drawer-overlay{z-index:120}
-  /* 5 — full-viewport sections, footer wordmark contained */
-  #about.about-yellow{min-height:100vh;padding:80px 0}
-  #work{padding-top:80px}
+  /* 3 — snap/screen sections: a complete first frame on landing where content allows */
+  .snap-section{min-height:100svh;scroll-margin-top:var(--nav-height,66px);display:grid;align-items:center;padding-block:clamp(48px,8vh,92px)}
   footer{overflow:hidden}
   .f-mark span{font-size:clamp(3rem,10vw,9rem)}
-  /* 2 — custom Tamara-head cursor (hero only) */
-  #tamara-cursor{position:fixed;width:60px;height:60px;border-radius:50%;background:url('assets/brain-closed.png') center/cover;pointer-events:none;z-index:9999;display:none;transform:translate(-50%,-50%);transition:opacity .15s}
-  /* 3 — peering eyes (slide in from the left after the hero exits) */
-  #peering-eyes{position:fixed;left:0;top:50%;z-index:85;width:62px;height:56px;overflow:hidden;border-radius:0 40px 40px 0;background:url('assets/brain-closed.png') center 28%/92px auto no-repeat;cursor:pointer;transform:translateY(-50%) translateX(-100%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);box-shadow:4px 0 12px rgba(0,0,0,.15)}
-  #peering-eyes.show{transform:translateY(-50%) translateX(0)}
-  @media (hover:none),(max-width:760px){#tamara-cursor,#peering-eyes{display:none!important}}
+  /* 4b — fixed "open me" drawer tab (replaces the peering-eyes trigger) */
+  #drawerTab{position:fixed;left:0;top:50%;z-index:110;writing-mode:vertical-rl;transform:translateY(-50%);
+    background:var(--ink);color:var(--bg);border:2px solid var(--ink);border-left:none;border-radius:0 12px 12px 0;
+    padding:18px 9px;font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:0.82rem;
+    letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;box-shadow:3px 3px 0 rgba(26,22,19,.22);
+    transition:transform .25s cubic-bezier(.2,.8,.2,1),background .2s ease}
+  #drawerTab:hover,#drawerTab:focus-visible{transform:translateY(-50%) translateX(6px);background:var(--red)}
+  #drawerTab:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
+  body.drawer-open #drawerTab{transform:translateY(-50%) translateX(-120%)}
+  @media(max-width:560px){#drawerTab{font-size:0.72rem;padding:14px 7px}}
+  @media(prefers-reduced-motion:reduce){#drawerTab{transition:none}}
+  /* custom Tamara-head cursor (hero only; off on touch) */
+  #tamara-cursor{position:fixed;width:58px;height:58px;border-radius:50%;background:url('assets/brain-closed.png') center/cover;pointer-events:none;z-index:9999;display:none;transform:translate(-50%,-50%);transition:opacity .15s}
+  @media (hover:none),(max-width:760px){#tamara-cursor{display:none!important}}
 </style>
 </head>
 <body>
@@ -443,14 +458,13 @@
   </div>
 </aside>
 
+<button id="drawerTab" type="button" aria-label="Open menu" aria-controls="drawer">open me</button>
+
 <header class="hero hero-centered">
   <div class="wrap">
-    <div class="hero-lead reveal">
-      <span class="eyebrow">● Tamara Richards · (almost)CEO</span>
-      <h1 class="title">I build the idea that <span class="red">wins</span> the <span class="mark">day.</span></h1>
-      <p class="lede">My brain runs on a hundred open tabs at once — and <span class="serif">AI is what finally closes the gap</span> between a 2 a.m. idea and a thing that actually works.</p>
-    </div>
-    <figure class="brain-figure" aria-label="Tamara's brain — hover to open it and pick a thought">
+    <!-- TODO: when ready, swap to assets/brain-closed-forward.png (eyes forward at rest)
+         and assets/brain-open-up.png (eyes up when open). Wired to brain-closed/open.png for now. -->
+    <figure class="brain-figure" aria-label="Tamara's brain — hover, focus, tap, or scroll to open it and pick a thought">
       <div class="brain-stack">
         <img class="brain-img closed" src="assets/brain-closed.png" alt="Tamara Richards, smiling" />
         <img class="brain-img open" src="assets/brain-open.png" alt="" aria-hidden="true" />
@@ -462,20 +476,25 @@
       </div>
       <figcaption class="brain-hint">Hover my brain ✦ pick a thought</figcaption>
     </figure>
-    <div class="marquee" aria-hidden="true">
-      <div class="track">
-        <b>ALWAYS SHIPPING</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>A FRAGRANCE BRAIN</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
-        <b>ALWAYS SHIPPING</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>A FRAGRANCE BRAIN</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
+    <div class="hero-lead reveal">
+      <span class="eyebrow">● Tamara Richards · (almost)CEO</span>
+      <h1 class="title">I build the idea that <span class="red">wins</span> the <span class="mark">day.</span></h1>
+      <p class="lede">My brain runs on a hundred open tabs at once — and <span class="serif">AI is what finally closes the gap</span> between a 2 a.m. idea and a thing that actually works.</p>
+      <div class="cta-row">
+        <a class="btn red" href="portfolio.html">See the apps</a>
+        <a class="btn" href="blog.html">Read the build log</a>
       </div>
     </div>
-    <div class="cta-row">
-      <a class="btn red" href="portfolio.html">See the apps</a>
-      <a class="btn" href="blog.html">Read the build log</a>
+  </div>
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <b>ALWAYS SHIPPING</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>A FRAGRANCE BRAIN</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
+      <b>ALWAYS SHIPPING</b><span class="star">✦</span><b>A CLAYMATION SISTER COMEDY</b><span class="star">✦</span><b>A FRAGRANCE BRAIN</b><span class="star">✦</span><b>SHIPPED WITH AI</b><span class="star">✦</span>
     </div>
   </div>
 </header>
 
-<section id="about" class="about-yellow">
+<section id="about" class="about-yellow snap-section">
   <div class="wrap">
     <div class="ab-top reveal">
       <div class="tag">About</div>
@@ -507,7 +526,7 @@
   </div>
 </section>
 
-<section id="work">
+<section id="work" class="snap-section">
   <div class="wrap">
     <div class="sec-head reveal">
       <div><div class="tag">Selected work · preview</div><h2>A peek at the <span class="serif">portfolio.</span></h2></div>
@@ -685,29 +704,43 @@
   })();
 </script>
 <script>
-  /* UX overrides: custom cursor + peering-eyes drawer trigger (extends existing drawer) */
+  /* Custom hero cursor + "open me" drawer tab + sequential, scroll-triggered brain open */
   (function(){
-    var fine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
-    var hero = document.querySelector('.hero');
-    function openDrawer(){
-      document.body.classList.add('drawer-open');
-      var mb=document.getElementById('menuBtn'); if(mb) mb.setAttribute('aria-expanded','true');
-      var dr=document.getElementById('drawer'); if(dr) dr.setAttribute('aria-hidden','false');
-    }
+    var fine=window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+    var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    var hero=document.querySelector('.hero');
+
+    // Custom Tamara-head cursor on the hero (desktop pointers only)
     if(hero && fine){
       var cur=document.createElement('div'); cur.id='tamara-cursor'; document.body.appendChild(cur);
       hero.addEventListener('mouseenter',function(){ cur.style.display='block'; document.body.style.cursor='none'; });
       hero.addEventListener('mouseleave',function(){ cur.style.display='none'; document.body.style.cursor=''; });
       document.addEventListener('mousemove',function(e){ cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px'; });
+    }
 
-      var eyes=document.createElement('div'); eyes.id='peering-eyes';
-      eyes.setAttribute('role','button'); eyes.setAttribute('aria-label','Open menu'); eyes.tabIndex=0;
-      document.body.appendChild(eyes);
-      var io=new IntersectionObserver(function(es){ eyes.classList.toggle('show', !es[0].isIntersecting); },{threshold:0.05});
-      io.observe(hero);
-      eyes.addEventListener('mouseenter',openDrawer);
-      eyes.addEventListener('click',openDrawer);
-      eyes.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openDrawer(); } });
+    // "open me" tab opens the existing drawer (reuses the Menu button's toggle)
+    var menuBtn=document.getElementById('menuBtn'), tab=document.getElementById('drawerTab');
+    if(tab && menuBtn){
+      var openIt=function(){ if(!document.body.classList.contains('drawer-open')) menuBtn.click(); };
+      tab.addEventListener('click',openIt);
+      tab.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openIt(); } });
+    }
+
+    // Brain auto-opens once when the hero is meaningfully in view — sequential, after the head settles.
+    // (Hover, focus, and tap already open it via CSS + the existing click handler.)
+    var fig=document.querySelector('.brain-figure');
+    if(fig && !reduce && 'IntersectionObserver' in window){
+      var opened=false;
+      var bo=new IntersectionObserver(function(es){
+        es.forEach(function(en){
+          if(!opened && en.isIntersecting && en.intersectionRatio>=0.5){
+            opened=true;
+            setTimeout(function(){ fig.classList.add('is-open'); }, 700);
+            bo.disconnect();
+          }
+        });
+      },{threshold:[0,0.5,1]});
+      bo.observe(fig);
     }
   })();
 </script>
