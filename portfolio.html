@@ -102,6 +102,9 @@
   .proj.coral .thumb.ph{background:repeating-linear-gradient(45deg,#ff7a3d14 0 14px,transparent 14px 28px)}
   .proj.purple .thumb.ph{background:repeating-linear-gradient(45deg,#7c4dff14 0 14px,transparent 14px 28px)}
   .thumb .peek{position:absolute;bottom:10px;left:10px;font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:var(--ink);color:var(--bg);padding:4px 9px;border-radius:999px}
+  /* live site preview embedded in a card thumb (scaled, non-interactive) */
+  .thumb-embed{background:var(--bg);position:relative}
+  .thumb-embed .site-preview{position:absolute;top:0;left:0;width:400%;height:400%;border:0;transform:scale(.25);transform-origin:top left;pointer-events:none}
   .proj .pbody{padding:22px 24px;display:flex;flex-direction:column;gap:13px;flex:1}
   .proj .one{font-size:1.05rem;font-weight:600}
   .proj .prob{font-size:0.92rem;color:var(--muted)}.proj .prob b{color:var(--ink)}
@@ -388,7 +391,7 @@
 
       <article class="proj pink reveal">
         <div class="top"><h3>BonnetNoona</h3><span class="status">In production</span></div>
-        <div class="thumb"><img src="assets/hero.jpg" alt="BonnetNoona claymation cast" /><span class="peek">▶ Preview</span></div>
+        <div class="thumb thumb-embed"><iframe class="site-preview" src="https://bonnetnoona-pitch.tiiny.site/" title="BonnetNoona pitch deck preview" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="peek">▶ Pitch preview</span></div>
         <div class="pbody">
           <div class="one">A faceless claymation comedy about sisters trying (and failing) to go viral.</div>
           <div class="prob"><b>The problem:</b> a whole world of characters in my head, no studio. AI let me direct it anyway, on-model across hundreds of shots.</div>
