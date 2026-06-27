@@ -334,7 +334,7 @@
   .hero-centered .cta-row{justify-content:center;margin-top:26px}
   .hero-centered .title{line-height:1.08;margin:22px 0 20px}
   .hero-centered .mark{padding-top:.06em;padding-bottom:.06em}
-  .brain-figure{position:relative;margin:18px auto 2px;width:100%;max-width:640px}
+  .brain-figure{position:relative;margin:10px auto 2px;width:clamp(260px,54vw,880px);max-width:100%}
   .brain-stack{position:relative;width:100%;padding-top:124%;overflow:visible;
     animation:brainIn 1s cubic-bezier(.2,.8,.2,1) both}
   @keyframes brainIn{0%{opacity:0;transform:translateY(-22px) scale(1.07)}100%{opacity:1;transform:none}}
@@ -428,8 +428,8 @@
     </div>
     <figure class="brain-figure" aria-label="Tamara's brain — hover to open it and pick a thought">
       <div class="brain-stack">
-        <img class="brain-img closed" src="assets/brain-closed.jpg" alt="Tamara Richards, smiling" />
-        <img class="brain-img open" src="assets/brain-open.jpg" alt="" aria-hidden="true" />
+        <img class="brain-img closed" src="assets/brain-closed.png" alt="Tamara Richards, smiling" />
+        <img class="brain-img open" src="assets/brain-open.png" alt="" aria-hidden="true" />
         <a class="pit pit1" href="portfolio.html" style="--c:var(--pink)"><span class="pit-in">Portfolio</span><span class="pv">Apps shipped with AI</span></a>
         <a class="pit pit2" href="blog.html" style="--c:var(--blue);color:#fff"><span class="pit-in">Blog</span><span class="pv" style="color:#ffffffcc">How I built each one</span></a>
         <a class="pit pit3" href="tools.html" style="--c:var(--yellow)"><span class="pit-in">Tools</span><span class="pv">My AI stack</span></a>
