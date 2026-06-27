@@ -210,6 +210,8 @@
   .ab-sub em{font-style:italic;color:#7a6700}
   .ab-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:34px;align-items:center}
   @media(max-width:820px){.ab-grid{grid-template-columns:1fr;gap:44px}}
+  .ab-left{display:flex;flex-direction:column;gap:20px}
+  .ab-left .ab-portrait{margin:0 auto}
   .ab-portrait{position:relative;justify-self:center;max-width:380px;width:100%}
   .ab-portrait img{width:100%;aspect-ratio:4/5;object-fit:cover;border:3px solid var(--ink);border-radius:18px;box-shadow:12px 12px 0 var(--ink);transform:rotate(-2.5deg);display:block}
   .ab-sticker{position:absolute;font-family:"Bricolage Grotesque";font-weight:800;border:2px solid var(--ink);border-radius:999px;padding:8px 14px;box-shadow:var(--shadow-sm);white-space:nowrap}
@@ -453,12 +455,19 @@
       <p class="ab-sub">Opera singer → solutions engineer → AI (ab)user. <em>(jk. I say please and thank you.)</em></p>
     </div>
     <div class="ab-grid">
+      <div class="ab-left">
+      <div class="ab-portrait reveal">
+        <img src="assets/tamara.gif" alt="Tamara Richards — the many faces of an idea machine" loading="lazy" />
+        <span class="ab-sticker s1">the many faces of an idea machine ✦</span>
+        <span class="ab-sticker s2">(almost)CEO</span>
+      </div>
       <div class="ab-stats reveal">
         <h3>On any given day…</h3>
         <div class="meter-row">Ideas <div class="bar"><i style="width:100%;background:var(--red)"></i></div> ∞</div>
         <div class="meter-row">Hours <div class="bar"><i style="width:30%;background:var(--blue)"></i></div> few</div>
         <div class="meter-row">Shipped <div class="bar"><i style="width:60%;background:var(--green)"></i></div> 1/day</div>
         <p class="note">The constraint was never ideas. It was the distance between thinking it and building it.</p>
+      </div>
       </div>
       <div class="ab-bio reveal">
         <p>I'm the <b>(almost)CEO of a million startups I never started</b> — the one who turns a 2 a.m. "wait, why doesn't this exist?" into a real idea, a process, and a plan with teeth.</p>
