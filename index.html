@@ -395,10 +395,12 @@
   .hero .marquee{width:100%;margin-top:clamp(14px,3vh,28px);border-top:2px solid var(--ink)}
   @media(max-width:880px){
     .hero.hero-centered{text-align:center}
-    .hero-centered .wrap{grid-template-columns:1fr;gap:16px;justify-items:center}
+    .hero-centered .wrap{grid-template-columns:1fr;gap:12px;justify-items:center}
+    .hero-centered .title{font-size:clamp(2rem,8vw,3rem)}
     .hero-centered .lede{margin:0 auto;max-width:54ch}
     .hero-centered .cta-row{justify-content:center}
-    .hero-centered .brain-stack{height:min(46svh,420px)}
+    .hero-centered .brain-stack{height:min(38svh,340px)}
+    .hero .marquee{margin-top:12px}
   }
   /* 4 — sticky glass nav (above content, below the drawer) */
   nav{z-index:100;background:rgba(244,238,226,0.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
