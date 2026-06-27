@@ -370,7 +370,7 @@
   .brain-figure:hover .pit5,.brain-figure.is-open .pit5{animation-delay:.3s}
   @keyframes pitWiggle{0%,100%{rotate:-2deg}50%{rotate:2deg}}
   .pit:hover,.pit:focus-visible{animation:none!important;rotate:0deg;transition-delay:0s;transform:scale(1.13) translateY(-2px);z-index:6;
-    box-shadow:5px 6px 0 var(--ink), 0 0 0 3px var(--lime), 0 0 14px 2px #c2f23dcc;outline:none}
+    box-shadow:5px 6px 0 var(--ink), 0 0 0 3px var(--yellow), 0 0 16px 3px #ffcf5edd;outline:none}
   .pit:hover .pv,.pit:focus-visible .pv{max-width:180px;opacity:1}
   .brain-hint{margin-top:14px;display:inline-block;font-family:"Inter",sans-serif;font-weight:700;
     font-size:0.66rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);transition:opacity .3s ease}
@@ -433,10 +433,19 @@
   .brain-figure.is-open .brain-stack::before,.brain-figure:hover .brain-stack::before,.brain-figure:focus-within .brain-stack::before{opacity:.8;animation:twinkle 2.4s ease-in-out infinite}
   .brain-figure.is-open .brain-stack::after,.brain-figure:hover .brain-stack::after,.brain-figure:focus-within .brain-stack::after{opacity:.7;animation:twinkle 2.9s .3s ease-in-out infinite}
   @keyframes twinkle{0%,100%{transform:scale(.88) rotate(-4deg)}50%{transform:scale(1.06) rotate(5deg)}}
-  /* thought tabs: signpost pin + "light up" as they pop */
-  .pit::before{content:"";position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:8px;height:8px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 2px var(--bg)}
-  .brain-figure.is-open .pit,.brain-figure:hover .pit,.brain-figure:focus-within .pit{animation:pitWiggle 1.6s ease-in-out infinite, pitGlow .7s ease both}
-  @keyframes pitGlow{0%{box-shadow:3px 3px 0 var(--ink)}40%{box-shadow:3px 3px 0 var(--ink),0 0 13px 3px #c2f23dcc}100%{box-shadow:3px 3px 0 var(--ink)}}
+  /* thought tabs styled as illuminated theme-park signs */
+  .pit .pit-in{text-shadow:0 1px 0 rgba(255,255,255,.22)}
+  /* marquee bulbs: a warm row of dots along the top (::before) and bottom (::after) of each sign */
+  .pit::before,.pit::after{content:"";position:absolute;left:7px;right:7px;height:5px;pointer-events:none;
+    background:radial-gradient(circle, #fff4cf 0 1.7px, transparent 2.3px) left center/11px 5px repeat-x;
+    opacity:.35;transition:opacity .3s ease, filter .3s ease}
+  .pit::before{top:-3px}
+  .pit::after{bottom:-3px}
+  /* bulbs light up + the sign warms when the brain opens or a tab is hovered/focused */
+  .brain-figure.is-open .pit::before,.brain-figure:hover .pit::before,.brain-figure:focus-within .pit::before,
+  .brain-figure.is-open .pit::after,.brain-figure:hover .pit::after,.brain-figure:focus-within .pit::after{opacity:1;filter:drop-shadow(0 0 2.5px #ffd76e)}
+  .brain-figure.is-open .pit,.brain-figure:hover .pit,.brain-figure:focus-within .pit{animation:pitWiggle 1.6s ease-in-out infinite, pitGlow .8s ease both}
+  @keyframes pitGlow{0%{box-shadow:3px 3px 0 var(--ink)}45%{box-shadow:3px 3px 0 var(--ink),0 0 16px 4px #ffcf5ecc}100%{box-shadow:3px 3px 0 var(--ink),0 0 7px 1px #ffcf5e66}}
   @media(prefers-reduced-motion:reduce){
     .brain-stack{animation:none}
     .brain-figure.is-open .brain-img.open,.brain-figure:hover .brain-img.open,.brain-figure:focus-within .brain-img.open{animation:none}
@@ -496,8 +505,7 @@
 
 <header class="hero hero-centered">
   <div class="wrap">
-    <!-- TODO: when ready, swap to assets/brain-closed-forward.png (eyes forward at rest)
-         and assets/brain-open-up.png (eyes up when open). Wired to brain-closed/open.png for now. -->
+    <!-- brain-closed.png = eyes-forward (rest), brain-open.png = eyes-up (open) — matched cutout pair -->
     <figure class="brain-figure" aria-label="Tamara's brain — hover, focus, tap, or scroll to open it and pick a thought">
       <div class="brain-stack">
         <img class="brain-img closed" src="assets/brain-closed.png" alt="Tamara Richards, smiling" />
