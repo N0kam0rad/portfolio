@@ -3,6 +3,12 @@
 
 Version is generated from the latest commit SHA touching the project's main source/spec path.
 Last updated is generated from that same commit date.
+
+Status vocabulary is intentionally small and consistent across repos:
+- Done: usable/shipped enough to show as complete
+- In progress: actively building, beta, prototype, testing, or drafting
+- Planned: scoped but not started
+- Idea: early concept only
 """
 
 from __future__ import annotations
@@ -25,63 +31,63 @@ PROJECTS = [
         "name": "Aurë",
         "href": "specs/aure.html",
         "description": "Fragrance intelligence + scent wardrobe app",
-        "status": "Beta",
+        "status": "In progress",
         "path": "specs/aure.html",
     },
     {
         "name": "ACCORD",
         "href": "specs/accord.html",
         "description": "Weather-based perfume ritual automation",
-        "status": "In the lab",
+        "status": "In progress",
         "path": "specs/accord.html",
     },
     {
         "name": "BonnetNoona",
         "href": "posts/how-i-built-a-consistent-ai-cast.html",
         "description": "AI-directed claymation comedy series",
-        "status": "In production",
+        "status": "In progress",
         "path": "posts/how-i-built-a-consistent-ai-cast.html",
     },
     {
         "name": "AestheticSim",
         "href": "specs/aesthetic-sim.html",
         "description": "Facial simulation + treatment-planning platform",
-        "status": "Prototype",
+        "status": "In progress",
         "path": "specs/aesthetic-sim.html",
     },
     {
         "name": "Roommate Tracker",
         "href": "specs/roommate-tracker.html",
         "description": "Shared-rent and payment tracker",
-        "status": "Built",
+        "status": "Done",
         "path": "specs/roommate-tracker.html",
     },
     {
         "name": "My Plate Planner",
         "href": "specs/plate-planner.html",
         "description": "Diet-aware meal planner + grocery helper",
-        "status": "Built",
+        "status": "Done",
         "path": "specs/plate-planner.html",
     },
     {
         "name": "Interior Render Studio",
         "href": "specs/interior-render.html",
         "description": "AI room rendering and style exploration tool",
-        "status": "Prototype",
+        "status": "In progress",
         "path": "specs/interior-render.html",
     },
     {
         "name": "Kids’ Habit + Reward App",
         "href": "specs/aurelias-rituals.html",
         "description": "Routine, reward, and puzzle system for kids",
-        "status": "Built · testing",
+        "status": "Done",
         "path": "specs/aurelias-rituals.html",
     },
     {
         "name": "Helix7",
         "href": "specs/helix7.html",
         "description": "Voice-note-to-web-novel workflow",
-        "status": "Drafting",
+        "status": "In progress",
         "path": "specs/helix7.html",
     },
 ]
