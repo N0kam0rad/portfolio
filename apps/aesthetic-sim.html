@@ -23,8 +23,8 @@ tailwind.config = {
   },
 };
 </script>
-<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
@@ -678,7 +678,7 @@ const ClinicianApp = ({ db, onUpdateDb }) => {
       <div className="flex-grow overflow-hidden">
         {reviewTab==='board' && (
           <div className="h-full overflow-y-auto scrollbar-thin">
-            <ConsultationBoard client={client} plan={draft} db={db}/>
+            <ConsultationBoard client={client} plan={plan} db={db}/>
           </div>
         )}
         {reviewTab==='plan' && (
