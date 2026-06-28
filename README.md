@@ -44,6 +44,9 @@ The site is designed to show:
 
 ## Featured builds
 
+Version and last-updated values are maintained by GitHub Actions. Version is generated from the latest commit touching each project’s main spec, post, or source path.
+
+<!-- FEATURED_BUILDS:START -->
 <div align="center">
 
 <table>
@@ -52,58 +55,79 @@ The site is designed to show:
       <th align="left">Project</th>
       <th align="left">What it is</th>
       <th align="left">Status</th>
+      <th align="left">Version</th>
+      <th align="left">Last updated</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><strong>Aurë</strong></td>
+      <td><a href="specs/aure.html"><strong>Aurë</strong></a></td>
       <td>Fragrance intelligence + scent wardrobe app</td>
       <td>Beta</td>
+      <td><code>pending</code></td>
+      <td>pending</td>
     </tr>
     <tr>
-      <td><strong>ACCORD</strong></td>
+      <td><a href="specs/accord.html"><strong>ACCORD</strong></a></td>
       <td>Weather-based perfume ritual automation</td>
       <td>In the lab</td>
+      <td><code>pending</code></td>
+      <td>pending</td>
     </tr>
     <tr>
-      <td><strong>BonnetNoona</strong></td>
+      <td><a href="posts/how-i-built-a-consistent-ai-cast.html"><strong>BonnetNoona</strong></a></td>
       <td>AI-directed claymation comedy series</td>
       <td>In production</td>
+      <td><code>pending</code></td>
+      <td>pending</td>
     </tr>
     <tr>
-      <td><strong>AestheticSim</strong></td>
+      <td><a href="specs/aesthetic-sim.html"><strong>AestheticSim</strong></a></td>
       <td>Facial simulation + treatment-planning platform</td>
       <td>Prototype</td>
+      <td><code>pending</code></td>
+      <td>pending</td>
     </tr>
     <tr>
-      <td><strong>Roommate Tracker</strong></td>
+      <td><a href="specs/roommate-tracker.html"><strong>Roommate Tracker</strong></a></td>
       <td>Shared-rent and payment tracker</td>
       <td>Built</td>
+      <td><code>pending</code></td>
+      <td>pending</td>
     </tr>
     <tr>
-      <td><strong>My Plate Planner</strong></td>
+      <td><a href="specs/plate-planner.html"><strong>My Plate Planner</strong></a></td>
       <td>Diet-aware meal planner + grocery helper</td>
       <td>Built</td>
+      <td><code>pending</code></td>
+      <td>pending</td>
     </tr>
     <tr>
-      <td><strong>Interior Render Studio</strong></td>
+      <td><a href="specs/interior-render.html"><strong>Interior Render Studio</strong></a></td>
       <td>AI room rendering and style exploration tool</td>
       <td>Prototype</td>
+      <td><code>pending</code></td>
+      <td>pending</td>
     </tr>
     <tr>
-      <td><strong>Kids’ Habit + Reward App</strong></td>
+      <td><a href="specs/aurelias-rituals.html"><strong>Kids’ Habit + Reward App</strong></a></td>
       <td>Routine, reward, and puzzle system for kids</td>
       <td>Built · testing</td>
+      <td><code>pending</code></td>
+      <td>pending</td>
     </tr>
     <tr>
-      <td><strong>Helix7</strong></td>
+      <td><a href="specs/helix7.html"><strong>Helix7</strong></a></td>
       <td>Voice-note-to-web-novel workflow</td>
       <td>Drafting</td>
+      <td><code>pending</code></td>
+      <td>pending</td>
     </tr>
   </tbody>
 </table>
 
 </div>
+<!-- FEATURED_BUILDS:END -->
 
 ---
 
@@ -133,6 +157,8 @@ portfolio/
 ├── specs/              # product spec pages
 ├── posts/              # build-log articles
 ├── apps/               # lightweight runnable app references
+├── scripts/            # repo automation helpers
+├── .github/workflows/  # GitHub Actions automation
 ├── .nojekyll           # GitHub Pages helper
 └── README.md           # this file
 ```
