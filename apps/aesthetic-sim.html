@@ -217,7 +217,7 @@ const IntakeWizard = ({ clientName, onComplete }) => {
       <h2 className="text-2xl font-serif font-semibold text-stone-800 mb-2">Your aesthetic preference</h2>
       <p className="text-stone-500 mb-6 text-sm">This helps your provider calibrate the plan to your comfort zone.</p>
       <div className="space-y-3 mb-8">
-        {[['Very subtle','I want to look like myself, just more rested'],['Natural but noticeable','I want people to notice something changed, not what'],['Balanced optimization','I'm open to the full picture — provider guides me'],['Dramatic change','I want significant improvement — provider will discuss expectations']].map(([label,desc])=>(
+        {[['Very subtle','I want to look like myself, just more rested'],['Natural but noticeable','I want people to notice something changed, not what'],['Balanced optimization','Open to the full picture — provider guides the plan'],['Dramatic change','I want significant improvement — provider will discuss expectations']].map(([label,desc])=>(
           <button key={label} onClick={()=>set('aesthetic',label)}
             className={`w-full text-left p-4 rounded-2xl border-2 transition-all ${data.aesthetic===label?'border-stone-900 bg-stone-50':'border-stone-200 hover:border-stone-300'}`}>
             <p className={`font-semibold text-sm mb-0.5 ${data.aesthetic===label?'text-stone-900':'text-stone-700'}`}>{label}</p>
