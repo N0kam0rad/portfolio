@@ -1,0 +1,41 @@
+name: Update README metadata
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 9 * * *"
+  push:
+    branches:
+      - main
+    paths:
+      - "specs/**"
+      - "posts/**"
+      - "apps/**"
+      - "index.html"
+      - "scripts/update_readme_metadata.py"
+      - ".github/workflows/update-readme-metadata.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Update Featured builds table
+        run: python3 scripts/update_readme_metadata.py
+
+      - name: Commit README changes
+        run: |
+          if git diff --quiet README.md; then
+            echo "README.md is already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Update README project metadata"
+          git push
