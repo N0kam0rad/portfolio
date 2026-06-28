@@ -10,6 +10,14 @@ I turn fuzzy ideas, personal problems, voice notes, and “wait, this should exi
 [![GitHub Profile](https://img.shields.io/badge/GitHub-N0kam0rad-1A1613?style=for-the-badge&logo=github&logoColor=white)](https://github.com/N0kam0rad)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-2F6BFF?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/tamaralynnrichards/)
 
+<br/>
+
+[![Thesis](https://img.shields.io/badge/Thesis-Why%20it%20exists-ED3A24?style=for-the-badge)](#the-thesis)
+[![Status](https://img.shields.io/badge/Status-Vocabulary-FFC835?style=for-the-badge)](#status-vocabulary)
+[![Builds](https://img.shields.io/badge/Builds-Featured-11B981?style=for-the-badge)](#featured-builds)
+[![Colors](https://img.shields.io/badge/Colors-System-7C4DFF?style=for-the-badge)](#color-system)
+[![Structure](https://img.shields.io/badge/Repo-Structure-1A1613?style=for-the-badge)](#repo-structure)
+
 </div>
 
 ---
