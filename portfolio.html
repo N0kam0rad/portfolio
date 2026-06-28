@@ -91,6 +91,8 @@
   .proj.pink .top{background:var(--pink)}.proj.blue .top{background:var(--blue)}
   .proj.green .top{background:var(--green)}.proj.coral .top{background:var(--coral)}
   .proj.purple .top{background:var(--purple)}.proj.red .top{background:var(--red)}
+  .proj.silver .top{background:#1a1a2e}.proj.silver .lnk{color:#7c4dff}
+  .proj.silver .thumb.ph{background:repeating-linear-gradient(45deg,#7c4dff14 0 14px,transparent 14px 28px)}
   .proj .top h3{font-size:1.5rem}
   .status{font-family:"Inter";font-weight:700;font-size:0.64rem;text-transform:uppercase;letter-spacing:0.08em;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:4px 10px;white-space:nowrap}
   .thumb{aspect-ratio:16/10;overflow:hidden;border-bottom:2px solid var(--ink);background:#00000008;position:relative}
@@ -117,6 +119,11 @@
   .lock-btn{font-family:"Inter";font-weight:700;font-size:0.84rem;border:2px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:11px;padding:8px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;box-shadow:var(--shadow-sm);transition:transform .12s}
   .lock-btn:hover{transform:translate(2px,2px);box-shadow:none}
   .lock-btn.unlocked{background:var(--lime);color:var(--ink)}
+  .coming-soon-btn{font-family:"Inter";font-weight:700;font-size:0.84rem;border:2px solid var(--ink);background:var(--bg);color:var(--muted);border-radius:11px;padding:8px 14px;display:inline-flex;align-items:center;gap:7px;box-shadow:var(--shadow-sm);cursor:default;opacity:.7}
+  .thumb-helix{position:relative;display:grid;grid-template-columns:1fr 1fr;height:100%}
+  .thumb-helix img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+  .thumb-helix .overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,#0a0a1a88 100%)}
+  .thumb-helix .peek{position:absolute;bottom:10px;left:10px;z-index:2}
 
   /* WHAT'S COOKING */
   .cooking{background:var(--ink);color:var(--bg)}
@@ -452,6 +459,22 @@
           <div class="prob"><b>The problem:</b> the best ideas arrive out loud and vanish. AI transcribes, outlines, and drafts them into chapters.</div>
           <div class="builtwith"><span class="pill">Transcription</span><span class="pill">Claude</span><span class="pill">Outline → draft</span></div>
           <div class="pfoot"><a class="lnk" href="specs/helix7.html">Read the spec →</a><button class="lock-btn" data-app="Helix7" data-href="apps/helix7.html">🔒 Read a chapter</button></div>
+        </div>
+      </article>
+
+      <article class="proj silver reveal">
+        <div class="top"><h3>The Helix Class</h3><span class="status">Coming soon</span></div>
+        <div class="thumb thumb-helix">
+          <img src="assets/helix-class/serea-academy.png" alt="Serea Lucent — Helix Class character concept" />
+          <img src="assets/helix-class/caier-vale.png" alt="Caier Vale — Helix Class character concept" />
+          <div class="overlay"></div>
+          <span class="peek">✦ Webtoon</span>
+        </div>
+        <div class="pbody">
+          <div class="one">A vertical-scroll webtoon set inside a luxury biotech academy where the mirrors don't behave.</div>
+          <div class="prob"><b>The world:</b> Panuria Academy is pristine, chrome-edged, and inhumanly clean. Serea Lucent fits perfectly on paper — but not in reflection.</div>
+          <div class="builtwith"><span class="pill">Higgsfield</span><span class="pill">Runway</span><span class="pill">Claude</span><span class="pill">Webtoon</span></div>
+          <div class="pfoot"><span class="coming-soon-btn">⏳ Chapter 1 dropping soon</span></div>
         </div>
       </article>
 
