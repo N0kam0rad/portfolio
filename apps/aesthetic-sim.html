@@ -222,7 +222,7 @@ const StepDots = ({total, current}) => (
 // ─── INTAKE WIZARD ──────────────────────────────────────────────────────────────
 const IntakeWizard = ({ clientName, onComplete }) => {
   const [step, setStep] = useState(0);
-  const [data, setData] = useState({ goals:[], treatments:[], aesthetic:'', budget:'', timeline:'', downtime:'', glp1:false, weightLoss:false, flags:[] });
+  const [data, setData] = useState({ goals:[], treatments:[], aesthetic:'', budget:'', timeline:'', downtime:'', glp1:false, glp1Answer:'', weightLoss:false, flags:[], noFlags:false });
   const toggle = (key, val) => setData(p => ({ ...p, [key]: p[key].includes(val) ? p[key].filter(x=>x!==val) : [...p[key], val] }));
   const set = (key, val) => setData(p => ({...p, [key]:val}));
   const STEPS = 5;
@@ -235,9 +235,11 @@ const IntakeWizard = ({ clientName, onComplete }) => {
       <p className="text-sm font-medium text-zinc-700 mb-4">What brings you in today? <span className="text-zinc-400 font-normal">(select all that apply)</span></p>
       <div className="flex flex-wrap gap-2 mb-8">
         {GOALS.map(g=>(
-          <button key={g} onClick={()=>toggle('goals',g)}
+          <button key={g} onClick={()=>setData(p=>({...p, goals: p.goals.includes(g)?p.goals.filter(x=>x!==g):[...p.goals.filter(x=>x!=='Not sure yet'),g]}))}
             className={`px-4 py-2 rounded-full border text-sm font-medium transition-all ${data.goals.includes(g)?'bg-zinc-900 text-white border-zinc-900':'border-zinc-300 text-zinc-700 hover:border-zinc-500'}`}>{g}</button>
         ))}
+        <button onClick={()=>setData(p=>({...p, goals: p.goals.includes('Not sure yet')?[]:['Not sure yet']}))}
+          className={`px-4 py-2 rounded-full border border-dashed text-sm font-medium transition-all ${data.goals.includes('Not sure yet')?'bg-zinc-900 text-white border-zinc-900':'border-zinc-300 text-zinc-500 hover:border-zinc-500'}`}>Not sure yet — just exploring</button>
       </div>
       <button disabled={!data.goals.length} onClick={()=>setStep(1)}
         className="px-8 py-3.5 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition disabled:opacity-30 disabled:cursor-not-allowed">
@@ -251,7 +253,7 @@ const IntakeWizard = ({ clientName, onComplete }) => {
       <h2 className="text-2xl font-serif font-semibold text-zinc-800 mb-2">Your aesthetic preference</h2>
       <p className="text-zinc-500 mb-6 text-sm">This helps your provider calibrate the plan to your comfort zone.</p>
       <div className="space-y-3 mb-8">
-        {[['Very subtle','I want to look like myself, just more rested'],['Natural but noticeable','I want people to notice something changed, not what'],['Balanced optimization','Open to the full picture — provider guides the plan'],['Dramatic change','I want significant improvement — provider will discuss expectations']].map(([label,desc])=>(
+        {[['Very subtle','I want to look like myself, just more rested'],['Natural but noticeable','I want people to notice something changed, not what'],['Balanced optimization','Open to the full picture — provider guides the plan'],['Dramatic change','I want significant improvement — provider will discuss expectations'],['Not sure',"I don't know yet — I'd like my provider to guide me"]].map(([label,desc])=>(
           <button key={label} onClick={()=>set('aesthetic',label)}
             className={`w-full text-left p-4 rounded-2xl border-2 transition-all ${data.aesthetic===label?'border-zinc-900 bg-zinc-50':'border-zinc-200 hover:border-zinc-300'}`}>
             <p className={`font-semibold text-sm mb-0.5 ${data.aesthetic===label?'text-zinc-900':'text-zinc-700'}`}>{label}</p>
@@ -285,7 +287,7 @@ const IntakeWizard = ({ clientName, onComplete }) => {
       )}
       <div className="space-y-2 mb-6">
         {MED_FLAGS.map(f=>(
-          <button key={f} onClick={()=>toggle('flags',f)}
+          <button key={f} onClick={()=>{ setData(p=>({...p, noFlags:false, flags: p.flags.includes(f)?p.flags.filter(x=>x!==f):[...p.flags,f]})); }}
             className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all flex items-center gap-3 ${data.flags.includes(f)?'border-amber-400 bg-amber-50 text-amber-900':'border-zinc-200 text-zinc-700 hover:border-zinc-300'}`}>
             <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all ${data.flags.includes(f)?'border-amber-500 bg-amber-500':'border-zinc-300'}`}>
               {data.flags.includes(f)&&<Icon name="Check" size={12} className="text-white" strokeWidth={3}/>}
@@ -293,13 +295,20 @@ const IntakeWizard = ({ clientName, onComplete }) => {
             {f}
           </button>
         ))}
+        <button onClick={()=>setData(p=>({...p, flags:[], noFlags:!p.noFlags}))}
+          className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all flex items-center gap-3 ${data.noFlags?'border-zinc-800 bg-zinc-900 text-white':'border-zinc-200 text-zinc-700 hover:border-zinc-300'}`}>
+          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all ${data.noFlags?'border-white bg-white':'border-zinc-300'}`}>
+            {data.noFlags&&<Icon name="Check" size={12} className="text-zinc-900" strokeWidth={3}/>}
+          </div>
+          None of these apply / Not sure
+        </button>
       </div>
       <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200 mb-6">
         <p className="text-sm font-medium text-zinc-700 mb-3">Are you currently on a GLP-1 medication (Ozempic, Wegovy, etc.) or planning significant weight loss?</p>
         <div className="flex gap-3">
-          {['Yes','No'].map(v=>(
-            <button key={v} onClick={()=>{ set('glp1',v==='Yes'); set('weightLoss',v==='Yes'); }}
-              className={`flex-1 py-2.5 rounded-xl border text-sm font-medium transition-all ${(data.glp1&&v==='Yes')||(!data.glp1&&v==='No')?'border-zinc-900 bg-zinc-900 text-white':'border-zinc-200 text-zinc-700 hover:border-zinc-400'}`}>{v}</button>
+          {['Yes','No','Not sure'].map(v=>(
+            <button key={v} onClick={()=>{ setData(p=>({...p, glp1Answer:v, glp1:v==='Yes', weightLoss:v==='Yes'})); }}
+              className={`flex-1 py-2.5 rounded-xl border text-sm font-medium transition-all ${data.glp1Answer===v?'border-zinc-900 bg-zinc-900 text-white':'border-zinc-200 text-zinc-700 hover:border-zinc-400'}`}>{v}</button>
           ))}
         </div>
         {data.glp1 && <p className="text-xs text-violet-700 mt-2 flex items-center gap-1"><Icon name="Info" size={12}/> Your plan will include a weight-loss facial support pathway.</p>}
@@ -321,6 +330,8 @@ const IntakeWizard = ({ clientName, onComplete }) => {
           <button key={b} onClick={()=>set('budget',b)}
             className={`py-2.5 px-4 rounded-xl border text-sm font-medium transition-all text-left ${data.budget===b?'border-zinc-900 bg-zinc-900 text-white':'border-zinc-200 text-zinc-700 hover:border-zinc-400'}`}>{b}</button>
         ))}
+        <button onClick={()=>set('budget','Not sure')}
+          className={`py-2.5 px-4 rounded-xl border border-dashed text-sm font-medium transition-all text-left ${data.budget==='Not sure'?'border-zinc-900 bg-zinc-900 text-white':'border-zinc-300 text-zinc-500 hover:border-zinc-400'}`}>Not sure / I don't know</button>
       </div>
       <p className="text-sm font-medium text-zinc-700 mb-3">Your timeline</p>
       <div className="space-y-2 mb-6">
@@ -328,6 +339,8 @@ const IntakeWizard = ({ clientName, onComplete }) => {
           <button key={t} onClick={()=>set('timeline',t)}
             className={`w-full py-2.5 px-4 rounded-xl border text-sm font-medium transition-all text-left ${data.timeline===t?'border-zinc-900 bg-zinc-900 text-white':'border-zinc-200 text-zinc-700 hover:border-zinc-400'}`}>{t}</button>
         ))}
+        <button onClick={()=>set('timeline','Not sure')}
+          className={`w-full py-2.5 px-4 rounded-xl border border-dashed text-sm font-medium transition-all text-left ${data.timeline==='Not sure'?'border-zinc-900 bg-zinc-900 text-white':'border-zinc-300 text-zinc-500 hover:border-zinc-400'}`}>Not sure / I don't know</button>
       </div>
       <p className="text-sm font-medium text-zinc-700 mb-3">Downtime tolerance</p>
       <div className="flex flex-wrap gap-2 mb-6">
@@ -335,6 +348,8 @@ const IntakeWizard = ({ clientName, onComplete }) => {
           <button key={d} onClick={()=>set('downtime',d)}
             className={`px-4 py-2 rounded-full border text-sm font-medium transition-all ${data.downtime===d?'bg-zinc-900 text-white border-zinc-900':'border-zinc-200 text-zinc-700 hover:border-zinc-400'}`}>{d}</button>
         ))}
+        <button onClick={()=>set('downtime','Not sure')}
+          className={`px-4 py-2 rounded-full border border-dashed text-sm font-medium transition-all ${data.downtime==='Not sure'?'bg-zinc-900 text-white border-zinc-900':'border-zinc-300 text-zinc-500 hover:border-zinc-400'}`}>Not sure / I don't know</button>
       </div>
       <div className="flex gap-3">
         <button onClick={()=>setStep(2)} className="px-6 py-3 border border-zinc-200 text-zinc-600 rounded-xl hover:bg-zinc-50 transition text-sm">Back</button>
