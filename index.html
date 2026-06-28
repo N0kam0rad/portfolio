@@ -92,7 +92,7 @@
   .proj.green .top{background:var(--green)}.proj.coral .top{background:var(--coral)}
   .proj.purple .top{background:var(--purple)}.proj.red .top{background:var(--red)}
   .proj .top h3{font-size:1.5rem}
-  .status{font-family:"Inter";font-weight:700;font-size:0.64rem;text-transform:uppercase;letter-spacing:0.08em;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .status{font-family:"Inter";font-weight:700;font-size:0.64rem;text-transform:uppercase;letter-spacing:0.08em;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:4px 10px;white-space:nowrap}.status.served{background:var(--lime)}.status.cooking{background:var(--yellow)}.status.deck{background:var(--blue);color:#fff}.status.spark{background:var(--paper)}
   .thumb{aspect-ratio:16/10;overflow:hidden;border-bottom:2px solid var(--ink);background:#00000008;position:relative}
   .thumb img{width:100%;height:100%;object-fit:cover;display:block}
   .thumb.ph{display:grid;place-items:center}
@@ -577,41 +577,41 @@
 <section id="work" class="snap-section">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div><div class="tag">Selected work · preview</div><h2>A peek at the <span class="serif">portfolio.</span></h2></div>
-      <p>A few things I’ve shipped. <b>See the full set on the portfolio.</b></p>
+      <div><div class="tag">Selected work · most finished first</div><h2>Served first, <span class="serif">then cooking.</span></h2></div>
+      <p>Most finished cards come first. Then the work that is still cooking. <b>See the full set on the portfolio.</b></p>
     </div>
     <div class="grid grid-preview">
 
-      <article class="proj pink reveal">
-        <div class="top"><h3>BonnetNoona</h3><span class="status">In production</span></div>
-        <div class="thumb thumb-embed"><iframe class="site-preview" src="https://bonnetnoona-pitch.tiiny.site/" title="BonnetNoona pitch deck preview" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="peek">▶ Pitch preview</span></div>
-        <div class="pbody">
-          <div class="one">A faceless claymation comedy about sisters trying (and failing) to go viral.</div>
-          <div class="prob"><b>The problem:</b> a whole world of characters in my head, no studio. AI let me direct it anyway, on-model across hundreds of shots.</div>
-          <div class="builtwith"><span class="pill">Image gen</span><span class="pill">Reference elements</span><span class="pill">Motion model</span><span class="pill">CapCut</span></div>
-          <div class="pfoot"><a class="lnk" href="posts/how-i-built-a-consistent-ai-cast.html">Read the build →</a><button class="lock-btn" data-app="BonnetNoona" data-href="https://bonnetnoona-proposal.tiiny.site">🔒 Watch the film</button></div>
-        </div>
-      </article>
-
-      <article class="proj coral reveal">
-        <div class="top"><h3>Aurë / Accord</h3><span class="status">Beta</span></div>
-        <div class="thumb ph"><span class="big">AURÉ</span><span class="peek">Fragrance brain</span></div>
-        <div class="pbody">
-          <div class="one">A fragrance-intelligence &amp; scent-wardrobe app — your nose, organized.</div>
-          <div class="prob"><b>The problem:</b> scent is deeply personal and impossible to track. Aurë maps what you wear, when, and why.</div>
-          <div class="builtwith"><span class="pill">Flutter</span><span class="pill">Supabase</span><span class="pill">Claude Code</span><span class="pill">Design system</span></div>
-          <div class="pfoot"><a class="lnk" href="specs/aure.html">Aurë spec →</a><a class="lnk" href="specs/accord.html">Accord spec →</a><button class="lock-btn" data-app="Aurë" data-href="apps/aure.html">🔒 Open the app</button></div>
-        </div>
-      </article>
-
       <article class="proj blue reveal">
-        <div class="top"><h3>AestheticSim</h3><span class="status">Prototype</span></div>
+        <div class="top"><h3>AestheticSim</h3><span class="status served">Served</span></div>
         <div class="thumb"><video autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" poster="assets/aesthetic-sim-thumb.jpg"><source src="assets/aesthetic-sim-demo.mp4" type="video/mp4"/><!-- fallback --><img src="assets/aesthetic-sim-thumb.jpg" alt="AestheticSim demo" style="width:100%;height:100%;object-fit:cover;"/></video></div>
         <div class="pbody">
           <div class="one">An identity-preserving facial-simulation &amp; treatment-planning tool for aesthetic clinics.</div>
           <div class="prob"><b>The problem:</b> consults are guesswork. AestheticSim gives clients a real before/after and clinicians an AI-drafted plan.</div>
           <div class="builtwith"><span class="pill">React</span><span class="pill">Gemini</span><span class="pill">Prompt design</span></div>
           <div class="pfoot"><a class="lnk" href="specs/aesthetic-sim.html">Read the spec →</a><button class="lock-btn" data-app="AestheticSim" data-href="apps/aesthetic-sim.html">🔒 Open the demo</button></div>
+        </div>
+      </article>
+
+      <article class="proj pink reveal">
+        <div class="top"><h3>BonnetNoona</h3><span class="status cooking">Cooking</span></div>
+        <div class="thumb thumb-embed"><iframe class="site-preview" src="https://bonnetnoona-pitch.tiiny.site/" title="BonnetNoona pitch deck preview" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="peek">▶ Pitch preview</span></div>
+        <div class="pbody">
+          <div class="one">A faceless claymation comedy about sisters trying (and failing) to go viral.</div>
+          <div class="prob"><b>The problem:</b> a whole world of characters in my head, no studio. AI let me direct it anyway, on-model across hundreds of shots.</div>
+          <div class="builtwith"><span class="pill">Image gen</span><span class="pill">Reference elements</span><span class="pill">Motion model</span><span class="pill">CapCut</span></div>
+          <div class="pfoot"><a class="lnk" href="posts/how-i-built-a-consistent-ai-cast.html">Read the build →</a><button class="lock-btn" data-app="BonnetNoona" data-href="https://bonnetnoona-proposal.tiiny.site">🔒 View pitch</button></div>
+        </div>
+      </article>
+
+      <article class="proj coral reveal">
+        <div class="top"><h3>Aurë / Accord</h3><span class="status cooking">Cooking</span></div>
+        <div class="thumb ph"><span class="big">AURÉ</span><span class="peek">Fragrance brain</span></div>
+        <div class="pbody">
+          <div class="one">A fragrance-intelligence &amp; scent-wardrobe app — your nose, organized.</div>
+          <div class="prob"><b>The problem:</b> scent is deeply personal and impossible to track. Aurë maps what you wear, when, and why.</div>
+          <div class="builtwith"><span class="pill">Flutter</span><span class="pill">Supabase</span><span class="pill">Claude Code</span><span class="pill">Design system</span></div>
+          <div class="pfoot"><a class="lnk" href="specs/aure.html">Aurë spec →</a><a class="lnk" href="specs/accord.html">Accord spec →</a><button class="lock-btn" data-app="Aurë" data-href="apps/aure.html">🔒 UI cooking</button></div>
         </div>
       </article>
 
