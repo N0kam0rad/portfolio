@@ -38,6 +38,12 @@ tailwind.config = {
   .scrollbar-thin::-webkit-scrollbar { width:4px; }
   .scrollbar-thin::-webkit-scrollbar-track { background:transparent; }
   .scrollbar-thin::-webkit-scrollbar-thumb { background:#D1D1D8; border-radius:9px; }
+  @media print {
+    .no-print { display:none !important; }
+    .print-doc { background:white; }
+    .print-page { page-break-after:always; }
+    body { background:white !important; }
+  }
 </style>
 </head>
 <body>
@@ -108,7 +114,7 @@ const MOCK_DB_INITIAL = {
       state:'analyzing', provider:'Dr. Aisha' },
     { id:'c4', name:'Sofia Reyes', email:'sofia@example.com', age:29,
       photo:'https://images.unsplash.com/photo-1592621385612-4d7129426394?auto=format&fit=crop&q=80&w=800',
-      intake: null, state:'invited', provider:'Dr. Aisha' },
+      intake: null, state:'booked', depositPaid:true, bookedDate:'2026-07-18', provider:'Dr. Aisha' },
   ],
   plans: {
     c1: {
@@ -135,6 +141,34 @@ const MOCK_DB_INITIAL = {
         { id:'i1', tx:'Neuromodulator (Tox)', units:64, low:12, high:16, rationale:'Standard male dosing — forehead, glabella, crow\'s feet. Review at 14 days.', enabled:true, phase:1, roi:9, longevity:'3–4 mos' },
       ],
     },
+  },
+};
+
+
+// ─── Admin Settings ───────────────────────────────────────────────────────────
+const ADMIN_SETTINGS_INITIAL = {
+  branding: {
+    clinicName: 'Luxe Aesthetics Studio',
+    tagline: 'Balanced. Natural. Yours.',
+    logoText: 'LA',
+    logoUrl: '',
+    accentColor: '#7C3AED',
+    disclaimer: 'This board is an educational aesthetic planning tool and not a substitute for an in-person medical evaluation, diagnosis, or personalized treatment plan. Simulations are approximate planning visuals and do not guarantee specific outcomes. Individual results vary based on anatomy, genetics, lifestyle, and treatment adherence.',
+  },
+  integrations: {
+    bookingSystem: 'Vagaro',
+    bookingUrl: '',
+    depositRequired: true,
+    depositAmount: 150,
+    depositLabel: 'Consultation Deposit',
+    notifyProvider: true,
+  },
+  board: {
+    showSimGallery: true,
+    showCostForecast: true,
+    showSkincareProtocol: true,
+    showPricing: true,
+    watermark: true,
   },
 };
 
@@ -559,8 +593,613 @@ const ConsultationBoard = ({ client, plan, db }) => {
   );
 };
 
+// ─── ADMIN PANEL ──────────────────────────────────────────────────────────────
+const AdminPanel = ({ settings, onSave, onBack }) => {
+  const [local, setLocal] = useState(JSON.parse(JSON.stringify(settings)));
+  const [tab, setTab] = useState('branding');
+  const [saved, setSaved] = useState(false);
+
+  const upd = (section, key, val) => setLocal(p=>({...p,[section]:{...p[section],[key]:val}}));
+  const save = () => { onSave(local); setSaved(true); setTimeout(()=>setSaved(false),2000); };
+
+  const Field = ({label, hint, children}) => (
+    <div className="mb-6">
+      <label className="block text-sm font-semibold text-zinc-700 mb-1">{label}</label>
+      {hint && <p className="text-xs text-zinc-400 mb-2">{hint}</p>}
+      {children}
+    </div>
+  );
+  const Input = ({value, onChange, placeholder, type='text'}) => (
+    <input type={type} value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}
+      className="w-full px-4 py-2.5 border border-zinc-200 rounded-xl text-sm text-zinc-800 focus:outline-none focus:border-violet-400 bg-white"/>
+  );
+  const Toggle = ({checked, onChange, label}) => (
+    <label className="flex items-center gap-3 cursor-pointer">
+      <div onClick={()=>onChange(!checked)} className={`w-10 h-6 rounded-full transition-colors flex items-center px-0.5 ${checked?'bg-violet-600':'bg-zinc-200'}`}>
+        <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${checked?'translate-x-4':'translate-x-0'}`}/>
+      </div>
+      <span className="text-sm text-zinc-700">{label}</span>
+    </label>
+  );
+
+  const tabs = [
+    { key:'branding', label:'Branding', icon:'Palette' },
+    { key:'integrations', label:'Integrations', icon:'Link' },
+    { key:'board', label:'Board Settings', icon:'FileText' },
+  ];
+
+  return (
+    <div className="min-h-screen font-sans flex flex-col bg-zinc-50">
+      <header className="bg-gradient-to-r from-zinc-950 to-zinc-900 px-6 py-4 flex items-center justify-between text-white shrink-0 no-print">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center"><Icon name="Settings" size={16}/></div>
+          <div>
+            <h1 className="text-base font-serif font-medium">{local.branding.clinicName}</h1>
+            <p className="text-zinc-400 text-xs">Admin Settings</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <button onClick={save} className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${saved?'bg-green-600 text-white':'bg-white/10 text-white hover:bg-white/20'}`}>
+            {saved?'Saved ✓':'Save Changes'}
+          </button>
+          <button onClick={onBack} className="px-4 py-1.5 border border-white/20 text-white text-sm rounded-lg hover:bg-white/10 transition">← Back</button>
+        </div>
+      </header>
+
+      <div className="flex flex-1">
+        {/* Sidebar */}
+        <nav className="w-56 bg-white border-r border-zinc-200 p-4 space-y-1 shrink-0 no-print">
+          {tabs.map(t=>(
+            <button key={t.key} onClick={()=>setTab(t.key)}
+              className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 transition ${tab===t.key?'bg-violet-50 text-violet-700 border border-violet-100':'text-zinc-500 hover:bg-zinc-50'}`}>
+              <Icon name={t.icon} size={15}/> {t.label}
+            </button>
+          ))}
+        </nav>
+
+        {/* Content */}
+        <main className="flex-1 p-8 overflow-y-auto max-w-2xl">
+
+          {tab === 'branding' && (
+            <div className="fade-up">
+              <h2 className="text-xl font-serif font-semibold text-zinc-800 mb-1">Branding</h2>
+              <p className="text-sm text-zinc-500 mb-8">Customize how your clinic appears in client communications and the consultation board.</p>
+
+              <Field label="Clinic Name">
+                <Input value={local.branding.clinicName} onChange={v=>upd('branding','clinicName',v)} placeholder="Luxe Aesthetics Studio"/>
+              </Field>
+              <Field label="Tagline" hint="Appears under the clinic name on consultation boards.">
+                <Input value={local.branding.tagline} onChange={v=>upd('branding','tagline',v)} placeholder="Balanced. Natural. Yours."/>
+              </Field>
+              <Field label="Logo" hint="Paste a public image URL, or we'll use the letter logo fallback.">
+                <div className="flex gap-3 items-center">
+                  <Input value={local.branding.logoUrl} onChange={v=>upd('branding','logoUrl',v)} placeholder="https://..."/>
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center text-white font-serif text-xl shadow shrink-0">
+                    {local.branding.logoUrl
+                      ? <img src={local.branding.logoUrl} className="w-full h-full object-cover rounded-2xl" alt="logo"/>
+                      : local.branding.logoText}
+                  </div>
+                </div>
+              </Field>
+              <Field label="Logo Fallback Text" hint="2–3 letters shown when no logo URL is set.">
+                <Input value={local.branding.logoText} onChange={v=>upd('branding','logoText',v.slice(0,3))} placeholder="LA"/>
+              </Field>
+              <Field label="Board Disclaimer" hint="Appears on every page of the consultation board.">
+                <textarea value={local.branding.disclaimer} onChange={e=>upd('branding','disclaimer',e.target.value)} rows={4}
+                  className="w-full px-4 py-2.5 border border-zinc-200 rounded-xl text-sm text-zinc-800 focus:outline-none focus:border-violet-400 bg-white resize-none"/>
+              </Field>
+
+              {/* Live preview */}
+              <div className="mt-4 p-5 border border-zinc-200 rounded-2xl bg-white">
+                <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-4">Board Header Preview</p>
+                <div className="border-b border-zinc-100 pb-5 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center text-white font-serif text-lg shrink-0">
+                    {local.branding.logoUrl ? <img src={local.branding.logoUrl} className="w-full h-full object-cover rounded-xl" alt=""/> : local.branding.logoText}
+                  </div>
+                  <div>
+                    <p className="font-serif text-base font-semibold text-zinc-800">{local.branding.clinicName||'—'}</p>
+                    <p className="text-xs text-zinc-500 italic">{local.branding.tagline||'—'}</p>
+                    <p className="text-[10px] text-zinc-400 mt-1">{local.branding.disclaimer?.slice(0,80)}…</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {tab === 'integrations' && (
+            <div className="fade-up">
+              <h2 className="text-xl font-serif font-semibold text-zinc-800 mb-1">Integrations</h2>
+              <p className="text-sm text-zinc-500 mb-8">Connect your booking system and configure the deposit-gated client intake flow.</p>
+
+              <div className="mb-8">
+                <h3 className="text-sm font-bold text-zinc-700 mb-4 uppercase tracking-wider">Booking System</h3>
+                <Field label="Platform">
+                  <div className="grid grid-cols-3 gap-2">
+                    {['Vagaro','Jane App','Calendly','Square','Mindbody','Other'].map(s=>(
+                      <button key={s} onClick={()=>upd('integrations','bookingSystem',s)}
+                        className={`py-2 px-3 rounded-xl border text-xs font-medium transition ${local.integrations.bookingSystem===s?'border-violet-500 bg-violet-50 text-violet-700':'border-zinc-200 text-zinc-600 hover:border-zinc-300'}`}>{s}</button>
+                    ))}
+                  </div>
+                </Field>
+                <Field label="Booking URL" hint="Clients are directed here to book and pay the deposit.">
+                  <Input value={local.integrations.bookingUrl} onChange={v=>upd('integrations','bookingUrl',v)} placeholder="https://vagaro.com/your-clinic"/>
+                </Field>
+                {local.integrations.bookingUrl && (
+                  <a href={local.integrations.bookingUrl} target="_blank" rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs text-violet-600 hover:text-violet-800 font-medium">
+                    <Icon name="ExternalLink" size={12}/> Test booking link
+                  </a>
+                )}
+              </div>
+
+              <div className="mb-8 border-t border-zinc-100 pt-8">
+                <h3 className="text-sm font-bold text-zinc-700 mb-4 uppercase tracking-wider">Deposit Gate</h3>
+                <div className="space-y-4">
+                  <Toggle checked={local.integrations.depositRequired}
+                    onChange={v=>upd('integrations','depositRequired',v)}
+                    label="Require deposit before intake form unlocks"/>
+                  {local.integrations.depositRequired && (
+                    <>
+                      <Field label="Deposit Amount">
+                        <div className="flex items-center gap-2">
+                          <span className="text-zinc-500 font-medium">$</span>
+                          <Input type="number" value={local.integrations.depositAmount}
+                            onChange={v=>upd('integrations','depositAmount',Number(v))} placeholder="150"/>
+                        </div>
+                      </Field>
+                      <Field label="Deposit Label" hint="Shown to the client when they book.">
+                        <Input value={local.integrations.depositLabel} onChange={v=>upd('integrations','depositLabel',v)} placeholder="Consultation Deposit"/>
+                      </Field>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="border-t border-zinc-100 pt-8">
+                <h3 className="text-sm font-bold text-zinc-700 mb-4 uppercase tracking-wider">Notifications</h3>
+                <Toggle checked={local.integrations.notifyProvider}
+                  onChange={v=>upd('integrations','notifyProvider',v)}
+                  label="Notify provider when client completes intake"/>
+              </div>
+            </div>
+          )}
+
+          {tab === 'board' && (
+            <div className="fade-up">
+              <h2 className="text-xl font-serif font-semibold text-zinc-800 mb-1">Board Settings</h2>
+              <p className="text-sm text-zinc-500 mb-8">Control which sections are included in the downloadable consultation board.</p>
+
+              <div className="space-y-4 mb-8">
+                <Toggle checked={local.board.showSimGallery}
+                  onChange={v=>upd('board','showSimGallery',v)}
+                  label="Include Simulation Gallery (treatment scenarios)"/>
+                <Toggle checked={local.board.showCostForecast}
+                  onChange={v=>upd('board','showCostForecast',v)}
+                  label="Include Cost Forecast & Packages"/>
+                <Toggle checked={local.board.showSkincareProtocol}
+                  onChange={v=>upd('board','showSkincareProtocol',v)}
+                  label="Include Skincare Protocol pages"/>
+                <Toggle checked={local.board.showPricing}
+                  onChange={v=>upd('board','showPricing',v)}
+                  label="Show pricing ranges in the board"/>
+                <Toggle checked={local.board.watermark}
+                  onChange={v=>upd('board','watermark',v)}
+                  label="Show simulation disclaimer watermark"/>
+              </div>
+
+              <div className="p-4 bg-violet-50 border border-violet-100 rounded-2xl flex gap-3">
+                <Icon name="Info" size={18} className="text-violet-600 shrink-0 mt-0.5"/>
+                <p className="text-sm text-violet-700">The consultation board is generated from the clinician's approved treatment plan. Clients can view and download it as a PDF from their portal after approval.</p>
+              </div>
+            </div>
+          )}
+
+        </main>
+      </div>
+    </div>
+  );
+};
+
+// ─── PRINTABLE CONSULTATION BOARD ─────────────────────────────────────────────
+const SCENARIOS = [
+  { title:'1. Current Baseline', filter:'none', desc:['Natural starting point for treatment planning','Current proportions and volume baseline','All simulations reference this state'] },
+  { title:'2. Neuromodulator Only', filter:'brightness(1.04) contrast(0.97)', desc:['Softened forehead and glabella expression lines','Slight brow lift and more open eye area','Prevention-focused; movement preserved','Refreshed upper face'] },
+  { title:'3. Neuromodulator + HA Filler', filter:'brightness(1.07) contrast(0.94) saturate(1.04)', desc:['Conservative midface and under-eye support','Subtle lip hydration and border refinement','Gentle chin refinement for harmony','Natural, refreshed balance'] },
+  { title:'4. Neuromodulator + Biostimulator', filter:'brightness(1.06) saturate(1.08) contrast(0.95)', desc:['Gradual collagen support, skin quality improvement','Subtle midface lift and improved under-eye transition','Enhanced radiance and texture over time','Natural, progressive rejuvenation'] },
+  { title:'5. Full Facial Balancing', filter:'brightness(1.1) saturate(1.1) contrast(0.92)', desc:['Comprehensive but natural facial balancing','Smoother upper face and brighter under-eyes','Enhanced midface support and chin definition','Improved overall harmony and proportion'] },
+  { title:'6. 12-Month Optimized', filter:'brightness(1.12) saturate(1.12) contrast(0.9) sepia(0.03)', desc:['Cumulative improvement from staged treatments','Smoother texture, even tone, subtle tightening','Collagen-supported midface and refined contours','Polished, healthy, and naturally refreshed'] },
+  { title:'7. Weight-Loss Only (−20–40 lb)', filter:'contrast(1.04) brightness(1.01)', desc:['Slimmer lower face, reduced submental fullness','More defined jawline and neck contour','Possible mild under-eye or midface deflation','Natural change with weight reduction'] },
+  { title:'8. Weight-Loss + Injectables', filter:'brightness(1.07) saturate(1.04) contrast(0.97)', desc:['Maintains facial balance after weight loss','Botox for upper face; subtle midface support','Chin/jawline refinement to support definition','Balanced, refreshed, proportionate results'] },
+  { title:'9. Full Post-Weight-Loss Plan', filter:'brightness(1.12) saturate(1.13) contrast(0.89)', desc:['Enhanced skin quality, firmness, and elasticity','Collagen stimulation for long-term support','Restored midface and under-eye harmony','Most balanced sustainable post-weight-loss result'] },
+];
+
+const FACE_ZONES = [
+  { label:'Forehead', sub:'dynamic lines prevention', x:50, y:13, side:'left' },
+  { label:'Glabella', sub:'expression lines', x:50, y:25, side:'left' },
+  { label:'Brows', sub:'brow balance & lift', x:50, y:29, side:'right' },
+  { label:'Under-Eyes', sub:'tear trough support', x:50, y:39, side:'left' },
+  { label:'Crow\'s Feet', sub:'prevention', x:68, y:36, side:'right' },
+  { label:'Cheeks', sub:'midface support', x:55, y:50, side:'left' },
+  { label:'Temples', sub:'volume support', x:72, y:30, side:'right' },
+  { label:'Skin Texture', sub:'pores, tone & glow', x:67, y:52, side:'right' },
+  { label:'Lips', sub:'shape, balance & hydration', x:50, y:64, side:'left' },
+  { label:'Jawline', sub:'definition & contour', x:62, y:76, side:'right' },
+  { label:'Chin', sub:'projection & balance', x:50, y:81, side:'left' },
+  { label:'Submental', sub:'skin laxity prevention', x:50, y:87, side:'right' },
+];
+
+const PrintableBoard = ({ client, plan, db, settings, onClose }) => {
+  const fmt = n => '$'+n.toLocaleString();
+  const firstVisitLow = plan.items.filter(i=>i.enabled&&i.phase===1).reduce((s,i)=>s+(i.units*i.low),0);
+  const firstVisitHigh = plan.items.filter(i=>i.enabled&&i.phase===1).reduce((s,i)=>s+(i.units*i.high),0);
+  const allLow = plan.items.filter(i=>i.enabled).reduce((s,i)=>s+(i.units*i.low),0);
+  const allHigh = plan.items.filter(i=>i.enabled).reduce((s,i)=>s+(i.units*i.high),0);
+  const topItems = [...plan.items].filter(i=>i.enabled).sort((a,b)=>b.roi-a.roi).slice(0,5);
+  const isGLP1 = client.intake?.glp1;
+  const showSim = settings?.board?.showSimGallery !== false;
+  const showCost = settings?.board?.showCostForecast !== false;
+  const showPricing = settings?.board?.showPricing !== false;
+  const watermark = settings?.board?.watermark !== false;
+  const clinicName = settings?.branding?.clinicName || db.organization.name;
+  const tagline = settings?.branding?.tagline || db.organization.tagline;
+  const disclaimer = settings?.branding?.disclaimer || 'This board is an educational aesthetic planning tool and not a substitute for an in-person medical evaluation.';
+
+  const DocHeader = ({page, total}) => (
+    <div className="flex items-center justify-between pb-4 mb-6 border-b border-zinc-200">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center text-white font-serif text-base">
+          {settings?.branding?.logoText||'LA'}
+        </div>
+        <div>
+          <p className="font-serif text-sm font-semibold text-zinc-800">{clinicName}</p>
+          <p className="text-[10px] text-zinc-400 italic">{tagline}</p>
+        </div>
+      </div>
+      <div className="text-center">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">Luxury Facial Aesthetics</p>
+        <p className="text-[10px] text-zinc-400">Consultation & Simulation Studio</p>
+      </div>
+      <div className="text-right">
+        <p className="text-xs font-bold text-zinc-400">PAGE {page} / {total}</p>
+        <p className="text-[10px] text-zinc-400">{client.name} · Age {client.age}</p>
+      </div>
+    </div>
+  );
+
+  const SectionNum = ({n, title}) => (
+    <div className="flex items-center gap-3 mb-4">
+      <div className="w-7 h-7 rounded-full bg-zinc-900 text-white text-xs font-bold flex items-center justify-center shrink-0">{n}</div>
+      <h2 className="text-xs font-bold uppercase tracking-[0.15em] text-zinc-700">{title}</h2>
+    </div>
+  );
+
+  const packages = [
+    { name:'A: Prevention Refresh', range:`${fmt(firstVisitLow)}–${fmt(firstVisitHigh)}`, desc:'Neuromodulator · Pigment-safe skincare · Optional light peel. Best first-step for expression lines and prevention.' },
+    { name:'B: Natural Balancing', range:`${fmt(Math.round(allLow*0.6))}–${fmt(Math.round(allHigh*0.6))}`, desc:'Package A + PRF/EZ Gel for under-eyes + 1–2 syringes HA filler for cheek/chin/prejowl support.' },
+    { name:'C: Collagen Architecture', range:`${fmt(allLow)}–${fmt(allHigh)}`, desc:'Sculptra series or Sofwave + PRF/EZ Gel + conservative neuromodulator. Best for prevention and firmness.' },
+    { name:'D: Weight-Loss Aware Plan', range:`${fmt(Math.round(allLow*0.55))}–${fmt(Math.round(allHigh*0.85))} Year 1`, desc:'Botox + collagen/skin tightening now; major filler after weight stabilizes. Reassess every 10–15 lb change.' },
+  ];
+
+  const totalPages = 1 + (showSim?1:0) + (showCost?1:0);
+
+  return (
+    <div className="fixed inset-0 bg-white z-50 overflow-auto font-sans">
+      {/* Toolbar */}
+      <div className="no-print sticky top-0 z-10 bg-zinc-900 text-white px-6 py-3 flex items-center justify-between shadow-lg">
+        <div className="flex items-center gap-3">
+          <div className="w-7 h-7 bg-white/10 rounded-lg flex items-center justify-center"><Icon name="FileText" size={15}/></div>
+          <div>
+            <p className="text-sm font-medium">Consultation Board — {client.name}</p>
+            <p className="text-xs text-zinc-400">{totalPages} pages · {clinicName}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <button onClick={()=>window.print()}
+            className="flex items-center gap-2 px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-xl hover:bg-violet-700 transition">
+            <Icon name="Download" size={15}/> Download / Print PDF
+          </button>
+          <button onClick={onClose} className="px-3 py-2 border border-white/20 text-sm rounded-xl hover:bg-white/10 transition flex items-center gap-1.5">
+            <Icon name="X" size={14}/> Close
+          </button>
+        </div>
+      </div>
+
+      {/* ── PAGE 1: Overview ── */}
+      <div className="print-page max-w-4xl mx-auto px-8 py-8">
+        <DocHeader page={1} total={totalPages}/>
+
+        {/* Disclaimer */}
+        <div className="mb-6 p-3 bg-zinc-50 border border-zinc-200 rounded-xl">
+          <p className="text-[10px] text-zinc-500 text-center leading-relaxed">{disclaimer}</p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-6">
+          {/* Left column */}
+          <div className="space-y-5">
+            {/* 1. Executive Summary */}
+            <div className="border border-zinc-200 rounded-2xl p-5">
+              <SectionNum n="1" title="Executive Summary"/>
+              <div className="space-y-4 text-sm">
+                <div>
+                  <p className="font-bold text-zinc-700 mb-1">Overview</p>
+                  <p className="text-zinc-600 leading-relaxed text-xs">
+                    {client.name.split(' ')[0]} presents with {client.intake?.aesthetic?.toLowerCase()||'a natural aesthetic preference'} goals.
+                    Primary consultation areas include {plan.analysis.map(a=>a.region.toLowerCase()).join(', ')}.
+                    {isGLP1 ? ' GLP-1/weight-loss pathway is active; collagen-first sequencing is recommended.' : ' Strong candidate for prevention-focused planning.'}
+                  </p>
+                </div>
+                <div>
+                  <p className="font-bold text-zinc-700 mb-1">Approach</p>
+                  <p className="text-zinc-600 text-xs leading-relaxed">
+                    Natural, conservative planning favored. Timeline: {client.intake?.timeline||'3–6 month glow-up'}.
+                    Budget range: {client.intake?.budget}. Downtime tolerance: {client.intake?.downtime||'1–2 days'}.
+                  </p>
+                </div>
+                <div>
+                  <p className="font-bold text-zinc-700 mb-1">Goals</p>
+                  <div className="flex flex-wrap gap-1">
+                    {(client.intake?.goals||[]).map(g=><span key={g} className="px-2 py-0.5 bg-zinc-100 text-zinc-700 text-[10px] rounded-full border border-zinc-200 font-medium">{g}</span>)}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Aging Analysis */}
+            <div className="border border-zinc-200 rounded-2xl p-5">
+              <SectionNum n="3" title="Aging Analysis"/>
+              <div className="space-y-2">
+                {[
+                  { cat:'Dynamic Lines', val: plan.analysis.find(a=>a.region==='Upper Face')?.severity||2, note: plan.analysis.find(a=>a.region==='Upper Face')?.finding?.split('.')[0]||'Mild expression activity' },
+                  { cat:'Static Lines', val:1, note:'Early fine lines, minimal at rest' },
+                  { cat:'Volume Loss', val: plan.analysis.find(a=>a.region==='Midface'||a.region==='Under-eye')?.severity||2, note:'Mild under-eye and midface' },
+                  { cat:'Contour Changes', val: plan.analysis.find(a=>a.region==='Lower Face'||a.region==='Jawline')?.severity||1, note:'Mild definition changes' },
+                  { cat:'Skin Quality', val: plan.analysis.find(a=>a.region==='Skin Quality')?.severity||2, note: plan.analysis.find(a=>a.region==='Skin Quality')?.finding?.split('.')[0]||'Mild texture concerns' },
+                ].map(({cat,val,note})=>(
+                  <div key={cat} className="flex items-center gap-3">
+                    <div className="w-28 shrink-0">
+                      <p className="text-[10px] font-bold text-zinc-600">{cat}</p>
+                      <p className="text-[9px] text-zinc-400">{note}</p>
+                    </div>
+                    <div className="flex gap-0.5 flex-1">{Array.from({length:3}).map((_,i)=><div key={i} className={`h-2 flex-1 rounded-sm ${i<val?'bg-violet-400':'bg-zinc-100'}`}/>)}</div>
+                    <span className="text-[10px] text-zinc-500 w-14 text-right">{['','Mild','Moderate','Notable'][val]}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-[10px] font-bold text-sage-700 flex items-center gap-1"><Icon name="CheckCircle2" size={11}/> Overall Aging Burden: Low to Mild</p>
+            </div>
+
+            {/* 5. Facial Balancing */}
+            <div className="border border-zinc-200 rounded-2xl p-5">
+              <SectionNum n="5" title="Facial Balancing Opportunities"/>
+              <div className="space-y-2">
+                {plan.analysis.map(a=>(
+                  <div key={a.region} className="flex gap-3 text-xs">
+                    <p className="font-bold text-zinc-700 w-24 shrink-0">{a.region}</p>
+                    <p className="text-zinc-600 leading-relaxed">{a.finding}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right column */}
+          <div className="space-y-5">
+            {/* 2. Facial Mapping */}
+            <div className="border border-zinc-200 rounded-2xl p-4 overflow-hidden">
+              <SectionNum n="2" title="Facial Mapping"/>
+              <div className="relative">
+                <img src={client.photo} className="w-full rounded-xl object-cover" style={{maxHeight:280}} alt={client.name}/>
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none" style={{pointerEvents:'none'}}>
+                  {FACE_ZONES.map((z,i)=>{
+                    const lx = z.side==='left' ? z.x-18 : z.x+18;
+                    const ly = z.y;
+                    return (
+                      <g key={i}>
+                        <circle cx={z.x} cy={z.y} r="1.2" fill="white" stroke="#1a1a1a" strokeWidth="0.4" opacity="0.9"/>
+                        <line x1={z.x} y1={z.y} x2={lx} y2={ly} stroke="#1a1a1a" strokeWidth="0.3" opacity="0.6"/>
+                      </g>
+                    );
+                  })}
+                </svg>
+                {/* Labels */}
+                <div className="absolute inset-0" style={{pointerEvents:'none'}}>
+                  {FACE_ZONES.map((z,i)=>(
+                    <div key={i} className={`absolute text-[7px] font-bold leading-tight ${z.side==='left'?'text-right':''}`}
+                      style={{
+                        left: z.side==='left' ? `${z.x-42}%` : `${z.x+4}%`,
+                        top: `${z.y-2.5}%`,
+                        width:'38%',
+                      }}>
+                      <span className="text-zinc-800">{z.label}</span>
+                      <span className="block text-zinc-400 font-normal">{z.sub}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* 4. Skin Quality */}
+            <div className="border border-zinc-200 rounded-2xl p-5">
+              <SectionNum n="4" title="Skin Quality"/>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                {[
+                  { metric:'Texture', note:'Mild uneven texture, surface irregularity' },
+                  { metric:'Pores', note:'Visible, especially nose and T-zone' },
+                  { metric:'Tone', note:'Mild uneven tone, some redness' },
+                  { metric:'Under-Eye', note:'Mild hollowing, shadowing present' },
+                  { metric:'Hydration & Glow', note:'Moderate; barrier support indicated' },
+                  { metric:'Resilience', note:'Good thickness; great foundation' },
+                ].map(({metric,note})=>(
+                  <div key={metric} className="flex items-start gap-2 p-2 bg-zinc-50 rounded-xl">
+                    <div className="w-4 h-4 bg-zinc-200 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                      <div className="w-1.5 h-1.5 bg-zinc-500 rounded-full"/>
+                    </div>
+                    <div>
+                      <p className="font-bold text-zinc-700 text-[10px]">{metric}</p>
+                      <p className="text-zinc-400 text-[9px] leading-tight">{note}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 6 + 7. Top Treatments + Priorities */}
+            <div className="border border-zinc-200 rounded-2xl p-5">
+              <SectionNum n="6" title="Top 5 Highest ROI Treatments"/>
+              <div className="space-y-2 mb-5">
+                {topItems.map((item,i)=>(
+                  <div key={item.id} className="flex items-start gap-3 text-xs">
+                    <span className="w-5 h-5 bg-zinc-900 text-white text-[10px] font-bold rounded-full flex items-center justify-center shrink-0">{i+1}</span>
+                    <div>
+                      <p className="font-bold text-zinc-800">{item.tx} <span className="font-normal text-violet-600 text-[10px]">{item.roi}/10 ROI</span></p>
+                      <p className="text-zinc-500 leading-tight">{item.rationale}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <SectionNum n="7" title="Treatment Priorities"/>
+              <div className="space-y-3">
+                {[1,2,3].map(ph=>{
+                  const items = plan.items.filter(i=>i.enabled&&i.phase===ph);
+                  const labels = {1:'REFRESH',2:'STRUCTURAL SUPPORT',3:'MAINTENANCE / PREVENTION'};
+                  if (!items.length) return null;
+                  return (
+                    <div key={ph} className="flex gap-3">
+                      <div className="flex flex-col items-center">
+                        <div className="w-5 h-5 bg-zinc-900 rounded-full shrink-0 flex items-center justify-center">
+                          <div className="w-1.5 h-1.5 bg-white rounded-full"/>
+                        </div>
+                        {ph<3&&<div className="w-0.5 h-full bg-zinc-200 flex-1 mt-1"/>}
+                      </div>
+                      <div className="pb-3">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Phase {ph} · {labels[ph]}</p>
+                        {items.map(i=><p key={i.id} className="text-xs text-zinc-700">· {i.tx}{showPricing?` (${fmt(i.units*i.low)}–${fmt(i.units*i.high)})`:''}</p>)}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-6 pt-4 border-t border-zinc-200 flex items-center justify-between">
+          <p className="text-[9px] text-zinc-400 uppercase tracking-wider font-bold">{clinicName}</p>
+          <p className="text-[9px] text-zinc-400 tracking-wider italic">Science · Art · Natural Results</p>
+          <p className="text-[9px] text-zinc-400 uppercase tracking-wider">Prepared for {client.name}</p>
+        </div>
+      </div>
+
+      {/* ── PAGE 2: Simulation Gallery ── */}
+      {showSim && (
+        <div className="print-page max-w-4xl mx-auto px-8 py-8">
+          <DocHeader page={2} total={totalPages}/>
+          <div className="mb-4">
+            <h2 className="text-lg font-serif font-semibold text-zinc-800 mb-0.5">Simulation Gallery</h2>
+            <p className="text-xs text-zinc-500">{watermark?'Planning simulations — approximate direction, not a guaranteed result':''}</p>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            {SCENARIOS.map((sc,i)=>(
+              <div key={i} className="border border-zinc-200 rounded-2xl overflow-hidden">
+                <img src={client.photo} className="w-full object-cover" style={{height:160, filter:sc.filter}} alt={sc.title}/>
+                <div className="p-3">
+                  <p className="text-[10px] font-bold text-zinc-800 mb-1">{sc.title}</p>
+                  <ul className="space-y-0.5">
+                    {sc.desc.map((d,j)=><li key={j} className="text-[9px] text-zinc-500 flex items-start gap-1"><span className="text-zinc-300 mt-0.5 shrink-0">·</span>{d}</li>)}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+          {isGLP1 && (
+            <div className="mt-4 p-4 border border-sage-200 bg-sage-50 rounded-2xl">
+              <p className="text-xs font-bold text-sage-800 mb-2 flex items-center gap-2"><Icon name="Info" size={13}/>Weight-Loss Scenario Guidance</p>
+              <div className="grid grid-cols-3 gap-3 text-xs text-sage-700">
+                <p>· Anticipated 20–40 lb loss may reduce facial fullness, especially midface and lower face.</p>
+                <p>· Prioritize neuromodulator, skin quality, and collagen stimulation early.</p>
+                <p>· Stage structural filler conservatively until weight is more stable.</p>
+              </div>
+            </div>
+          )}
+          <div className="mt-4 pt-3 border-t border-zinc-200 flex justify-between">
+            <p className="text-[9px] text-zinc-400 uppercase tracking-wider font-bold">{clinicName}</p>
+            <p className="text-[9px] text-zinc-400 tracking-wider italic">Science · Art · Natural Results</p>
+            <p className="text-[9px] text-zinc-400">Page 2 / {totalPages}</p>
+          </div>
+        </div>
+      )}
+
+      {/* ── PAGE 3: Cost Forecast ── */}
+      {showCost && (
+        <div className="max-w-4xl mx-auto px-8 py-8">
+          <DocHeader page={totalPages} total={totalPages}/>
+          <div className="mb-4">
+            <h2 className="text-lg font-serif font-semibold text-zinc-800 mb-0.5">Treatment Packages + Cost Forecast</h2>
+            <p className="text-xs text-zinc-500">U.S. medspa-style planning ranges · pricing varies by city, injector, device, product, and sessions</p>
+          </div>
+          {showPricing ? (
+            <>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                {packages.map((pkg,i)=>(
+                  <div key={i} className={`p-5 border rounded-2xl ${i===0?'border-zinc-900 bg-zinc-900 text-white':i===1?'border-violet-200 bg-violet-50':'border-zinc-200 bg-white'}`}>
+                    <p className={`text-[10px] font-bold uppercase tracking-wider mb-2 ${i===0?'text-zinc-400':i===1?'text-violet-600':'text-zinc-500'}`}>Package {pkg.name}</p>
+                    <p className={`text-2xl font-serif font-semibold mb-2 ${i===0?'text-white':i===1?'text-violet-900':'text-zinc-900'}`}>{pkg.range}</p>
+                    <p className={`text-xs leading-relaxed ${i===0?'text-zinc-300':i===1?'text-violet-700':'text-zinc-600'}`}>{pkg.desc}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="border border-zinc-200 rounded-2xl overflow-hidden mb-5">
+                <table className="w-full text-xs">
+                  <thead><tr className="bg-zinc-50 border-b border-zinc-200">
+                    <th className="text-left px-4 py-2.5 font-bold text-zinc-700">Treatment</th>
+                    <th className="text-left px-4 py-2.5 font-bold text-zinc-700">Typical Range</th>
+                    <th className="text-left px-4 py-2.5 font-bold text-zinc-700">Longevity</th>
+                  </tr></thead>
+                  <tbody>
+                    {plan.items.filter(i=>i.enabled).map((item,i)=>(
+                      <tr key={item.id} className={i%2===0?'bg-white':'bg-zinc-50/50'}>
+                        <td className="px-4 py-2.5 font-medium text-zinc-800">{item.tx}</td>
+                        <td className="px-4 py-2.5 text-zinc-600">{fmt(item.units*item.low)}–{fmt(item.units*item.high)}</td>
+                        <td className="px-4 py-2.5 text-zinc-500">{item.longevity}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          ) : (
+            <div className="p-6 bg-zinc-50 border border-zinc-200 rounded-2xl text-center">
+              <p className="text-zinc-500 text-sm">Pricing details are available during your in-person consultation.</p>
+            </div>
+          )}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-4 border border-zinc-200 rounded-2xl text-xs">
+              <p className="font-bold text-zinc-700 mb-2">Budget Forecast</p>
+              <p className="text-zinc-600">· Conservative first year: {fmt(firstVisitLow)}–{fmt(firstVisitHigh)}</p>
+              <p className="text-zinc-600">· Balanced first year: {fmt(Math.round(allLow*0.55))}–{fmt(Math.round(allHigh*0.6))}</p>
+              <p className="text-zinc-600">· Full plan: {fmt(allLow)}–{fmt(allHigh)}</p>
+              <p className="text-zinc-600">· 3-year range: {fmt(allLow)}–{fmt(Math.round(allHigh*2.5))}</p>
+            </div>
+            <div className="p-4 bg-zinc-900 text-white rounded-2xl text-xs">
+              <p className="font-bold mb-2">Sequencing Note</p>
+              <p className="text-zinc-300 leading-relaxed">Best ROI comes from treating motion, skin quality, and collagen first. Use filler like punctuation, not paragraphs.{isGLP1?' Stage filler conservatively until weight stabilizes.':''}</p>
+            </div>
+          </div>
+          <div className="mt-6 pt-4 border-t border-zinc-200 flex justify-between">
+            <p className="text-[9px] text-zinc-400 uppercase font-bold">{clinicName}</p>
+            <p className="text-[9px] text-zinc-400 italic">Science · Art · Natural Results</p>
+            <p className="text-[9px] text-zinc-400">Page {totalPages} / {totalPages}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // ─── CLINICIAN APP ─────────────────────────────────────────────────────────────
-const ClinicianApp = ({ db, onUpdateDb }) => {
+const ClinicianApp = ({ db, onUpdateDb, settings }) => {
   const [view, setView] = useState('dashboard');
   const [selectedId, setSelectedId] = useState(null);
   const [reviewTab, setReviewTab] = useState('plan');
@@ -577,7 +1216,7 @@ const ClinicianApp = ({ db, onUpdateDb }) => {
   const updateItem = (id,field,val) => setDraft(p=>p?{...p,items:p.items.map(i=>i.id===id?{...i,[field]:val}:i)}:p);
 
   const cols = {
-    invited: db.clients.filter(c=>c.state==='invited'),
+    booked: db.clients.filter(c=>c.state==='booked'||c.state==='invited'),
     analyzing: db.clients.filter(c=>c.state==='analyzing'),
     review: db.clients.filter(c=>c.state==='needs_review'),
     approved: db.clients.filter(c=>c.state==='approved'),
@@ -596,7 +1235,7 @@ const ClinicianApp = ({ db, onUpdateDb }) => {
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center"><Icon name="Stethoscope" size={16}/></div>
           <div>
-            <h1 className="text-base font-serif font-medium">{db.organization.name}</h1>
+            <h1 className="text-base font-serif font-medium">{settings?.branding?.clinicName||db.organization.name}</h1>
             <p className="text-zinc-400 text-xs">Provider Dashboard · Dr. Aisha</p>
           </div>
         </div>
@@ -609,7 +1248,7 @@ const ClinicianApp = ({ db, onUpdateDb }) => {
         <h2 className="text-xl font-serif font-semibold text-zinc-800 mb-6">Consultation Pipeline</h2>
         <div className="flex gap-5 min-w-[900px]">
           {[
-            { key:'invited', label:'Awaiting Intake', color:'text-zinc-400', bg:'bg-zinc-50 border-dashed border-zinc-200', cnt:'bg-zinc-200 text-zinc-600' },
+            { key:'booked', label:'Awaiting Intake', color:'text-zinc-400', bg:'bg-zinc-50 border-dashed border-zinc-200', cnt:'bg-zinc-200 text-zinc-600' },
             { key:'analyzing', label:'AI Processing', color:'text-blue-600', bg:'bg-blue-50/40 border-blue-100', cnt:'bg-blue-100 text-blue-700' },
             { key:'review', label:'Needs Review', color:'text-violet-700', bg:'bg-violet-50/40 border-violet-200', cnt:'bg-violet-100 text-violet-800' },
             { key:'approved', label:'Approved / Sent', color:'text-green-600', bg:'bg-green-50/40 border-green-200', cnt:'bg-green-100 text-green-700' },
@@ -637,7 +1276,7 @@ const ClinicianApp = ({ db, onUpdateDb }) => {
                     {c.state==='needs_review' && <button className="w-full mt-2 py-1.5 bg-zinc-900 text-white text-xs font-medium rounded-lg">Review & Build Board →</button>}
                     {c.state==='approved' && <p className="text-xs text-green-600 flex items-center gap-1 mt-1"><Icon name="CheckCircle2" size={12}/> Plan approved & sent</p>}
                     {c.state==='analyzing' && <p className="text-xs text-blue-500 flex items-center gap-1 mt-1"><Icon name="Activity" size={12}/> Generating analysis…</p>}
-                    {c.state==='invited' && <p className="text-xs text-zinc-400 flex items-center gap-1 mt-1"><Icon name="Clock" size={12}/> Awaiting client intake</p>}
+                    {(c.state==='invited'||c.state==='booked') && <p className="text-xs text-zinc-400 flex items-center gap-1 mt-1"><Icon name="Clock" size={12}/> Awaiting client intake</p>}
                   </div>
                 ))}
                 {cols[col.key].length===0&&<p className="text-center text-zinc-300 text-xs py-6">Empty</p>}
@@ -766,13 +1405,53 @@ const ClinicianApp = ({ db, onUpdateDb }) => {
 };
 
 // ─── CLIENT APP ─────────────────────────────────────────────────────────────────
-const ClientApp = ({ db, clientId, onUpdateDb }) => {
+const ClientApp = ({ db, clientId, onUpdateDb, settings }) => {
   const [view, setView] = useState('dashboard');
+  const [showBoard, setShowBoard] = useState(false);
+  const [showIntake, setShowIntake] = useState(false);
   const client = db.clients.find(c=>c.id===clientId);
   const plan = db.plans?.[clientId];
   const isApproved = client?.state==='approved';
 
-  if (client?.state==='invited') {
+  if ((client?.state==='booked'||client?.state==='invited') && !showIntake) {
+    const clinicName = settings?.branding?.clinicName||db.organization.name;
+    const depositAmt = settings?.integrations?.depositAmount||150;
+    const depositLabel = settings?.integrations?.depositLabel||'Consultation Deposit';
+    return (
+      <div className="min-h-screen bg-F1F1F5 flex items-center justify-center font-sans p-6" style={{background:'#F1F1F5'}}>
+        <div className="max-w-md w-full text-center fade-up">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-zinc-800 to-zinc-950 flex items-center justify-center text-white font-serif text-2xl mx-auto mb-6 shadow-xl">
+            {settings?.branding?.logoText||'LA'}
+          </div>
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-violet-700 mb-2">{clinicName}</p>
+          <h1 className="text-3xl font-serif font-semibold text-zinc-800 mb-3">You're booked in.</h1>
+          <p className="text-zinc-500 mb-2 leading-relaxed">Your {depositLabel} of <strong>${depositAmt}</strong> has been received. Complete your pre-consultation intake below so your provider can prepare a personalized plan before you arrive.</p>
+          <p className="text-sm text-zinc-400 mb-8">Takes about 5 minutes · Completely confidential</p>
+          <div className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-lg text-left mb-6">
+            <div className="flex items-center gap-4 mb-5">
+              <div className="w-12 h-12 rounded-full overflow-hidden bg-zinc-100">{client.photo&&<img src={client.photo} className="w-full h-full object-cover" alt=""/>}</div>
+              <div>
+                <p className="font-semibold text-zinc-800">{client.name}</p>
+                <p className="text-sm text-zinc-400">Patient · {client.provider}</p>
+              </div>
+            </div>
+            <div className="space-y-2 text-sm text-zinc-600">
+              <div className="flex items-center gap-2"><Icon name="CheckCircle2" size={15} className="text-green-500"/><span>{depositLabel} confirmed · ${depositAmt}</span></div>
+              {client.bookedDate && <div className="flex items-center gap-2"><Icon name="Calendar" size={15} className="text-violet-500"/><span>Appointment: {client.bookedDate}</span></div>}
+              <div className="flex items-center gap-2"><Icon name="ClipboardList" size={15} className="text-zinc-400"/><span>Pre-consultation intake: not started</span></div>
+            </div>
+          </div>
+          <button onClick={()=>setShowIntake(true)}
+            className="w-full py-4 bg-zinc-900 text-white font-semibold rounded-2xl hover:bg-zinc-800 transition text-sm flex items-center justify-center gap-2 shadow-lg">
+            <Icon name="ClipboardList" size={16}/> Start Pre-Consultation Intake →
+          </button>
+          <p className="text-xs text-zinc-400 mt-4">Your answers are private and only visible to your care team.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if ((client?.state==='booked'||client?.state==='invited') && showIntake) {
     return <IntakeWizard clientName={client.name} onComplete={intake=>{
       onUpdateDb(p=>({...p, clients:p.clients.map(c=>c.id===clientId?{...c,intake,state:'analyzing'}:c)}));
     }}/>;
@@ -781,6 +1460,7 @@ const ClientApp = ({ db, clientId, onUpdateDb }) => {
   const fmt = n=>'$'+n.toLocaleString();
 
   return (
+  <React.Fragment>
     <div className="min-h-screen font-sans flex flex-col">
       <header className="bg-white/90 backdrop-blur border-b border-zinc-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
         <h1 className="font-serif text-lg text-zinc-800 font-semibold">{db.organization.name} <span className="text-zinc-400 font-sans font-normal text-sm ml-1">Client Portal</span></h1>
@@ -817,9 +1497,10 @@ const ClientApp = ({ db, clientId, onUpdateDb }) => {
                     <p className="text-zinc-400 text-sm">Dr. Aisha has completed your facial analysis, treatment plan, and skincare journey.</p>
                   </div>
                 </div>
-                <div className="flex gap-3 shrink-0">
+                <div className="flex gap-3 shrink-0 flex-wrap">
                   <button onClick={()=>setView('skincare')} className="px-5 py-2.5 bg-white/10 text-white text-sm font-medium rounded-xl hover:bg-white/20 transition">Skincare Plan</button>
                   <button onClick={()=>setView('board')} className="px-5 py-2.5 bg-white text-zinc-900 text-sm font-medium rounded-xl hover:bg-zinc-100 transition shadow-sm">View My Assessment →</button>
+                  <button onClick={()=>setShowBoard(true)} className="px-5 py-2.5 bg-violet-600 text-white text-sm font-medium rounded-xl hover:bg-violet-700 transition flex items-center gap-2"><Icon name="Download" size={15}/> Download Board</button>
                 </div>
               </div>
             )}
@@ -901,14 +1582,18 @@ const ClientApp = ({ db, clientId, onUpdateDb }) => {
         )}
       </main>
     </div>
+    {showBoard && plan && (
+      <PrintableBoard client={client} plan={plan} db={db} settings={settings} onClose={()=>setShowBoard(false)}/>
+    )}
+  </React.Fragment>
   );
 };
 
 // ─── MAIN APP ──────────────────────────────────────────────────────────────────
 function App() {
   const [db, setDb] = useState(MOCK_DB_INITIAL);
+  const [settings, setSettings] = useState(ADMIN_SETTINGS_INITIAL);
   const [persona, setPersona] = useState(null);
-  const [panelOpen, setPanelOpen] = useState(false);
 
   return (
     <React.Fragment>
@@ -918,7 +1603,7 @@ function App() {
             <div className="w-20 h-20 rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-xl bg-gradient-to-br from-zinc-800 to-zinc-950 ring-1 ring-white/10">
               <span className="text-white font-serif text-4xl">A</span>
             </div>
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-violet-700 mb-3">Aesthetic Intelligence Platform</p>
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-violet-700 mb-3">{settings.branding.clinicName} · Aesthetic Intelligence Platform</p>
             <h1 className="text-5xl font-serif font-semibold text-zinc-800 mb-3">AestheticSim</h1>
             <p className="text-zinc-500 mb-2 text-lg leading-relaxed">Intake → Analysis → Simulation → Treatment Plan → Skincare Journey</p>
             <p className="text-zinc-400 text-sm mb-10">A full consultation operating system for modern medspas.</p>
@@ -936,9 +1621,16 @@ function App() {
                 </button>
               </div>
               <div className="border-t border-zinc-100 pt-3">
+                <p className="text-xs text-zinc-500 mb-2 font-medium">Admin</p>
+                <button onClick={()=>setPersona({role:'admin'})} className="w-full py-2.5 border border-zinc-200 text-zinc-600 rounded-xl text-sm font-medium flex items-center gap-3 px-4 hover:bg-zinc-50 transition mb-3">
+                  <Icon name="Settings" size={16} className="text-zinc-400"/>
+                  <div className="text-left"><div>Admin Settings</div><div className="text-zinc-400 text-xs">Branding · Integrations · Board</div></div>
+                </button>
+              </div>
+              <div className="border-t border-zinc-100 pt-3">
                 <p className="text-xs text-zinc-500 mb-2 font-medium">View as existing client</p>
-                {db.clients.filter(c=>c.id!=='c4').map(c=>{
-                  const labels = { needs_review:'Board in review', approved:'Plan approved', analyzing:'AI analyzing' };
+                {db.clients.map(c=>{
+                  const labels = { needs_review:'Board in review', approved:'Plan approved', analyzing:'AI analyzing', booked:'Appointment booked', invited:'Awaiting intake' };
                   return (
                     <button key={c.id} onClick={()=>setPersona({role:'client',id:c.id})}
                       className="w-full flex items-center justify-between text-sm px-3 py-2 hover:bg-zinc-50 rounded-xl group transition">
@@ -946,7 +1638,7 @@ function App() {
                         <div className="w-7 h-7 rounded-full overflow-hidden bg-zinc-100 shrink-0">{c.photo&&<img src={c.photo} className="w-full h-full object-cover"/>}</div>
                         <span className="text-zinc-700 font-medium group-hover:text-zinc-900">{c.name}</span>
                       </div>
-                      <Badge color={c.state==='approved'?'green':c.state==='needs_review'?'violet':'zinc'}>{labels[c.state]||c.state}</Badge>
+                      <Badge color={c.state==='approved'?'green':c.state==='needs_review'?'violet':c.state==='booked'?'blue':'zinc'}>{labels[c.state]||c.state}</Badge>
                     </button>
                   );
                 })}
@@ -956,8 +1648,9 @@ function App() {
         </div>
       ) : (
         <>
-          {persona.role==='clinician' && <ClinicianApp db={db} onUpdateDb={setDb}/>}
-          {persona.role==='client' && <ClientApp db={db} clientId={persona.id} onUpdateDb={setDb}/>}
+          {persona.role==='clinician' && <ClinicianApp db={db} onUpdateDb={setDb} settings={settings}/>}
+          {persona.role==='client' && <ClientApp db={db} clientId={persona.id} onUpdateDb={setDb} settings={settings}/>}
+          {persona.role==='admin' && <AdminPanel settings={settings} onSave={setSettings} onBack={()=>setPersona(null)}/>}
         </>
       )}
       <div className="fixed bottom-5 left-5 z-50 flex flex-col items-start gap-2">
