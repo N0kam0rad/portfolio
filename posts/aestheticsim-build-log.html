@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How I built AestheticSim · Tamara Richards</title>
+<meta name="description" content="Build log for AestheticSim, including the demo video, workflow, tools, and what changed from idea to prototype." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Fraunces:ital,wght@1,500&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#F4EEE2;--ink:#1A1613;--paper:#FFFDF8;--red:#ED3A24;--blue:#2F6BFF;--green:#11B981;--purple:#7C4DFF;--yellow:#FFC835;--lime:#C2F23D;--muted:#6E665B;--shadow:6px 6px 0 var(--ink)}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;line-height:1.65}a{color:var(--blue)}.bar{height:12px;display:flex}.bar span{flex:1}.bar span:nth-child(1){background:var(--blue)}.bar span:nth-child(2){background:var(--red)}.bar span:nth-child(3){background:var(--green)}.bar span:nth-child(4){background:var(--yellow)}nav{position:sticky;top:0;background:var(--bg);border-bottom:2px solid var(--ink);z-index:3}nav .in{max-width:900px;margin:0 auto;padding:0 24px;height:62px;display:flex;justify-content:space-between;align-items:center}.back{font-weight:800;text-decoration:none;color:var(--ink)}main{max-width:900px;margin:0 auto;padding:44px 24px}h1,h2,h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;line-height:1;letter-spacing:-.025em}h1{font-size:clamp(2.4rem,7vw,4.6rem);margin:14px 0}.eyebrow{font-weight:800;font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}.lede{font-size:1.15rem;color:var(--muted);max-width:65ch}.meta{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 28px}.pill{font-size:.74rem;font-weight:800;border:2px solid var(--ink);border-radius:999px;background:var(--paper);padding:5px 12px}.pill.served{background:var(--lime)}.demo{background:var(--ink);color:var(--bg);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;margin:26px 0 34px}.demo video{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;background:#111}.demo .cap{padding:18px 22px}.demo b{font-family:"Bricolage Grotesque";font-size:1.2rem}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:28px 0}@media(max-width:760px){.grid{grid-template-columns:1fr}}.card{background:var(--paper);border:2px solid var(--ink);border-radius:20px;box-shadow:4px 4px 0 var(--ink);padding:24px}.card h3{font-size:1.25rem;margin-bottom:8px}.card p{color:#342e27}.wide{grid-column:1/-1}.cta{margin:38px 0;background:var(--purple);color:#fff;border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:28px}.cta a{color:var(--yellow);font-weight:800}footer{text-align:center;color:var(--muted);padding:30px;border-top:2px solid var(--ink)}
+</style>
+</head>
+<body>
+<div class="bar"><span></span><span></span><span></span><span></span></div>
+<nav><div class="in"><a class="back" href="../blog.html">← Build log</a><b>AestheticSim</b></div></nav>
+<main>
+<div class="eyebrow">Build log · Served</div>
+<h1>How I built AestheticSim</h1>
+<p class="lede">AestheticSim started as a fuzzy consultation-platform idea and became a clickable, role-switching prototype with a client view, a clinic view, mock data, and a demo-ready review board.</p>
+<div class="meta"><span class="pill served">Served</span><span class="pill">React prototype</span><span class="pill">Mock data</span><span class="pill">AI-assisted build</span></div>
+<section class="demo" aria-label="AestheticSim demo video"><video controls preload="metadata" poster="../assets/aesthetic-sim-thumb.jpg"><source src="../assets/aesthetic-sim-demo.mp4" type="video/mp4" />Your browser does not support the video tag.</video><div class="cap"><b>Demo video</b><p>The short walkthrough shows the working board, analysis panels, review workflow, and plan output.</p></div></section>
+<section class="grid"><div class="card"><h3>The spark</h3><p>I wanted a way to make a high-trust consultation feel visual, structured, and easier to explain without pretending the prototype was a production system.</p></div><div class="card"><h3>The build move</h3><p>I started with the data model: clients, consults, review states, plan items, pricing, confidence notes, and role switching. That gave the interface a skeleton before the screens got pretty.</p></div><div class="card"><h3>What AI did well</h3><p>AI helped turn the workflow into a fast React prototype, then helped me iterate on states, labels, and the story the demo needed to tell.</p></div><div class="card"><h3>What needed human taste</h3><p>The first UI was too generic. The polish pass added stronger hierarchy, editorial cards, trust language, and a clearer before-demo-after narrative.</p></div><div class="card wide"><h3>What I would build next</h3><p>Real auth, a safer upload pipeline, clinic admin settings, a stricter review state machine, and analytics that show where the consultation turns into booking intent.</p></div></section>
+<div class="cta"><h2>Related pages</h2><p><a href="../specs/aesthetic-sim.html">Read the product spec →</a><br/><a href="../portfolio.html">Back to the portfolio →</a></p></div>
+</main>
+<footer>Tamara Richards — Ideas, prototyped with AI.</footer>
+</body>
+</html>
