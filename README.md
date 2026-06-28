@@ -42,6 +42,19 @@ The site is designed to show:
 
 ---
 
+## Status vocabulary
+
+Every project uses the same four status labels across repo READMEs and portfolio tables:
+
+| Status | Meaning |
+|---|---|
+| **Done** | Usable, shipped, or complete enough to demo honestly. |
+| **In progress** | Actively building, beta, prototype, testing, drafting, or production work. |
+| **Planned** | Scoped or committed, but not started yet. |
+| **Idea** | Early concept only. |
+
+---
+
 ## Featured builds
 
 Version and last-updated values are maintained by GitHub Actions. Version is generated from the latest commit touching each project’s main spec, post, or source path.
