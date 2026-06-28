@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <link rel="alternate icon" href="favicon.svg" />
 <title>Portfolio — Tamara Richards</title>
-<meta name="description" content="The full portfolio: apps and passion projects shipped with AI. Peek a demo on any card, read the build free, unlock the full app." />
+<meta name="description" content="The full portfolio: apps and passion projects shipped with AI. Every project card includes a visual thumbnail, product context, and a path into the demo or spec." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -16,635 +16,83 @@
     --bg:#F4EEE2; --ink:#1A1613; --paper:#FFFDF8; --red:#ED3A24;
     --pink:#FF4D9D; --blue:#2F6BFF; --green:#11B981; --coral:#FF7A3D;
     --purple:#7C4DFF; --yellow:#FFC835; --lime:#C2F23D; --muted:#6E665B;
-    --shadow:6px 6px 0 var(--ink); --shadow-sm:4px 4px 0 var(--ink); --maxw:1180px; --nav-height:66px;
+    --shadow:6px 6px 0 var(--ink); --shadow-sm:4px 4px 0 var(--ink); --maxw:1180px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
   body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-  h1,h2,h3,h4{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;line-height:0.95;letter-spacing:-0.025em}
-  .serif{font-family:"Fraunces",Georgia,serif;font-style:italic;font-weight:500;letter-spacing:-0.01em}
-  a{color:inherit}
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
-  .reveal{opacity:0;transform:translateY(26px);transition:opacity .6s ease, transform .6s ease}
-  .reveal.in{opacity:1;transform:none}
-  .accentbar{height:12px;display:flex}.accentbar span{flex:1}
-  .accentbar span:nth-child(1){background:var(--red)}.accentbar span:nth-child(2){background:var(--blue)}
-  .accentbar span:nth-child(3){background:var(--green)}.accentbar span:nth-child(4){background:var(--coral)}
-  .accentbar span:nth-child(5){background:var(--purple)}.accentbar span:nth-child(6){background:var(--yellow)}
-
-  nav{position:sticky;top:0;z-index:80;background:var(--bg);border-bottom:2px solid var(--ink)}
-  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-  .logo{display:flex;align-items:center;gap:11px;font-family:"Bricolage Grotesque";font-weight:800;font-size:1.15rem}
-  .logo .dot{width:13px;height:13px;border-radius:50%;background:var(--red);border:2px solid var(--ink)}
-  .chip{font-family:"Inter";font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;background:var(--yellow);border:2px solid var(--ink);border-radius:999px;padding:3px 9px;box-shadow:var(--shadow-sm)}
-  .navlinks{display:flex;gap:4px;align-items:center}
-  .navlinks a{text-decoration:none;font-weight:600;font-size:0.9rem;padding:8px 11px;border-radius:10px}
-  .navlinks a:hover{background:#00000010}
-  .navlinks a.cta{background:var(--ink);color:var(--bg);border:2px solid var(--ink)}
-  @media(max-width:880px){.navlinks a:not(.cta){display:none}}
-
-  .marquee{background:var(--red);color:#fff;border-bottom:2px solid var(--ink);overflow:hidden;white-space:nowrap;padding:10px 0}
-  .marquee .track{display:inline-block;will-change:transform;animation:scroll 26s linear infinite}
-  .marquee b{font-family:"Bricolage Grotesque";font-weight:800;font-size:0.95rem;margin:0 6px}
-  .marquee .star{color:var(--yellow);margin:0 14px}
-  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-
-  header.hero{padding:58px 0 30px}
-  .hero-grid{display:grid;grid-template-columns:1.45fr 0.85fr;gap:38px;align-items:center}
-  @media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:26px}}
-  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;border:2px solid var(--ink);background:var(--paper);border-radius:999px;padding:7px 15px;box-shadow:var(--shadow-sm)}
-  h1.title{font-size:clamp(3.1rem,8.5vw,6.4rem);margin:24px 0 22px;letter-spacing:-0.035em}
-  h1.title .red{color:var(--red)}
-  h1.title .mark{background:var(--lime);border:2px solid var(--ink);border-radius:10px;padding:0 .1em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
-  .lede{font-size:clamp(1.08rem,2vw,1.3rem);max-width:54ch}
-  .lede .serif{color:var(--red);font-size:1.06em}
-  .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:30px}
-  .btn{display:inline-block;text-decoration:none;font-weight:700;font-size:0.98rem;padding:14px 24px;border:2px solid var(--ink);border-radius:13px;box-shadow:var(--shadow);transition:transform .12s, box-shadow .12s;cursor:pointer;background:var(--paper)}
-  .btn:hover{transform:translate(2px,2px);box-shadow:var(--shadow-sm)}
-  .btn.red{background:var(--red);color:#fff}
-  .hero-card{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:26px;transform:rotate(2.2deg)}
-  .hero-card h3{font-size:1.05rem;margin-bottom:16px}
-  .meter-row{display:flex;align-items:center;gap:10px;font-weight:600;font-size:0.9rem;margin-bottom:11px}
-  .bar{flex:1;height:14px;border:2px solid var(--ink);border-radius:999px;overflow:hidden;background:#0000000a}
-  .bar i{display:block;height:100%}
-  .hero-card .note{margin-top:6px;font-size:0.82rem;color:var(--muted)}
-
-  section{padding:62px 0;border-top:2px solid var(--ink);scroll-margin-top:var(--nav-height,66px)}
-  .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;flex-wrap:wrap;margin-bottom:34px}
-  .sec-head .tag{font-weight:700;font-size:0.76rem;text-transform:uppercase;letter-spacing:0.16em;color:var(--red);margin-bottom:10px}
-  .sec-head h2{font-size:clamp(2.1rem,5.2vw,3.6rem)}
-  .sec-head p{color:var(--muted);max-width:44ch;font-size:1rem}
-
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  @media(max-width:820px){.steps{grid-template-columns:1fr}}
-  .step{background:var(--paper);border:2px solid var(--ink);border-radius:20px;box-shadow:var(--shadow);padding:26px}
-  .step .n{font-family:"Bricolage Grotesque";font-weight:800;font-size:1.7rem;width:54px;height:54px;display:grid;place-items:center;border:2px solid var(--ink);border-radius:14px;margin-bottom:16px;color:#fff}
-  .step:nth-child(1) .n{background:var(--red)}.step:nth-child(2) .n{background:var(--blue)}.step:nth-child(3) .n{background:var(--green)}
-  .step h3{font-size:1.3rem;margin-bottom:9px}.step p{color:var(--muted);font-size:0.95rem}
-
-  /* WORK / app cards */
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
-  @media(max-width:820px){.grid{grid-template-columns:1fr}}
-  .proj{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;transition:transform .15s ease, box-shadow .15s ease}
-  .proj:hover{box-shadow:10px 10px 0 var(--ink)}
-  .proj .top{padding:20px 24px;border-bottom:2px solid var(--ink);display:flex;align-items:center;justify-content:space-between;gap:12px;color:#fff}
-  .proj.pink .top{background:var(--pink)}.proj.blue .top{background:var(--blue)}
-  .proj.green .top{background:var(--green)}.proj.coral .top{background:var(--coral)}
-  .proj.purple .top{background:var(--purple)}.proj.red .top{background:var(--red)}
-  .proj.silver .top{background:#1a1a2e}.proj.silver .lnk{color:#7c4dff}
-  .proj.silver .thumb.ph{background:repeating-linear-gradient(45deg,#7c4dff14 0 14px,transparent 14px 28px)}
-  .proj .top h3{font-size:1.5rem}
-  .status{font-family:"Inter";font-weight:700;font-size:0.64rem;text-transform:uppercase;letter-spacing:0.08em;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:4px 10px;white-space:nowrap}
-  .thumb{aspect-ratio:16/10;overflow:hidden;border-bottom:2px solid var(--ink);background:#00000008;position:relative}
-  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
-  .thumb.ph{display:grid;place-items:center}
-  .thumb.ph .big{font-family:"Bricolage Grotesque";font-weight:800;font-size:2.5rem;opacity:.18;letter-spacing:.04em;text-align:center;padding:0 10px}
-  .proj.blue .thumb.ph{background:repeating-linear-gradient(45deg,#2f6bff14 0 14px,transparent 14px 28px)}
-  .proj.green .thumb.ph{background:repeating-linear-gradient(45deg,#11b98114 0 14px,transparent 14px 28px)}
-  .proj.coral .thumb.ph{background:repeating-linear-gradient(45deg,#ff7a3d14 0 14px,transparent 14px 28px)}
-  .proj.purple .thumb.ph{background:repeating-linear-gradient(45deg,#7c4dff14 0 14px,transparent 14px 28px)}
-  .thumb .peek{position:absolute;bottom:10px;left:10px;font-size:0.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;background:var(--ink);color:var(--bg);padding:4px 9px;border-radius:999px}
-  /* live site preview embedded in a card thumb (scaled, non-interactive) */
-  .thumb-embed{background:var(--bg);position:relative}
-  .thumb-embed .site-preview{position:absolute;top:0;left:0;width:400%;height:400%;border:0;transform:scale(.25);transform-origin:top left;pointer-events:none}
-  .proj .pbody{padding:22px 24px;display:flex;flex-direction:column;gap:13px;flex:1}
-  .proj .one{font-size:1.05rem;font-weight:600}
-  .proj .prob{font-size:0.92rem;color:var(--muted)}.proj .prob b{color:var(--ink)}
-  .builtwith{display:flex;flex-wrap:wrap;gap:7px}
-  .pill{font-size:0.73rem;font-weight:600;border:2px solid var(--ink);border-radius:999px;padding:4px 10px;background:var(--bg)}
-  .pfoot{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding-top:6px}
-  .lnk{font-weight:700;font-size:0.9rem;text-decoration:none;border-bottom:3px solid currentColor;padding-bottom:1px}
-  .proj.pink .lnk{color:var(--pink)}.proj.blue .lnk{color:var(--blue)}.proj.green .lnk{color:#0e9e6e}
-  .proj.coral .lnk{color:#df5e1f}.proj.purple .lnk{color:var(--purple)}.proj.red .lnk{color:var(--red)}
-  .lock-btn{font-family:"Inter";font-weight:700;font-size:0.84rem;border:2px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:11px;padding:8px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;box-shadow:var(--shadow-sm);transition:transform .12s}
-  .lock-btn:hover{transform:translate(2px,2px);box-shadow:none}
-  .lock-btn.unlocked{background:var(--lime);color:var(--ink)}
-  .coming-soon-btn{font-family:"Inter";font-weight:700;font-size:0.84rem;border:2px solid var(--ink);background:var(--bg);color:var(--muted);border-radius:11px;padding:8px 14px;display:inline-flex;align-items:center;gap:7px;box-shadow:var(--shadow-sm);cursor:default;opacity:.7}
-  .thumb-helix{position:relative;display:grid;grid-template-columns:1fr 1fr;height:100%}
-  .thumb-helix img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
-  .thumb-helix .overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,#0a0a1a88 100%)}
-  .thumb-helix .peek{position:absolute;bottom:10px;left:10px;z-index:2}
-
-  /* WHAT'S COOKING */
-  .cooking{background:var(--ink);color:var(--bg)}
-  .cooking .sec-head .tag{color:var(--yellow)}.cooking .sec-head h2{color:var(--bg)}.cooking .sec-head p{color:#c9c2b6}
-  .cook-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-  @media(max-width:760px){.cook-grid{grid-template-columns:1fr}}
-  .cook{background:#241f1a;border:2px solid #3a332b;border-radius:18px;padding:22px;display:flex;gap:16px;align-items:flex-start}
-  .cook .emoji{font-size:1.6rem;line-height:1}
-  .cook h4{font-size:1.15rem;color:var(--bg);margin-bottom:5px}
-  .cook p{font-size:0.9rem;color:#b8b1a6}
-  .scook{display:inline-block;margin-top:9px;font-size:0.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:3px 9px;border-radius:999px;border:2px solid}
-  .scook.building{color:var(--lime);border-color:var(--lime)}
-  .scook.soon{color:var(--coral);border-color:var(--coral)}
-  .scook.concept{color:#b8b1a6;border-color:#5a5249}
-
-  /* BUILD LOG */
-  .blog-feat{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-columns:1fr 0.85fr}
-  @media(max-width:760px){.blog-feat{grid-template-columns:1fr}}
-  .blog-feat .txt{padding:34px}
-  .blog-feat .label{font-weight:700;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--red)}
-  .blog-feat h3{font-size:2rem;margin:13px 0 12px}.blog-feat p{color:var(--muted);font-size:0.98rem}
-  .blog-feat .img{border-left:2px solid var(--ink);min-height:230px;background-size:cover;background-position:center}
-  @media(max-width:760px){.blog-feat .img{border-left:none;border-top:2px solid var(--ink);min-height:180px}}
-  .blog-feat .btn{margin-top:22px;background:var(--ink);color:var(--bg)}
-  .blog-more{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
-  @media(max-width:820px){.blog-more{grid-template-columns:1fr}}
-  .stub{background:var(--paper);border:2px dashed var(--ink);border-radius:16px;padding:20px}
-  .stub .k{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted)}
-  .stub h4{font-size:1.12rem;margin:8px 0 6px}.stub p{font-size:0.87rem;color:var(--muted)}
-
-  /* TOOLS */
-  .tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-  @media(max-width:820px){.tools-grid{grid-template-columns:repeat(2,1fr)}}
-  .tool{display:flex;flex-direction:column;gap:4px;background:var(--paper);border:2px solid var(--ink);border-radius:16px;padding:16px 18px;text-decoration:none;box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s}
-  .tool:hover{transform:translate(2px,2px);box-shadow:none}
-  .tool b{font-family:"Bricolage Grotesque";font-size:1.05rem}
-  .tool span{font-size:0.82rem;color:var(--muted)}
-  .tool .arr{font-weight:700;color:var(--red)}
-  .repos{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-  .repos .lab{font-weight:700;font-size:0.82rem;color:var(--muted)}
-  .repo{font-weight:700;font-size:0.86rem;text-decoration:none;border:2px solid var(--ink);border-radius:999px;padding:7px 14px;background:var(--bg)}
-
-  .about{display:grid;grid-template-columns:0.8fr 1.2fr;gap:26px;align-items:stretch}
-  @media(max-width:820px){.about{grid-template-columns:1fr}}
-  .portrait{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
-  .portrait img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;border-bottom:2px solid var(--ink)}
-  .portrait .ph2{aspect-ratio:4/5;display:grid;place-items:center;background:repeating-linear-gradient(45deg,#7c4dff14 0 16px,transparent 16px 32px);border-bottom:2px solid var(--ink);text-align:center;padding:20px}
-  .portrait .ph2 b{font-family:"Bricolage Grotesque";font-size:1.3rem}
-  .portrait .ph2 span{font-size:0.82rem;color:var(--muted);margin-top:6px}
-  .portrait .cap{padding:13px 18px;font-weight:600;font-size:0.88rem;color:var(--muted)}.portrait .cap .serif{color:var(--red)}
-  .bio{background:var(--yellow);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:30px;display:flex;flex-direction:column;justify-content:center;gap:14px}
-  .bio p{font-size:1.06rem}.bio .serif{color:var(--red)}
-  .bio .lookrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}.bio .lookrow .pill{background:var(--paper)}
-
-  #contact .contact-box{background:var(--purple);color:#fff;border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:32px;text-align:center}
-  .contact-box h3{font-size:1.8rem;margin-bottom:8px}
-  .contact-box .mail{display:inline-block;margin-top:16px;background:#fff;color:var(--ink);font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:13px;padding:13px 22px;box-shadow:var(--shadow-sm)}
-
-  footer{border-top:2px solid var(--ink);background:var(--red);color:#fff}
-  footer .wrap{padding:54px 26px 60px}
-  footer .big{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(2.4rem,7vw,5rem);line-height:0.95;letter-spacing:-0.03em}
-  footer .big .serif{color:var(--yellow)}
-  footer .row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-top:30px;border-top:2px solid #ffffff55;padding-top:22px;font-weight:600}
-  footer a{color:#fff;text-decoration:underline;text-underline-offset:3px}
-
-  /* GATE MODAL */
-  .gate{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(26,22,19,0.6);backdrop-filter:blur(4px)}
-  .gate.open{display:flex}
-  .gate-card{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:10px 10px 0 var(--ink);max-width:440px;width:100%;padding:32px;position:relative}
-  .gate-card .x{position:absolute;top:16px;right:18px;font-size:1.4rem;font-weight:800;cursor:pointer;background:none;border:none;color:var(--ink)}
-  .gate-card .key{font-size:2rem}
-  .gate-card h3{font-size:1.7rem;margin:8px 0 8px}
-  .gate-card p{color:var(--muted);font-size:0.95rem;margin-bottom:18px}
-  .gate-form{display:flex;gap:8px;margin-bottom:14px}
-  .gate-form input{flex:1;border:2px solid var(--ink);border-radius:12px;padding:12px 14px;font-family:"Inter";font-size:0.95rem}
-  .gate-form button{background:var(--red);color:#fff;border:2px solid var(--ink);border-radius:12px;font-weight:700;padding:0 18px;cursor:pointer}
-  .gate-or{text-align:center;font-weight:700;color:var(--muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:.1em;margin:14px 0}
-  .follow-row{display:flex;gap:10px}
-  .follow-btn{flex:1;text-align:center;text-decoration:none;font-weight:700;font-size:0.9rem;border:2px solid var(--ink);border-radius:12px;padding:12px;box-shadow:var(--shadow-sm)}
-  .follow-btn.tt{background:var(--ink);color:#fff}.follow-btn.ig{background:linear-gradient(45deg,#feda75,#d62976,#962fbf);color:#fff}
-  .gate-done{width:100%;margin-top:14px;background:var(--lime);border:2px solid var(--ink);border-radius:12px;font-weight:700;padding:11px;cursor:pointer}
-  .gate-note{font-size:0.74rem;color:var(--muted);margin-top:14px;text-align:center}
-
-  .bigmq{border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);background:var(--ink);color:var(--bg);overflow:hidden;padding:20px 0}
-  .bigmq .row{display:flex;white-space:nowrap;width:max-content;will-change:transform;animation:bigscroll 26s linear infinite}
-  .bigmq span{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(2rem,6vw,4rem);letter-spacing:-0.02em;padding:0 .28em;line-height:1.05}
-  .bigmq .em{color:var(--yellow)}.bigmq .out{color:transparent;-webkit-text-stroke:1.6px var(--bg)}
-  .bigmq:hover .row{animation-play-state:paused}
-  @keyframes bigscroll{to{transform:translateX(-50%)}}
-
-  /* ABOUT — bold yellow editorial (Wilde Weide vibe) */
-  #about.about-yellow{background:var(--yellow);border-top:2px solid var(--ink)}
-  .ab-top{margin-bottom:30px}
-  .ab-top .tag{font-weight:700;font-size:0.76rem;text-transform:uppercase;letter-spacing:0.16em;color:var(--red);margin-bottom:10px}
-  .ab-h{font-size:clamp(2.6rem,7.5vw,5.2rem);line-height:0.9;letter-spacing:-0.03em}
-  .ab-sub{font-size:1.12rem;margin-top:16px;max-width:54ch;font-weight:500}
-  .ab-sub em{font-style:italic;color:#7a6700}
-  .ab-grid{display:grid;grid-template-columns:0.85fr 1.15fr;gap:34px;align-items:center}
-  @media(max-width:820px){.ab-grid{grid-template-columns:1fr;gap:44px}}
-  .ab-portrait{position:relative;justify-self:center;max-width:380px;width:100%}
-  .ab-portrait img{width:100%;aspect-ratio:4/5;object-fit:cover;border:3px solid var(--ink);border-radius:18px;box-shadow:12px 12px 0 var(--ink);transform:rotate(-2.5deg);display:block}
-  .ab-sticker{position:absolute;font-family:"Bricolage Grotesque";font-weight:800;border:2px solid var(--ink);border-radius:999px;padding:8px 14px;box-shadow:var(--shadow-sm);white-space:nowrap}
-  .ab-sticker.s1{background:var(--paper);color:var(--ink);font-size:0.82rem;bottom:-16px;left:-12px;transform:rotate(-4deg)}
-  .ab-sticker.s2{background:var(--red);color:#fff;font-size:0.95rem;top:-14px;right:-10px;transform:rotate(5deg)}
-  .ab-bio{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:32px;display:flex;flex-direction:column;gap:14px}
-  .ab-bio p{font-size:1.07rem}.ab-bio .serif{color:var(--red)}
-  .ab-bio .lookrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
-  .ab-bio .lookrow .pill{background:var(--bg)}
-
-  /* HERO portrait (face at the top — portfolio lead) */
-  .hero-portrait{position:relative;justify-self:center;max-width:360px;width:100%}
-  .hero-portrait img{width:100%;aspect-ratio:4/5;object-fit:cover;border:3px solid var(--ink);border-radius:18px;box-shadow:12px 12px 0 var(--ink);transform:rotate(2deg);display:block}
-  /* About stat card (moved from hero) */
-  .ab-stats{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:30px}
-  .ab-stats h3{font-size:1.05rem;margin-bottom:16px}
-  .ab-stats .note{margin-top:6px;font-size:0.84rem;color:var(--muted)}
-
-  /* Scroll progress + dynamic motion */
-  #scrollbar{position:fixed;top:0;left:0;height:4px;width:100%;background:var(--red);transform:scaleX(0);transform-origin:0 50%;z-index:300;pointer-events:none}
-  nav{transition:box-shadow .2s ease}
-  nav.scrolled{box-shadow:0 5px 0 rgba(26,22,19,0.10)}
-  .reveal{will-change:opacity,transform}
-  .proj{will-change:transform}
-  @media(prefers-reduced-motion:reduce){
-    .reveal{opacity:1!important;transform:none!important;transition:none!important}
-    #scrollbar{display:none}
-    .marquee .track,.bigmq .row,.f-mark .row{animation:none!important}
-  }
-
-  /* ===== Besharm-style footer navigation ===== */
-  footer.fnav{background:var(--red);color:#fff;border-top:2px solid var(--ink);overflow:hidden}
-  footer.fnav .wrap{padding:66px 26px 0}
-  .f-eyebrow{font-weight:700;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.2em;opacity:.85;margin-bottom:14px}
-  .f-lead{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(2rem,5vw,3.4rem);line-height:0.98;letter-spacing:-0.025em;max-width:15ch;margin-bottom:48px}
-  .f-lead .serif{color:var(--yellow)}
-  .f-cols{display:block;padding-bottom:46px;border-bottom:2px solid #ffffff44}
-  
-
-  /* big animated nav links */
-  .f-nav{display:flex;flex-direction:column}
-  .fl{position:relative;display:flex;align-items:center;text-decoration:none;color:#fff;padding:14px 0;border-top:2px solid #ffffff33;font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(1.7rem,4.4vw,3rem);line-height:1;letter-spacing:-0.025em;transition:padding-left .38s cubic-bezier(.2,.8,.2,1),color .25s}
-  .f-nav .fl:last-child{border-bottom:2px solid #ffffff33}
-  .fl:hover{padding-left:30px;color:var(--yellow)}
-  .fl-arrow{position:absolute;left:2px;opacity:0;transform:translateX(-14px) rotate(-10deg);transition:opacity .3s,transform .38s cubic-bezier(.2,.8,.2,1);font-size:0.66em}
-  .fl:hover .fl-arrow{opacity:1;transform:translateX(0) rotate(0)}
-  .fl-in{position:relative;display:inline-block;overflow:hidden;height:1.2em}
-  .fl-in span{display:block;height:1.2em;line-height:1.2;transition:transform .42s cubic-bezier(.2,.8,.2,1)}
-  .fl-in span:nth-child(2){color:var(--yellow)}
-  .fl:hover .fl-in span{transform:translateY(-100%)}
-  .fl .num{margin-left:auto;font-family:"Inter";font-weight:700;font-size:0.72rem;letter-spacing:.06em;opacity:.6;align-self:center}
-
-  /* connect column */
-  .f-links{display:flex;flex-direction:column;margin-bottom:26px}
-  .f-links a{text-decoration:none;color:#fff;font-weight:700;font-size:1.06rem;padding:11px 0;border-top:2px solid #ffffff33;display:flex;justify-content:space-between;align-items:center;transition:padding-left .3s,color .25s}
-  .f-links a:last-child{border-bottom:2px solid #ffffff33}
-  .f-links a:hover{padding-left:14px;color:var(--yellow)}
-  .f-links a .ar{transition:transform .3s}
-  .f-links a:hover .ar{transform:translate(4px,-4px)}
-  .f-mailbig{display:inline-block;font-weight:700;text-decoration:none;color:var(--ink);background:#fff;border:2px solid var(--ink);border-radius:13px;padding:12px 20px;box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s;word-break:break-all}
-  .f-mailbig:hover{transform:translate(2px,2px);box-shadow:none}
-
-  /* giant wordmark bleeding off the bottom */
-  .f-mark{margin-top:26px;line-height:.8;white-space:nowrap;overflow:hidden}
-  .f-mark .row{display:flex;width:max-content;will-change:transform;animation:bigscroll 36s linear infinite}
-  .f-mark span{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(3.6rem,16vw,12rem);letter-spacing:-0.045em;padding:0 .2em;color:transparent;-webkit-text-stroke:2px #ffffffcc}
-  .f-mark span.fill{color:#fff;-webkit-text-stroke:0}
-  .f-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:20px 0 30px;font-weight:600;font-size:0.9rem}
-  .f-bottom a{color:#fff}
-  .f-top-btn{cursor:pointer;background:none;border:2px solid #ffffff66;color:#fff;border-radius:999px;padding:9px 17px;font-weight:700;font-size:0.82rem;display:inline-flex;gap:8px;align-items:center;transition:background .2s,border-color .2s,transform .2s}
-  .f-top-btn:hover{background:#ffffff1a;border-color:#fff;transform:translateY(-2px)}
-
-  /* ===== multipage additions ===== */
-  .navlinks a.active{text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px}
-  .more-row{display:flex;justify-content:center;margin-top:36px}
-
-  /* ===== left drawer navigation ===== */
-  .menu-btn{display:inline-flex;align-items:center;gap:9px;font-family:"Inter";font-weight:700;font-size:0.9rem;background:var(--paper);border:2px solid var(--ink);border-radius:11px;padding:8px 14px;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s}
-  .menu-btn:hover{transform:translate(2px,2px);box-shadow:none}
-  .menu-bars{display:inline-flex;flex-direction:column;gap:3px}
-  .menu-bars span{display:block;width:18px;height:2.5px;background:var(--ink);border-radius:2px;transition:transform .3s ease,opacity .2s ease}
-  body.drawer-open .menu-bars span:nth-child(1){transform:translateY(5.5px) rotate(45deg)}
-  body.drawer-open .menu-bars span:nth-child(2){opacity:0}
-  body.drawer-open .menu-bars span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg)}
-  @media(max-width:560px){nav .navcta{display:none}}
-
-  .drawer-overlay{position:fixed;inset:0;background:rgba(26,22,19,0.5);backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .3s ease,visibility .3s ease;z-index:90}
-  body.drawer-open .drawer-overlay{opacity:1;visibility:visible}
-  .drawer{position:fixed;top:0;left:0;height:100%;width:min(86vw,340px);background:var(--bg);border-right:2px solid var(--ink);box-shadow:8px 0 0 rgba(26,22,19,0.12);transform:translateX(-100%);transition:transform .36s cubic-bezier(.22,.8,.2,1);z-index:95;display:flex;flex-direction:column;padding:20px 22px 26px;overflow-y:auto}
-  body.drawer-open .drawer{transform:none}
-  .drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:14px;border-bottom:2px solid var(--ink)}
-  .drawer-title{font-family:"Bricolage Grotesque";font-weight:800;font-size:1.05rem;text-transform:uppercase;letter-spacing:0.06em}
-  .drawer-x{background:none;border:none;font-size:1.4rem;font-weight:800;cursor:pointer;color:var(--ink);line-height:1}
-  .drawer-nav{display:flex;flex-direction:column}
-  .drawer-nav a{text-decoration:none;color:var(--ink);font-family:"Bricolage Grotesque";font-weight:800;font-size:1.5rem;letter-spacing:-0.02em;padding:13px 2px;border-bottom:2px solid #00000014;transition:padding-left .25s ease,color .2s ease}
-  .drawer-nav a:hover{padding-left:12px;color:var(--red)}
-  .drawer-nav a[aria-current="page"]{color:var(--red)}
-  .drawer-nav a[aria-current="page"]::before{content:"\2192 \00a0";font-size:0.7em}
-  .drawer-foot{margin-top:auto;padding-top:18px;display:flex;flex-wrap:wrap;gap:8px}
-  .drawer-foot a{font-size:0.78rem;font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:999px;padding:6px 12px;background:var(--paper)}
-  @media(prefers-reduced-motion:reduce){.drawer,.drawer-overlay,.menu-bars span{transition:none}}
-</style>
-<style>
-  /* ===== UX overrides: full-viewport hero, custom cursor, peering eyes, glass nav ===== */
-  /* 1 + 5 — hero fills the viewport (minus nav), content centered */
-  .hero.hero-centered{min-height:calc(100vh - 66px);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:14px 0 24px}
-  .hero-centered .wrap{display:flex;flex-direction:column;align-items:center;width:100%}
-  .hero-centered .title{margin:6px 0 12px}
-  .hero-centered .lede{margin:0 auto 4px}
-  .hero-centered .brain-figure{width:auto;max-width:100%;margin:6px auto 2px}
-  .hero-centered .brain-stack{padding-top:0;aspect-ratio:928/1152;height:clamp(230px,44vh,560px);width:auto;max-width:100%}
-  .hero-centered .brain-hint{margin-top:6px}
-  .hero .marquee{width:100%;margin-top:10px;border-top:2px solid var(--ink)}
-  .hero-centered .cta-row{margin-top:16px}
-  /* 4 — sticky glass nav, above content (but below the drawer) */
-  nav{z-index:100;background:rgba(244,238,226,0.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-  /* 6 — left drawer: rounded right edge, stacked above the nav when open */
-  .drawer{border-radius:0 16px 16px 0;z-index:130}
-  .drawer-overlay{z-index:120}
-  /* 5 — full-viewport sections, footer wordmark contained */
-  #about.about-yellow{min-height:100vh;padding:80px 0}
-  #work{padding-top:80px}
-  footer{overflow:hidden}
-  .f-mark span{font-size:clamp(3rem,10vw,9rem)}
-  /* 2 — custom Tamara-head cursor (hero only) */
-  #tamara-cursor{position:fixed;width:60px;height:60px;border-radius:50%;background:url('assets/brain-closed.png') center/cover;pointer-events:none;z-index:9999;display:none;transform:translate(-50%,-50%);transition:opacity .15s}
-  /* 3 — peering eyes (slide in from the left after the hero exits) */
-  #peering-eyes{position:fixed;left:0;top:50%;z-index:85;width:62px;height:56px;overflow:hidden;border-radius:0 40px 40px 0;background:url('assets/brain-closed.png') center 28%/92px auto no-repeat;cursor:pointer;transform:translateY(-50%) translateX(-100%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);box-shadow:4px 0 12px rgba(0,0,0,.15)}
-  #peering-eyes.show{transform:translateY(-50%) translateX(0)}
-  @media (hover:none),(max-width:760px){#tamara-cursor,#peering-eyes{display:none!important}}
+  h1,h2,h3,h4{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;line-height:.95;letter-spacing:-.025em}
+  .serif{font-family:"Fraunces",Georgia,serif;font-style:italic;font-weight:500;letter-spacing:-.01em}
+  a{color:inherit}.wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+  .accentbar{height:12px;display:flex}.accentbar span{flex:1}.accentbar span:nth-child(1){background:var(--red)}.accentbar span:nth-child(2){background:var(--blue)}.accentbar span:nth-child(3){background:var(--green)}.accentbar span:nth-child(4){background:var(--coral)}.accentbar span:nth-child(5){background:var(--purple)}.accentbar span:nth-child(6){background:var(--yellow)}
+  nav.site{position:sticky;top:0;z-index:80;background:rgba(244,238,226,.92);border-bottom:2px solid var(--ink);backdrop-filter:blur(8px)}
+  nav.site .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+  .logo{display:flex;align-items:center;gap:11px;font-family:"Bricolage Grotesque";font-weight:800;font-size:1.15rem;text-decoration:none}.logo .dot{width:13px;height:13px;border-radius:50%;background:var(--red);border:2px solid var(--ink)}
+  .chip{font-family:"Inter";font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;background:var(--yellow);border:2px solid var(--ink);border-radius:999px;padding:3px 9px;box-shadow:var(--shadow-sm)}
+  .menu-btn{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:.9rem;background:var(--paper);border:2px solid var(--ink);border-radius:11px;padding:8px 14px;cursor:pointer;box-shadow:var(--shadow-sm)}
+  .menu-bars{display:inline-flex;flex-direction:column;gap:3px}.menu-bars span{display:block;width:18px;height:2.5px;background:var(--ink);border-radius:2px}.navcta{text-decoration:underline;text-underline-offset:4px}
+  .drawer-overlay{position:fixed;inset:0;background:rgba(26,22,19,.5);backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:.25s;z-index:90}.drawer{position:fixed;top:0;left:0;height:100%;width:min(86vw,340px);background:var(--bg);border-right:2px solid var(--ink);box-shadow:8px 0 0 rgba(26,22,19,.12);transform:translateX(-100%);transition:transform .32s cubic-bezier(.22,.8,.2,1);z-index:130;display:flex;flex-direction:column;padding:20px 22px 26px;overflow-y:auto;border-radius:0 16px 16px 0}
+  body.drawer-open .drawer{transform:none}body.drawer-open .drawer-overlay{opacity:1;visibility:visible}.drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:14px;border-bottom:2px solid var(--ink)}.drawer-title{font-family:"Bricolage Grotesque";font-weight:800;font-size:1.05rem;text-transform:uppercase;letter-spacing:.06em}.drawer-x{background:none;border:none;font-size:1.4rem;font-weight:800;cursor:pointer;color:var(--ink);line-height:1}.drawer-nav{display:flex;flex-direction:column}.drawer-nav a{text-decoration:none;color:var(--ink);font-family:"Bricolage Grotesque";font-weight:800;font-size:1.5rem;letter-spacing:-.02em;padding:13px 2px;border-bottom:2px solid #00000014}.drawer-nav a[aria-current="page"]{color:var(--red)}.drawer-foot{margin-top:auto;padding-top:18px;display:flex;flex-wrap:wrap;gap:8px}.drawer-foot a{font-size:.78rem;font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:999px;padding:6px 12px;background:var(--paper)}
+  header.hero{padding:58px 0 34px;border-bottom:2px solid var(--ink)}.eyebrow{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;border:2px solid var(--ink);background:var(--paper);border-radius:999px;padding:7px 15px;box-shadow:var(--shadow-sm)}
+  h1.title{font-size:clamp(3rem,8.5vw,6.4rem);margin:24px 0 18px;letter-spacing:-.035em}.title .red{color:var(--red)}.title .mark{background:var(--lime);border:2px solid var(--ink);border-radius:10px;padding:0 .1em;box-decoration-break:clone;-webkit-box-decoration-break:clone}.lede{font-size:clamp(1.08rem,2vw,1.3rem);max-width:62ch}.lede .serif{color:var(--red)}.hero-note{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.hero-note span{background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:7px 12px;font-weight:700;font-size:.82rem;box-shadow:var(--shadow-sm)}
+  section{padding:54px 0}.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:22px;flex-wrap:wrap;margin-bottom:30px}.sec-head .tag{font-weight:700;font-size:.76rem;text-transform:uppercase;letter-spacing:.16em;color:var(--red);margin-bottom:10px}.sec-head h2{font-size:clamp(2.1rem,5.2vw,3.6rem)}.sec-head p{color:var(--muted);max-width:46ch}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}@media(max-width:820px){.grid{grid-template-columns:1fr}nav.site .navcta{display:none}}
+  .proj{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;transition:transform .15s ease,box-shadow .15s ease}.proj:hover{box-shadow:10px 10px 0 var(--ink);transform:translateY(-2px)}.proj .top{padding:20px 24px;border-bottom:2px solid var(--ink);display:flex;align-items:center;justify-content:space-between;gap:12px;color:#fff}.proj.pink .top{background:var(--pink)}.proj.blue .top{background:var(--blue)}.proj.green .top{background:var(--green)}.proj.coral .top{background:var(--coral)}.proj.purple .top{background:var(--purple)}.proj.red .top{background:var(--red)}.proj.silver .top{background:#1a1a2e}.proj .top h3{font-size:1.5rem}.status{font-weight:800;font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:4px 10px;white-space:nowrap}
+  .thumb{aspect-ratio:16/10;overflow:hidden;border-bottom:2px solid var(--ink);background:#00000008;position:relative}.thumb img{width:100%;height:100%;object-fit:cover;display:block}.thumb .peek{position:absolute;bottom:10px;left:10px;font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;background:var(--ink);color:var(--bg);padding:4px 9px;border-radius:999px;z-index:3}.thumb-embed{background:var(--bg)}.thumb-embed .site-preview{position:absolute;top:0;left:0;width:400%;height:400%;border:0;transform:scale(.25);transform-origin:top left;pointer-events:none}
+  .visual{padding:24px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;background:var(--vbg,#F7F2EA)}.mini{background:#fff;border:2px solid var(--ink);border-radius:16px;padding:14px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:10px}.mini b{font-family:"Bricolage Grotesque";font-size:.9rem}.bar{height:12px;border:2px solid var(--ink);border-radius:999px;overflow:hidden;background:#00000010}.bar i{display:block;height:100%;background:var(--c,var(--blue))}.orb{width:76px;height:76px;border-radius:50%;background:var(--c);border:2px solid var(--ink);box-shadow:var(--shadow-sm);align-self:center}.wave{height:58px;border:2px solid var(--ink);border-radius:12px;background:repeating-linear-gradient(90deg,var(--c) 0 6px,transparent 6px 16px)}.room{height:86px;border:2px solid var(--ink);border-radius:12px;background:linear-gradient(135deg,#fff 0 50%,var(--c) 50%)}.plate{height:86px;border:2px solid var(--ink);border-radius:50%;background:conic-gradient(var(--green) 0 35%,var(--yellow) 35% 65%,var(--purple) 65% 100%)}.ledger{height:86px;border:2px solid var(--ink);border-radius:12px;padding:10px;background:#fff}.ledger span{display:block;height:10px;margin:7px 0;border-radius:999px;background:var(--c)}
+  .thumb-helix{position:relative;display:grid;grid-template-columns:1fr 1fr}.thumb-helix img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}.thumb-helix .overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,#0a0a1a88 100%)}
+  .pbody{padding:22px 24px;display:flex;flex-direction:column;gap:13px;flex:1}.one{font-size:1.05rem;font-weight:700}.prob{font-size:.92rem;color:var(--muted)}.prob b{color:var(--ink)}.builtwith{display:flex;flex-wrap:wrap;gap:7px}.pill{font-size:.73rem;font-weight:700;border:2px solid var(--ink);border-radius:999px;padding:4px 10px;background:var(--bg)}.pfoot{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding-top:6px}.lnk{font-weight:800;font-size:.9rem;text-decoration:none;border-bottom:3px solid currentColor;padding-bottom:1px}.proj.pink .lnk{color:var(--pink)}.proj.blue .lnk{color:var(--blue)}.proj.green .lnk{color:#0e9e6e}.proj.coral .lnk{color:#df5e1f}.proj.purple .lnk{color:var(--purple)}.proj.red .lnk{color:var(--red)}.lock-btn,.coming-soon-btn{font-family:"Inter";font-weight:800;font-size:.84rem;border:2px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:11px;padding:8px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;box-shadow:var(--shadow-sm)}.lock-btn:hover{transform:translate(2px,2px);box-shadow:none}.lock-btn.unlocked{background:var(--lime);color:var(--ink)}.coming-soon-btn{background:var(--bg);color:var(--muted);cursor:default;opacity:.8}
+  .bigmq{border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);background:var(--ink);color:var(--bg);overflow:hidden;padding:20px 0}.bigmq .row{display:flex;white-space:nowrap;width:max-content;animation:bigscroll 26s linear infinite}.bigmq span{font-family:"Bricolage Grotesque";font-weight:800;font-size:clamp(2rem,6vw,4rem);letter-spacing:-.02em;padding:0 .28em;line-height:1.05}.bigmq .em{color:var(--yellow)}.bigmq .out{color:transparent;-webkit-text-stroke:1.6px var(--bg)}@keyframes bigscroll{to{transform:translateX(-50%)}}
+  footer{background:var(--red);color:#fff;border-top:2px solid var(--ink);overflow:hidden}.foot{padding:56px 26px 30px}.foot h2{font-size:clamp(2rem,5vw,3.4rem);max-width:14ch}.foot .serif{color:var(--yellow)}.foot-links{display:flex;flex-wrap:wrap;gap:14px;margin-top:28px}.foot-links a{font-weight:800;color:#fff}.mail{display:inline-block;margin-top:22px;font-weight:800;background:#fff;color:var(--ink);border:2px solid var(--ink);border-radius:13px;padding:12px 18px;box-shadow:var(--shadow-sm);text-decoration:none}.fine{margin-top:32px;border-top:2px solid #ffffff55;padding-top:18px;font-weight:700}
+  .gate{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(26,22,19,.6);backdrop-filter:blur(4px)}.gate.open{display:flex}.gate-card{background:var(--paper);border:2px solid var(--ink);border-radius:24px;box-shadow:10px 10px 0 var(--ink);max-width:440px;width:100%;padding:32px;position:relative}.gate-card .x{position:absolute;top:16px;right:18px;font-size:1.4rem;font-weight:800;cursor:pointer;background:none;border:none;color:var(--ink)}.gate-card h3{font-size:1.7rem;margin:8px 0}.gate-card p{color:var(--muted);font-size:.95rem;margin-bottom:18px}.gate-form{display:flex;gap:8px;margin-bottom:14px}.gate-form input{flex:1;border:2px solid var(--ink);border-radius:12px;padding:12px 14px;font-family:"Inter"}.gate-form button{background:var(--red);color:#fff;border:2px solid var(--ink);border-radius:12px;font-weight:800;padding:0 18px;cursor:pointer}.follow-row{display:flex;gap:10px}.follow-btn{flex:1;text-align:center;text-decoration:none;font-weight:800;font-size:.9rem;border:2px solid var(--ink);border-radius:12px;padding:12px;box-shadow:var(--shadow-sm)}.follow-btn.tt{background:var(--ink);color:#fff}.follow-btn.ig{background:linear-gradient(45deg,#feda75,#d62976,#962fbf);color:#fff}.gate-done{width:100%;margin-top:14px;background:var(--lime);border:2px solid var(--ink);border-radius:12px;font-weight:800;padding:11px;cursor:pointer}.gate-or{text-align:center;font-weight:800;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;margin:14px 0}.gate-note{font-size:.74rem;color:var(--muted);margin-top:14px;text-align:center}
 </style>
 </head>
 <body>
 <div class="accentbar"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-
-<nav>
-  <div class="wrap">
-    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span class="menu-bars"><span></span><span></span><span></span></span> Menu</button>
-    <a class="logo" href="index.html" style="text-decoration:none"><span class="dot"></span> Tamara Richards <span class="chip">The (almost) CEO</span></a>
-    <a class="cta navcta" href="contact.html">Work with me</a>
-  </div>
-</nav>
-
+<nav class="site"><div class="wrap"><button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span class="menu-bars"><span></span><span></span><span></span></span> Menu</button><a class="logo" href="index.html"><span class="dot"></span> Tamara Richards <span class="chip">The (almost) CEO</span></a><a class="navcta" href="contact.html">Work with me</a></div></nav>
 <div class="drawer-overlay" id="drawerOverlay"></div>
-<aside class="drawer" id="drawer" aria-hidden="true">
-  <div class="drawer-head">
-    <span class="drawer-title">Menu</span>
-    <button class="drawer-x" id="drawerX" aria-label="Close menu">✕</button>
-  </div>
-  <nav class="drawer-nav" aria-label="Primary">
-    <a href="index.html">Home</a>
-    <a href="portfolio.html" aria-current="page">Portfolio</a>
-    <a href="blog.html">Blog</a>
-    <a href="tools.html">Tools</a>
-    <a href="ideas.html">Ideas</a>
-    <a href="contact.html">Work with me</a>
-  </nav>
-  <div class="drawer-foot">
-    <a href="https://www.tiktok.com/@tamaralynnrichard" target="_blank" rel="noopener">TikTok ↗</a>
-    <a href="https://www.instagram.com/tamaranots/" target="_blank" rel="noopener">Instagram ↗</a>
-    <a href="https://github.com/N0kam0rad" target="_blank" rel="noopener">GitHub ↗</a>
-    <a href="https://www.linkedin.com/in/tamaralynnrichards/" target="_blank" rel="noopener">LinkedIn ↗</a>
-  </div>
-</aside>
+<aside class="drawer" id="drawer" aria-hidden="true"><div class="drawer-head"><span class="drawer-title">Menu</span><button class="drawer-x" id="drawerX" aria-label="Close menu">✕</button></div><nav class="drawer-nav" aria-label="Primary"><a href="index.html">Home</a><a href="portfolio.html" aria-current="page">Portfolio</a><a href="blog.html">Blog</a><a href="tools.html">Tools</a><a href="ideas.html">Ideas</a><a href="contact.html">Work with me</a></nav><div class="drawer-foot"><a href="https://www.tiktok.com/@tamaralynnrichard" target="_blank" rel="noopener">TikTok ↗</a><a href="https://www.instagram.com/tamaranots/" target="_blank" rel="noopener">Instagram ↗</a><a href="https://github.com/N0kam0rad" target="_blank" rel="noopener">GitHub ↗</a><a href="https://www.linkedin.com/in/tamaralynnrichards/" target="_blank" rel="noopener">LinkedIn ↗</a></div></aside>
 
-<section id="work">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <div><div class="tag">The work · preview &amp; unlock</div><h2>Different problems, <span class="serif">one engine.</span></h2></div>
-      <p>Peek the demo on any card. Read the build free. <b>Subscribe or follow to open the full app.</b></p>
-    </div>
-    <div class="grid">
+<header class="hero"><div class="wrap"><div class="eyebrow">Portfolio · visual-first</div><h1 class="title">Every project gets a <span class="red">real</span> <span class="mark">thumbnail.</span></h1><p class="lede">The portfolio now leads with proof: screenshots, previews, production boards, and safe demo visuals before text-only scaffolding. The little ghost cards have been evicted from the viewport.</p><div class="hero-note"><span>Thumbnail-backed cards first</span><span>Dummy data only where needed</span><span>Build logs should show the recipe</span></div></div></header>
 
-      <article class="proj pink reveal">
-        <div class="top"><h3>BonnetNoona</h3><span class="status">In production</span></div>
-        <div class="thumb thumb-embed"><iframe class="site-preview" src="https://bonnetnoona-pitch.tiiny.site/" title="BonnetNoona pitch deck preview" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="peek">▶ Pitch preview</span></div>
-        <div class="pbody">
-          <div class="one">A faceless claymation comedy about sisters trying (and failing) to go viral.</div>
-          <div class="prob"><b>The problem:</b> a whole world of characters in my head, no studio. AI let me direct it anyway, on-model across hundreds of shots.</div>
-          <div class="builtwith"><span class="pill">Image gen</span><span class="pill">Reference elements</span><span class="pill">Motion model</span><span class="pill">CapCut</span></div>
-          <div class="pfoot"><a class="lnk" href="posts/how-i-built-a-consistent-ai-cast.html">Read the build →</a><button class="lock-btn" data-app="BonnetNoona" data-href="https://bonnetnoona-proposal.tiiny.site">🔒 Watch the film</button></div>
-        </div>
-      </article>
+<section id="work"><div class="wrap"><div class="sec-head"><div><div class="tag">The work · preview & unlock</div><h2>Different problems, <span class="serif">one engine.</span></h2></div><p>Each card now has either a product screenshot, a live preview, or a designed demo thumbnail. Screenshot-backed projects display first.</p></div><div class="grid">
 
-      <article class="proj coral reveal">
-        <div class="top"><h3>Aurë / Accord</h3><span class="status">Beta</span></div>
-        <div class="thumb ph"><span class="big">AURÉ</span><span class="peek">Fragrance brain</span></div>
-        <div class="pbody">
-          <div class="one">A fragrance-intelligence &amp; scent-wardrobe app — your nose, organized.</div>
-          <div class="prob"><b>The problem:</b> scent is deeply personal and impossible to track. Aurë maps what you wear, when, and why.</div>
-          <div class="builtwith"><span class="pill">Flutter</span><span class="pill">Supabase</span><span class="pill">Claude Code</span><span class="pill">Design system</span></div>
-          <div class="pfoot"><a class="lnk" href="specs/aure.html">Aurë spec →</a><a class="lnk" href="specs/accord.html">Accord spec →</a><button class="lock-btn" data-app="Aurë" data-href="apps/aure.html">🔒 Open the app</button></div>
-        </div>
-      </article>
+<article class="proj pink"><div class="top"><h3>BonnetNoona</h3><span class="status">In production</span></div><div class="thumb thumb-embed"><iframe class="site-preview" src="https://bonnetnoona-pitch.tiiny.site/" title="BonnetNoona pitch deck preview" loading="lazy" scrolling="no" tabindex="-1" aria-hidden="true"></iframe><span class="peek">Pitch preview</span></div><div class="pbody"><div class="one">A faceless claymation comedy about sisters trying and failing to go viral.</div><div class="prob"><b>The problem:</b> a whole world of characters in my head, no studio. AI let me direct it anyway, on-model across hundreds of shots.</div><div class="builtwith"><span class="pill">Image gen</span><span class="pill">Reference elements</span><span class="pill">Motion model</span><span class="pill">CapCut</span></div><div class="pfoot"><a class="lnk" href="posts/how-i-built-a-consistent-ai-cast.html">Read the build →</a><button class="lock-btn" data-app="BonnetNoona" data-href="https://bonnetnoona-proposal.tiiny.site">🔒 Watch the film</button></div></div></article>
 
-      <article class="proj blue reveal">
-        <div class="top"><h3>AestheticSim</h3><span class="status">Prototype</span></div>
-        <div class="thumb"><img src="assets/aesthetic-sim-thumb.jpg" alt="AestheticSim consultation board — facial mapping, aging analysis, and downloadable treatment plan" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"/></div>
-        <div class="pbody">
-          <div class="one">An identity-preserving facial-simulation &amp; treatment-planning tool for aesthetic clinics.</div>
-          <div class="prob"><b>The problem:</b> consults are guesswork. AestheticSim gives clients a real before/after and clinicians an AI-drafted plan.</div>
-          <div class="builtwith"><span class="pill">React</span><span class="pill">Gemini</span><span class="pill">Prompt design</span></div>
-          <div class="pfoot"><a class="lnk" href="specs/aesthetic-sim.html">Read the spec →</a><button class="lock-btn" data-app="AestheticSim" data-href="apps/aesthetic-sim.html">🔒 Open the demo</button></div>
-        </div>
-      </article>
+<article class="proj blue"><div class="top"><h3>AestheticSim</h3><span class="status">Prototype</span></div><div class="thumb"><img src="assets/aesthetic-sim-thumb.jpg?v=2" alt="AestheticSim consultation board with facial mapping, aging analysis, and downloadable treatment plan" loading="lazy" /><span class="peek">Consult board</span></div><div class="pbody"><div class="one">An identity-preserving facial-simulation and treatment-planning tool for aesthetic clinics.</div><div class="prob"><b>The problem:</b> consults are guesswork. AestheticSim gives clients a real before/after and clinicians an AI-drafted plan.</div><div class="builtwith"><span class="pill">React</span><span class="pill">Gemini</span><span class="pill">Prompt design</span></div><div class="pfoot"><a class="lnk" href="specs/aesthetic-sim.html">Read the spec →</a><button class="lock-btn" data-app="AestheticSim" data-href="apps/aesthetic-sim.html">🔒 Open the demo</button></div></div></article>
 
-      <article class="proj green reveal">
-        <div class="top"><h3>Roommate Tracker</h3><span class="status">Built</span></div>
-        <div class="thumb ph"><span class="big">SPLIT</span><span class="peek">Mobile app</span></div>
-        <div class="pbody">
-          <div class="one">A shared-rent tracker that ends the "who owes what" group chat forever.</div>
-          <div class="prob"><b>The problem:</b> someone always fronts the rent and loses track. This logs every payment and shows balances paying down live.</div>
-          <div class="builtwith"><span class="pill">Web app</span><span class="pill">localStorage</span><span class="pill">Claude</span></div>
-          <div class="pfoot"><a class="lnk" href="specs/roommate-tracker.html">Read the spec →</a><button class="lock-btn" data-app="Roommate Tracker" data-href="apps/roommate-tracker.html">🔒 Open the app</button></div>
-        </div>
-      </article>
+<article class="proj silver"><div class="top"><h3>The Helix Class</h3><span class="status">Coming soon</span></div><div class="thumb thumb-helix"><img src="assets/helix-class/serea-academy.png" alt="Serea Lucent character concept" loading="lazy" /><img src="assets/helix-class/caier-vale.png" alt="Caier Vale character concept" loading="lazy" /><div class="overlay"></div><span class="peek">Webtoon</span></div><div class="pbody"><div class="one">A vertical-scroll webtoon set inside a luxury biotech academy where the mirrors don't behave.</div><div class="prob"><b>The world:</b> Panuria Academy is pristine, chrome-edged, and inhumanly clean. Serea Lucent fits perfectly on paper, but not in reflection.</div><div class="builtwith"><span class="pill">Higgsfield</span><span class="pill">Runway</span><span class="pill">Claude</span><span class="pill">Webtoon</span></div><div class="pfoot"><span class="coming-soon-btn">⏳ Chapter 1 dropping soon</span></div></div></article>
 
-      <article class="proj purple reveal">
-        <div class="top"><h3>My Plate Planner</h3><span class="status">Built</span></div>
-        <div class="thumb ph"><span class="big">EAT</span><span class="peek">Mobile app</span></div>
-        <div class="pbody">
-          <div class="one">A meal-planner that respects your sensitivities and counts protein without the obsession.</div>
-          <div class="prob"><b>The problem:</b> generic plans ignore real dietary needs. This filters by what you can actually eat and tells you what to cook from your fridge.</div>
-          <div class="builtwith"><span class="pill">Gemini Canvas</span><span class="pill">Flutter</span><span class="pill">Local-first</span></div>
-          <div class="pfoot"><a class="lnk" href="specs/plate-planner.html">Read the spec →</a><button class="lock-btn" data-app="My Plate Planner" data-href="apps/plate-planner.html">🔒 Open the app</button></div>
-        </div>
-      </article>
+<article class="proj coral"><div class="top"><h3>Aurë / Accord</h3><span class="status">Beta</span></div><div class="thumb visual" style="--vbg:#fff6ed;--c:var(--coral)"><div class="mini"><b>Galaxy</b><div class="orb"></div><div class="bar"><i style="width:72%"></i></div></div><div class="mini"><b>Wear log</b><div class="bar"><i style="width:45%"></i></div><div class="bar"><i style="width:86%"></i></div><div class="bar"><i style="width:58%"></i></div></div><div class="mini"><b>Next scent</b><div class="orb" style="--c:var(--yellow)"></div><div class="bar"><i style="width:64%;background:var(--yellow)"></i></div></div><span class="peek">Fragrance brain</span></div><div class="pbody"><div class="one">A fragrance-intelligence and scent-wardrobe app: your nose, organized.</div><div class="prob"><b>The problem:</b> scent is personal and hard to track. Aurë maps what you wear, when, and why.</div><div class="builtwith"><span class="pill">Flutter</span><span class="pill">Supabase</span><span class="pill">Claude Code</span><span class="pill">Design system</span></div><div class="pfoot"><a class="lnk" href="specs/aure.html">Aurë spec →</a><a class="lnk" href="specs/accord.html">Accord spec →</a><button class="lock-btn" data-app="Aurë" data-href="apps/aure.html">🔒 Open the app</button></div></div></article>
 
-      <article class="proj red reveal">
-        <div class="top"><h3>Helix7</h3><span class="status">Drafting</span></div>
-        <div class="thumb ph"><span class="big">A NOVEL</span><span class="peek">From voice notes</span></div>
-        <div class="pbody">
-          <div class="one">A web novel built entirely from my voice notes — talk the story, ship the manuscript.</div>
-          <div class="prob"><b>The problem:</b> the best ideas arrive out loud and vanish. AI transcribes, outlines, and drafts them into chapters.</div>
-          <div class="builtwith"><span class="pill">Transcription</span><span class="pill">Claude</span><span class="pill">Outline → draft</span></div>
-          <div class="pfoot"><a class="lnk" href="specs/helix7.html">Read the spec →</a><button class="lock-btn" data-app="Helix7" data-href="apps/helix7.html">🔒 Read a chapter</button></div>
-        </div>
-      </article>
+<article class="proj coral"><div class="top"><h3>Interior Render Studio</h3><span class="status">Prototype</span></div><div class="thumb visual" style="--vbg:#fff6ed;--c:var(--coral)"><div class="mini"><b>Before</b><div class="room" style="--c:#d8cab8"></div></div><div class="mini"><b>Style</b><div class="bar"><i style="width:80%"></i></div><div class="bar"><i style="width:55%"></i></div><div class="bar"><i style="width:92%"></i></div></div><div class="mini"><b>Render</b><div class="room"></div></div><span class="peek">AI render</span></div><div class="pbody"><div class="one">Point it at your room, pick a style, see it reimagined.</div><div class="prob"><b>The problem:</b> picturing a redesign is hard and designers are pricey. See the transformation before you move a single thing.</div><div class="builtwith"><span class="pill">React</span><span class="pill">Image gen</span><span class="pill">Prompt scaffolding</span></div><div class="pfoot"><a class="lnk" href="specs/interior-render.html">Read the spec →</a><button class="lock-btn" data-app="Interior Render Studio" data-href="apps/interior-render.html">🔒 Open the studio</button></div></div></article>
 
-      <article class="proj silver reveal">
-        <div class="top"><h3>The Helix Class</h3><span class="status">Coming soon</span></div>
-        <div class="thumb thumb-helix">
-          <img src="assets/helix-class/serea-academy.png" alt="Serea Lucent — Helix Class character concept" />
-          <img src="assets/helix-class/caier-vale.png" alt="Caier Vale — Helix Class character concept" />
-          <div class="overlay"></div>
-          <span class="peek">✦ Webtoon</span>
-        </div>
-        <div class="pbody">
-          <div class="one">A vertical-scroll webtoon set inside a luxury biotech academy where the mirrors don't behave.</div>
-          <div class="prob"><b>The world:</b> Panuria Academy is pristine, chrome-edged, and inhumanly clean. Serea Lucent fits perfectly on paper — but not in reflection.</div>
-          <div class="builtwith"><span class="pill">Higgsfield</span><span class="pill">Runway</span><span class="pill">Claude</span><span class="pill">Webtoon</span></div>
-          <div class="pfoot"><span class="coming-soon-btn">⏳ Chapter 1 dropping soon</span></div>
-        </div>
-      </article>
+<article class="proj green"><div class="top"><h3>Roommate Tracker</h3><span class="status">Built</span></div><div class="thumb visual" style="--vbg:#effaf5;--c:var(--green)"><div class="mini"><b>Rent split</b><div class="ledger"><span style="width:88%"></span><span style="width:62%"></span><span style="width:74%"></span></div></div><div class="mini"><b>Balances</b><div class="bar"><i style="width:70%"></i></div><div class="bar"><i style="width:38%"></i></div><div class="bar"><i style="width:54%"></i></div></div><div class="mini"><b>History</b><div class="ledger"><span style="width:55%"></span><span style="width:82%"></span><span style="width:46%"></span></div></div><span class="peek">Dummy dashboard</span></div><div class="pbody"><div class="one">A shared-rent tracker that ends the “who owes what” group chat forever.</div><div class="prob"><b>The problem:</b> someone always fronts the rent and loses track. This logs every payment and shows balances paying down live.</div><div class="builtwith"><span class="pill">Web app</span><span class="pill">localStorage</span><span class="pill">Claude</span></div><div class="pfoot"><a class="lnk" href="specs/roommate-tracker.html">Read the spec →</a><button class="lock-btn" data-app="Roommate Tracker" data-href="apps/roommate-tracker.html">🔒 Open the app</button></div></div></article>
 
-      <article class="proj coral reveal">
-        <div class="top"><h3>Interior Render Studio</h3><span class="status">Prototype</span></div>
-        <div class="thumb ph"><span class="big">INTERIORS</span><span class="peek">AI render</span></div>
-        <div class="pbody">
-          <div class="one">Point it at your room, pick a style, see it reimagined — photorealistic AI interior renders.</div>
-          <div class="prob"><b>The problem:</b> picturing a redesign is hard and designers are pricey. See the transformation before you move a single thing.</div>
-          <div class="builtwith"><span class="pill">React</span><span class="pill">Image gen</span><span class="pill">Prompt scaffolding</span></div>
-          <div class="pfoot"><a class="lnk" href="specs/interior-render.html">Read the spec →</a><button class="lock-btn" data-app="Interior Render Studio" data-href="apps/interior-render.html">🔒 Open the studio</button></div>
-        </div>
-      </article>
+<article class="proj purple"><div class="top"><h3>My Plate Planner</h3><span class="status">Built</span></div><div class="thumb visual" style="--vbg:#f5f0ff;--c:var(--purple)"><div class="mini"><b>Breakfast</b><div class="plate"></div></div><div class="mini"><b>Protein</b><div class="bar"><i style="width:78%"></i></div><div class="bar"><i style="width:60%"></i></div><div class="bar"><i style="width:88%"></i></div></div><div class="mini"><b>Plan</b><div class="plate"></div></div><span class="peek">Dummy meals</span></div><div class="pbody"><div class="one">A meal-planner that respects sensitivities and counts protein without the obsession.</div><div class="prob"><b>The problem:</b> generic plans ignore real dietary needs. This filters by what you can actually eat and tells you what to cook from your fridge.</div><div class="builtwith"><span class="pill">Gemini Canvas</span><span class="pill">Flutter</span><span class="pill">Local-first</span></div><div class="pfoot"><a class="lnk" href="specs/plate-planner.html">Read the spec →</a><button class="lock-btn" data-app="My Plate Planner" data-href="apps/plate-planner.html">🔒 Open the app</button></div></div></article>
 
-    </div>
-  </div>
-</section>
+<article class="proj red"><div class="top"><h3>Helix7</h3><span class="status">Drafting</span></div><div class="thumb visual" style="--vbg:#fff0ed;--c:var(--red)"><div class="mini"><b>Voice memo</b><div class="wave"></div></div><div class="mini"><b>Outline</b><div class="bar"><i style="width:88%"></i></div><div class="bar"><i style="width:66%"></i></div><div class="bar"><i style="width:72%"></i></div></div><div class="mini"><b>Chapter</b><div class="bar"><i style="width:92%"></i></div><div class="bar"><i style="width:58%"></i></div><div class="bar"><i style="width:80%"></i></div></div><span class="peek">From voice notes</span></div><div class="pbody"><div class="one">A web novel built from voice notes: talk the story, ship the manuscript.</div><div class="prob"><b>The problem:</b> the best ideas arrive out loud and vanish. AI transcribes, outlines, and drafts them into chapters.</div><div class="builtwith"><span class="pill">Transcription</span><span class="pill">Claude</span><span class="pill">Outline → draft</span></div><div class="pfoot"><a class="lnk" href="specs/helix7.html">Read the spec →</a><button class="lock-btn" data-app="Helix7" data-href="apps/helix7.html">🔒 Read a chapter</button></div></div></article>
 
-<div class="bigmq" aria-hidden="true">
-  <div class="row">
-    <span>MORE IDEAS THAN HOURS</span><span class="em">✦</span><span class="out">SHIP ONE A DAY</span><span class="em">✦</span>
-    <span>MORE IDEAS THAN HOURS</span><span class="em">✦</span><span class="out">SHIP ONE A DAY</span><span class="em">✦</span>
-  </div>
-</div>
+</div></div></section>
 
-<footer class="fnav">
-  <div class="wrap">
-    <div class="f-eyebrow">Navigate</div>
-    <div class="f-lead">Got an idea? <span class="serif">Let's ship it.</span></div>
-    <div class="f-cols">
-      <div class="f-side">
-        <div class="f-eyebrow">Let's connect</div>
-        <div class="f-links">
-          <a href="https://www.tiktok.com/@tamaralynnrichard" target="_blank" rel="noopener">TikTok <span class="ar">↗</span></a>
-          <a href="https://www.instagram.com/tamaranots/" target="_blank" rel="noopener">Instagram <span class="ar">↗</span></a>
-          <a href="https://github.com/N0kam0rad" target="_blank" rel="noopener">GitHub <span class="ar">↗</span></a>
-          <a href="https://www.linkedin.com/in/tamaralynnrichards/" target="_blank" rel="noopener">LinkedIn <span class="ar">↗</span></a>
-        </div>
-        <a class="f-mailbig" href="mailto:richards.tlynn@gmail.com">richards.tlynn@gmail.com</a>
-      </div>
-    </div>
-  </div>
-  <div class="f-mark" aria-hidden="true">
-    <div class="row">
-      <span class="fill">Tamara Richards</span><span>✦</span><span>The (almost) CEO</span><span>✦</span>
-      <span class="fill">Tamara Richards</span><span>✦</span><span>The (almost) CEO</span><span>✦</span>
-    </div>
-  </div>
-  <div class="wrap">
-    <div class="f-bottom">
-      <div>© 2026 Tamara Richards — Say it with your bonnet on.</div>
-      <button class="f-top-btn" id="toTop">Back to top ↑</button>
-    </div>
-  </div>
-</footer>
+<div class="bigmq" aria-hidden="true"><div class="row"><span>THUMBNAILS FIRST</span><span class="em">✦</span><span class="out">NO GHOST CARDS</span><span class="em">✦</span><span>SHOW THE THING</span><span class="em">✦</span><span>THUMBNAILS FIRST</span><span class="em">✦</span><span class="out">NO GHOST CARDS</span><span class="em">✦</span><span>SHOW THE THING</span><span class="em">✦</span></div></div>
 
-<!-- GATE MODAL -->
-<div class="gate" id="gate">
-  <div class="gate-card">
-    <button class="x" id="gateX" aria-label="Close">✕</button>
-    <div class="key">🔑</div>
-    <h3>Unlock <span id="gateApp">the apps</span></h3>
-    <p>The build log's free. To open the full apps, follow along — that's the unlock. (Newsletter's coming; drop your email and I'll ping you when it's live.)</p>
-    <div class="follow-row">
-      <a class="follow-btn tt" id="ttBtn" href="https://www.tiktok.com/@tamaralynnrichard" target="_blank" rel="noopener">Follow on TikTok</a>
-      <a class="follow-btn ig" id="igBtn" href="https://www.instagram.com/tamaranots/" target="_blank" rel="noopener">Follow on Instagram</a>
-    </div>
-    <button class="gate-done" id="gateDone">I followed — unlock the apps</button>
-    <div class="gate-or">— or, for the newsletter —</div>
-    <form class="gate-form" id="gateForm">
-      <input type="email" id="gateEmail" placeholder="you@email.com" required />
-      <button type="submit">Notify me</button>
-    </form>
-    <p class="gate-note">One unlock opens every app. Newsletter coming soon — no spam, ever.</p>
-  </div>
-</div>
+<footer><div class="wrap foot"><h2>Got an idea? <span class="serif">Let's ship it.</span></h2><div class="foot-links"><a href="https://www.tiktok.com/@tamaralynnrichard" target="_blank" rel="noopener">TikTok ↗</a><a href="https://www.instagram.com/tamaranots/" target="_blank" rel="noopener">Instagram ↗</a><a href="https://github.com/N0kam0rad" target="_blank" rel="noopener">GitHub ↗</a><a href="https://www.linkedin.com/in/tamaralynnrichards/" target="_blank" rel="noopener">LinkedIn ↗</a></div><a class="mail" href="mailto:richards.tlynn@gmail.com">richards.tlynn@gmail.com</a><div class="fine">© 2026 Tamara Richards — Say it with your bonnet on.</div></div></footer>
+
+<div class="gate" id="gate"><div class="gate-card"><button class="x" id="gateX" aria-label="Close">✕</button><div style="font-size:2rem">🔑</div><h3>Unlock <span id="gateApp">the apps</span></h3><p>The build log's free. To open the full apps, follow along. Newsletter is coming; drop your email and I'll ping you when it's live.</p><div class="follow-row"><a class="follow-btn tt" href="https://www.tiktok.com/@tamaralynnrichard" target="_blank" rel="noopener">Follow on TikTok</a><a class="follow-btn ig" href="https://www.instagram.com/tamaranots/" target="_blank" rel="noopener">Follow on Instagram</a></div><button class="gate-done" id="gateDone">I followed — unlock the apps</button><div class="gate-or">or, for the newsletter</div><form class="gate-form" id="gateForm"><input type="email" id="gateEmail" placeholder="you@email.com" required /><button type="submit">Notify me</button></form><p class="gate-note">One unlock opens every app. Newsletter coming soon — no spam, ever.</p></div></div>
 
 <script>
-  // Reveal — staggered cascade for grid siblings
-  const io=new IntersectionObserver((es)=>{es.forEach(e=>{
-    if(e.isIntersecting){
-      const el=e.target;
-      const sibs=[...el.parentElement.children].filter(c=>c.classList.contains('reveal'));
-      const idx=sibs.indexOf(el);
-      if(idx>0) el.style.transitionDelay=Math.min(idx*0.07,0.42)+'s';
-      el.classList.add('in'); io.unobserve(el);
-    }
-  })},{threshold:0.12});
-  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-
-  // Scroll progress bar + nav shadow (native scroll — no hijack)
-  const bar=document.createElement('div'); bar.id='scrollbar'; document.body.appendChild(bar);
-  const docEl=document.documentElement;
-  function setBar(){ const max=docEl.scrollHeight-docEl.clientHeight; bar.style.transform='scaleX('+(max>0?Math.min(docEl.scrollTop/max,1):0)+')'; }
-  const navEl=document.querySelector('nav');
-  function onScroll(){ navEl.classList.toggle('scrolled',(window.scrollY||docEl.scrollTop)>10); setBar(); }
-  window.addEventListener('scroll',onScroll,{passive:true}); window.addEventListener('resize',setBar); onScroll();
-
-  // Back to top
-  const toTop=document.getElementById('toTop');
-  if(toTop) toTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
-
-  // Magnetic buttons
-  document.querySelectorAll('.btn').forEach(b=>{
-    b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*0.18}px,${(e.clientY-r.top-r.height/2)*0.3}px)`;});
-    b.addEventListener('mouseleave',()=>{b.style.transform='';});
-  });
-</script>
-<script>
-  const KEY='tr_unlocked_v1';
-  const gate=document.getElementById('gate');
-  const gateApp=document.getElementById('gateApp');
-  function isUnlocked(){ try{return localStorage.getItem(KEY)==='1';}catch(e){return false;} }
-  function applyUnlock(){ document.querySelectorAll('.lock-btn').forEach(b=>{ b.classList.add('unlocked'); b.innerHTML='\U0001F513 '+ b.textContent.replace(/^🔒\s*/,''); }); }
-  function unlock(){ try{localStorage.setItem(KEY,'1');}catch(e){} applyUnlock(); closeGate(); }
-  function openGate(app){ gateApp.textContent=app?('“'+app+'”'):'the apps'; gate.classList.add('open'); }
-  function closeGate(){ gate.classList.remove('open'); }
-  document.getElementById('gateX').addEventListener('click',closeGate);
-  gate.addEventListener('click',e=>{ if(e.target===gate) closeGate(); });
-  document.getElementById('gateForm').addEventListener('submit',e=>{ e.preventDefault(); unlock(); });
-  document.getElementById('gateDone').addEventListener('click',unlock);
-  document.querySelectorAll('.lock-btn').forEach(b=>{
-    b.addEventListener('click',()=>{
-      if(isUnlocked()){ const href=b.getAttribute('data-href'); if(href&&href!=='#'){window.open(href,'_blank');} else {alert('This app link is coming soon — Tamara is hosting it.');} }
-      else { openGate(b.getAttribute('data-app')); }
-    });
-  });
-  if(isUnlocked()) applyUnlock();
-</script>
-<script>
-  // Left drawer navigation
-  (function(){
-    const mb=document.getElementById('menuBtn'), dr=document.getElementById('drawer'),
-          ov=document.getElementById('drawerOverlay'), dx=document.getElementById('drawerX');
-    if(!mb||!dr) return;
-    const open=()=>{document.body.classList.add('drawer-open');mb.setAttribute('aria-expanded','true');dr.setAttribute('aria-hidden','false');};
-    const close=()=>{document.body.classList.remove('drawer-open');mb.setAttribute('aria-expanded','false');dr.setAttribute('aria-hidden','true');};
-    mb.addEventListener('click',()=>document.body.classList.contains('drawer-open')?close():open());
-    if(ov) ov.addEventListener('click',close);
-    if(dx) dx.addEventListener('click',close);
-    dr.querySelectorAll('a').forEach(a=>a.addEventListener('click',close));
-    document.addEventListener('keydown',e=>{ if(e.key==='Escape') close(); });
-  })();
-</script>
-<script>
-  /* UX overrides: custom cursor + peering-eyes drawer trigger (extends existing drawer) */
-  (function(){
-    var fine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
-    var hero = document.querySelector('.hero');
-    function openDrawer(){
-      document.body.classList.add('drawer-open');
-      var mb=document.getElementById('menuBtn'); if(mb) mb.setAttribute('aria-expanded','true');
-      var dr=document.getElementById('drawer'); if(dr) dr.setAttribute('aria-hidden','false');
-    }
-    if(hero && fine){
-      var cur=document.createElement('div'); cur.id='tamara-cursor'; document.body.appendChild(cur);
-      hero.addEventListener('mouseenter',function(){ cur.style.display='block'; document.body.style.cursor='none'; });
-      hero.addEventListener('mouseleave',function(){ cur.style.display='none'; document.body.style.cursor=''; });
-      document.addEventListener('mousemove',function(e){ cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px'; });
-
-      var eyes=document.createElement('div'); eyes.id='peering-eyes';
-      eyes.setAttribute('role','button'); eyes.setAttribute('aria-label','Open menu'); eyes.tabIndex=0;
-      document.body.appendChild(eyes);
-      var io=new IntersectionObserver(function(es){ eyes.classList.toggle('show', !es[0].isIntersecting); },{threshold:0.05});
-      io.observe(hero);
-      eyes.addEventListener('mouseenter',openDrawer);
-      eyes.addEventListener('click',openDrawer);
-      eyes.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openDrawer(); } });
-    }
-  })();
+  const mb=document.getElementById('menuBtn'), dr=document.getElementById('drawer'), ov=document.getElementById('drawerOverlay'), dx=document.getElementById('drawerX');
+  function openDrawer(){document.body.classList.add('drawer-open');mb.setAttribute('aria-expanded','true');dr.setAttribute('aria-hidden','false')}
+  function closeDrawer(){document.body.classList.remove('drawer-open');mb.setAttribute('aria-expanded','false');dr.setAttribute('aria-hidden','true')}
+  if(mb){mb.addEventListener('click',()=>document.body.classList.contains('drawer-open')?closeDrawer():openDrawer());ov.addEventListener('click',closeDrawer);dx.addEventListener('click',closeDrawer);dr.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeDrawer));document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()})}
+  const KEY='tr_unlocked_v1', gate=document.getElementById('gate'), gateApp=document.getElementById('gateApp');
+  function isUnlocked(){try{return localStorage.getItem(KEY)==='1'}catch(e){return false}}
+  function closeGate(){gate.classList.remove('open')}
+  function applyUnlock(){document.querySelectorAll('.lock-btn').forEach(b=>{b.classList.add('unlocked');b.innerHTML='🔓 '+b.textContent.replace(/^🔒\s*/,'')})}
+  function unlock(){try{localStorage.setItem(KEY,'1')}catch(e){}applyUnlock();closeGate()}
+  document.getElementById('gateX').addEventListener('click',closeGate);gate.addEventListener('click',e=>{if(e.target===gate)closeGate()});document.getElementById('gateForm').addEventListener('submit',e=>{e.preventDefault();unlock()});document.getElementById('gateDone').addEventListener('click',unlock);
+  document.querySelectorAll('.lock-btn').forEach(b=>{b.addEventListener('click',()=>{if(isUnlocked()){const href=b.getAttribute('data-href');if(href)window.open(href,'_blank')}else{gateApp.textContent='“'+b.getAttribute('data-app')+'”';gate.classList.add('open')}})});if(isUnlocked())applyUnlock();
 </script>
 </body>
 </html>
