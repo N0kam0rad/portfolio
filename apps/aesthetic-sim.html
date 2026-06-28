@@ -29,15 +29,15 @@ tailwind.config = {
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
   html { scroll-behavior: smooth; }
-  body { -webkit-font-smoothing: antialiased; background:#FAF8F4; min-height:100vh; }
+  body { -webkit-font-smoothing: antialiased; background:#F1F1F5; min-height:100vh; }
   h1,h2,h3,h4,.font-serif { font-optical-sizing:auto; }
   @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
   .fade-up { animation:fadeUp .4s ease both; }
   @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-  .shimmer { background:linear-gradient(90deg,#f0ede8 25%,#e8e4dc 50%,#f0ede8 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; }
+  .shimmer { background:linear-gradient(90deg,#E4E4ED 25%,#DCDCE8 50%,#E4E4ED 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; }
   .scrollbar-thin::-webkit-scrollbar { width:4px; }
   .scrollbar-thin::-webkit-scrollbar-track { background:transparent; }
-  .scrollbar-thin::-webkit-scrollbar-thumb { background:#d6d3ce; border-radius:9px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background:#D1D1D8; border-radius:9px; }
 </style>
 </head>
 <body>
@@ -139,15 +139,15 @@ const MOCK_DB_INITIAL = {
 };
 
 // ─── Shared UI ─────────────────────────────────────────────────────────────────
-const Badge = ({children, color='stone'}) => {
-  const colors = { amber:'bg-amber-50 text-amber-800 border-amber-200', green:'bg-green-50 text-green-700 border-green-200', blue:'bg-blue-50 text-blue-700 border-blue-200', red:'bg-red-50 text-red-700 border-red-200', stone:'bg-stone-100 text-stone-600 border-stone-200', sage:'bg-sage-50 text-sage-700 border-sage-200' };
-  return <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase tracking-wider ${colors[color]||colors.stone}`}>{children}</span>;
+const Badge = ({children, color='zinc'}) => {
+  const colors = { violet:'bg-violet-50 text-violet-700 border-violet-200', green:'bg-green-50 text-green-700 border-green-200', blue:'bg-blue-50 text-blue-700 border-blue-200', red:'bg-red-50 text-red-700 border-red-200', zinc:'bg-zinc-100 text-zinc-600 border-zinc-200', sage:'bg-sage-50 text-sage-700 border-sage-200' };
+  return <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase tracking-wider ${colors[color]||colors.zinc}`}>{children}</span>;
 };
 
 const ROIBar = ({score}) => (
   <div className="flex items-center gap-2">
-    <div className="flex gap-0.5">{Array.from({length:10}).map((_,i)=><div key={i} className={`w-2 h-2 rounded-sm ${i<score?'bg-amber-500':'bg-stone-200'}`}/>)}</div>
-    <span className="text-[10px] font-bold text-amber-700">{score}/10 ROI</span>
+    <div className="flex gap-0.5">{Array.from({length:10}).map((_,i)=><div key={i} className={`w-2 h-2 rounded-sm ${i<score?'bg-violet-500':'bg-zinc-200'}`}/>)}</div>
+    <span className="text-[10px] font-bold text-violet-700">{score}/10 ROI</span>
   </div>
 );
 
@@ -160,17 +160,17 @@ const ImageSlider = ({ src }) => {
     setPos(Math.max(5, Math.min(95, ((x-r.left)/r.width)*100)));
   };
   return (
-    <div ref={ref} className="relative w-full aspect-[3/4] bg-stone-100 rounded-2xl overflow-hidden cursor-ew-resize select-none border border-stone-200"
+    <div ref={ref} className="relative w-full aspect-[3/4] bg-zinc-100 rounded-2xl overflow-hidden cursor-ew-resize select-none border border-zinc-200"
       onMouseMove={e=>move(e.clientX)} onTouchMove={e=>move(e.touches[0].clientX)}>
       <img src={src} className="absolute inset-0 w-full h-full object-cover" style={{filter:'contrast(1.04) brightness(1.03) saturate(0.9)'}} draggable="false" alt="Simulated"/>
       <div className="absolute bottom-3 right-3"><Badge color="sage">Simulated</Badge></div>
       <div className="absolute inset-0 border-r-2 border-white" style={{clipPath:`polygon(0 0,${pos}% 0,${pos}% 100%,0 100%)`}}>
         <img src={src} className="w-full h-full object-cover" draggable="false" alt="Current"/>
-        <div className="absolute bottom-3 left-3"><Badge color="stone">Current</Badge></div>
+        <div className="absolute bottom-3 left-3"><Badge color="zinc">Current</Badge></div>
       </div>
       <div className="absolute top-0 bottom-0 flex items-center justify-center" style={{left:`calc(${pos}% - 22px)`}}>
-        <div className="w-11 h-11 bg-white rounded-full shadow-xl flex items-center justify-center border border-stone-200">
-          <Icon name="ChevronsLeftRight" size={16} className="text-stone-600"/>
+        <div className="w-11 h-11 bg-white rounded-full shadow-xl flex items-center justify-center border border-zinc-200">
+          <Icon name="ChevronsLeftRight" size={16} className="text-zinc-600"/>
         </div>
       </div>
     </div>
@@ -180,7 +180,7 @@ const ImageSlider = ({ src }) => {
 const StepDots = ({total, current}) => (
   <div className="flex gap-2 items-center justify-center mb-8">
     {Array.from({length:total}).map((_,i)=>(
-      <div key={i} className={`rounded-full transition-all duration-300 ${i===current?'w-8 h-2.5 bg-stone-900':i<current?'w-2.5 h-2.5 bg-stone-400':'w-2.5 h-2.5 bg-stone-200'}`}/>
+      <div key={i} className={`rounded-full transition-all duration-300 ${i===current?'w-8 h-2.5 bg-zinc-900':i<current?'w-2.5 h-2.5 bg-zinc-400':'w-2.5 h-2.5 bg-zinc-200'}`}/>
     ))}
   </div>
 );
@@ -195,18 +195,18 @@ const IntakeWizard = ({ clientName, onComplete }) => {
 
   const Step0 = () => (
     <div className="fade-up">
-      <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-700 mb-2">Aesthetic Journey Studio</p>
-      <h2 className="text-3xl font-serif font-semibold text-stone-800 mb-3">Hello{clientName?`, ${clientName.split(' ')[0]}`:''}.</h2>
-      <p className="text-stone-500 mb-8 leading-relaxed">This short intake takes about 5 minutes and helps your provider build a personalized treatment and skincare plan before you arrive. Nothing is a commitment — just a starting point.</p>
-      <p className="text-sm font-medium text-stone-700 mb-4">What brings you in today? <span className="text-stone-400 font-normal">(select all that apply)</span></p>
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-violet-700 mb-2">Aesthetic Journey Studio</p>
+      <h2 className="text-3xl font-serif font-semibold text-zinc-800 mb-3">Hello{clientName?`, ${clientName.split(' ')[0]}`:''}.</h2>
+      <p className="text-zinc-500 mb-8 leading-relaxed">This short intake takes about 5 minutes and helps your provider build a personalized treatment and skincare plan before you arrive. Nothing is a commitment — just a starting point.</p>
+      <p className="text-sm font-medium text-zinc-700 mb-4">What brings you in today? <span className="text-zinc-400 font-normal">(select all that apply)</span></p>
       <div className="flex flex-wrap gap-2 mb-8">
         {GOALS.map(g=>(
           <button key={g} onClick={()=>toggle('goals',g)}
-            className={`px-4 py-2 rounded-full border text-sm font-medium transition-all ${data.goals.includes(g)?'bg-stone-900 text-white border-stone-900':'border-stone-300 text-stone-700 hover:border-stone-500'}`}>{g}</button>
+            className={`px-4 py-2 rounded-full border text-sm font-medium transition-all ${data.goals.includes(g)?'bg-zinc-900 text-white border-zinc-900':'border-zinc-300 text-zinc-700 hover:border-zinc-500'}`}>{g}</button>
         ))}
       </div>
       <button disabled={!data.goals.length} onClick={()=>setStep(1)}
-        className="px-8 py-3.5 bg-stone-900 text-white font-medium rounded-xl hover:bg-stone-800 transition disabled:opacity-30 disabled:cursor-not-allowed">
+        className="px-8 py-3.5 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition disabled:opacity-30 disabled:cursor-not-allowed">
         Continue <span className="ml-1 opacity-60">→</span>
       </button>
     </div>
@@ -214,35 +214,35 @@ const IntakeWizard = ({ clientName, onComplete }) => {
 
   const Step1 = () => (
     <div className="fade-up">
-      <h2 className="text-2xl font-serif font-semibold text-stone-800 mb-2">Your aesthetic preference</h2>
-      <p className="text-stone-500 mb-6 text-sm">This helps your provider calibrate the plan to your comfort zone.</p>
+      <h2 className="text-2xl font-serif font-semibold text-zinc-800 mb-2">Your aesthetic preference</h2>
+      <p className="text-zinc-500 mb-6 text-sm">This helps your provider calibrate the plan to your comfort zone.</p>
       <div className="space-y-3 mb-8">
         {[['Very subtle','I want to look like myself, just more rested'],['Natural but noticeable','I want people to notice something changed, not what'],['Balanced optimization','Open to the full picture — provider guides the plan'],['Dramatic change','I want significant improvement — provider will discuss expectations']].map(([label,desc])=>(
           <button key={label} onClick={()=>set('aesthetic',label)}
-            className={`w-full text-left p-4 rounded-2xl border-2 transition-all ${data.aesthetic===label?'border-stone-900 bg-stone-50':'border-stone-200 hover:border-stone-300'}`}>
-            <p className={`font-semibold text-sm mb-0.5 ${data.aesthetic===label?'text-stone-900':'text-stone-700'}`}>{label}</p>
-            <p className="text-xs text-stone-500">{desc}</p>
+            className={`w-full text-left p-4 rounded-2xl border-2 transition-all ${data.aesthetic===label?'border-zinc-900 bg-zinc-50':'border-zinc-200 hover:border-zinc-300'}`}>
+            <p className={`font-semibold text-sm mb-0.5 ${data.aesthetic===label?'text-zinc-900':'text-zinc-700'}`}>{label}</p>
+            <p className="text-xs text-zinc-500">{desc}</p>
           </button>
         ))}
       </div>
-      <p className="text-sm font-medium text-stone-700 mb-3">Treatments you're curious about: <span className="text-stone-400 font-normal">(optional)</span></p>
+      <p className="text-sm font-medium text-zinc-700 mb-3">Treatments you're curious about: <span className="text-zinc-400 font-normal">(optional)</span></p>
       <div className="flex flex-wrap gap-2 mb-8">
         {TREATMENTS.map(t=>(
           <button key={t} onClick={()=>toggle('treatments',t)}
-            className={`px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${data.treatments.includes(t)?'bg-amber-100 text-amber-800 border-amber-300':'border-stone-200 text-stone-600 hover:border-stone-400'}`}>{t}</button>
+            className={`px-3 py-1.5 rounded-full border text-xs font-medium transition-all ${data.treatments.includes(t)?'bg-violet-100 text-violet-800 border-violet-300':'border-zinc-200 text-zinc-600 hover:border-zinc-400'}`}>{t}</button>
         ))}
       </div>
       <div className="flex gap-3">
-        <button onClick={()=>setStep(0)} className="px-6 py-3 border border-stone-200 text-stone-600 rounded-xl hover:bg-stone-50 transition text-sm">Back</button>
-        <button disabled={!data.aesthetic} onClick={()=>setStep(2)} className="px-8 py-3 bg-stone-900 text-white font-medium rounded-xl hover:bg-stone-800 transition text-sm disabled:opacity-30">Continue →</button>
+        <button onClick={()=>setStep(0)} className="px-6 py-3 border border-zinc-200 text-zinc-600 rounded-xl hover:bg-zinc-50 transition text-sm">Back</button>
+        <button disabled={!data.aesthetic} onClick={()=>setStep(2)} className="px-8 py-3 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition text-sm disabled:opacity-30">Continue →</button>
       </div>
     </div>
   );
 
   const Step2 = () => (
     <div className="fade-up">
-      <h2 className="text-2xl font-serif font-semibold text-stone-800 mb-2">A few health questions</h2>
-      <p className="text-stone-500 mb-6 text-sm leading-relaxed">These help your provider keep your consultation safe. Select anything that applies — your answers are private and only visible to your care team.</p>
+      <h2 className="text-2xl font-serif font-semibold text-zinc-800 mb-2">A few health questions</h2>
+      <p className="text-zinc-500 mb-6 text-sm leading-relaxed">These help your provider keep your consultation safe. Select anything that applies — your answers are private and only visible to your care team.</p>
       {data.flags.length > 0 && (
         <div className="mb-5 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex gap-3">
           <Icon name="AlertTriangle" size={18} className="text-amber-600 shrink-0 mt-0.5"/>
@@ -252,59 +252,59 @@ const IntakeWizard = ({ clientName, onComplete }) => {
       <div className="space-y-2 mb-6">
         {MED_FLAGS.map(f=>(
           <button key={f} onClick={()=>toggle('flags',f)}
-            className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all flex items-center gap-3 ${data.flags.includes(f)?'border-amber-400 bg-amber-50 text-amber-900':'border-stone-200 text-stone-700 hover:border-stone-300'}`}>
-            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all ${data.flags.includes(f)?'border-amber-500 bg-amber-500':'border-stone-300'}`}>
+            className={`w-full text-left px-4 py-3 rounded-xl border text-sm transition-all flex items-center gap-3 ${data.flags.includes(f)?'border-amber-400 bg-amber-50 text-amber-900':'border-zinc-200 text-zinc-700 hover:border-zinc-300'}`}>
+            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all ${data.flags.includes(f)?'border-amber-500 bg-amber-500':'border-zinc-300'}`}>
               {data.flags.includes(f)&&<Icon name="Check" size={12} className="text-white" strokeWidth={3}/>}
             </div>
             {f}
           </button>
         ))}
       </div>
-      <div className="p-4 bg-stone-50 rounded-2xl border border-stone-200 mb-6">
-        <p className="text-sm font-medium text-stone-700 mb-3">Are you currently on a GLP-1 medication (Ozempic, Wegovy, etc.) or planning significant weight loss?</p>
+      <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-200 mb-6">
+        <p className="text-sm font-medium text-zinc-700 mb-3">Are you currently on a GLP-1 medication (Ozempic, Wegovy, etc.) or planning significant weight loss?</p>
         <div className="flex gap-3">
           {['Yes','No'].map(v=>(
             <button key={v} onClick={()=>{ set('glp1',v==='Yes'); set('weightLoss',v==='Yes'); }}
-              className={`flex-1 py-2.5 rounded-xl border text-sm font-medium transition-all ${(data.glp1&&v==='Yes')||(!data.glp1&&v==='No')?'border-stone-900 bg-stone-900 text-white':'border-stone-200 text-stone-700 hover:border-stone-400'}`}>{v}</button>
+              className={`flex-1 py-2.5 rounded-xl border text-sm font-medium transition-all ${(data.glp1&&v==='Yes')||(!data.glp1&&v==='No')?'border-zinc-900 bg-zinc-900 text-white':'border-zinc-200 text-zinc-700 hover:border-zinc-400'}`}>{v}</button>
           ))}
         </div>
-        {data.glp1 && <p className="text-xs text-amber-700 mt-2 flex items-center gap-1"><Icon name="Info" size={12}/> Your plan will include a weight-loss facial support pathway.</p>}
+        {data.glp1 && <p className="text-xs text-violet-700 mt-2 flex items-center gap-1"><Icon name="Info" size={12}/> Your plan will include a weight-loss facial support pathway.</p>}
       </div>
       <div className="flex gap-3">
-        <button onClick={()=>setStep(1)} className="px-6 py-3 border border-stone-200 text-stone-600 rounded-xl hover:bg-stone-50 transition text-sm">Back</button>
-        <button onClick={()=>setStep(3)} className="px-8 py-3 bg-stone-900 text-white font-medium rounded-xl hover:bg-stone-800 transition text-sm">Continue →</button>
+        <button onClick={()=>setStep(1)} className="px-6 py-3 border border-zinc-200 text-zinc-600 rounded-xl hover:bg-zinc-50 transition text-sm">Back</button>
+        <button onClick={()=>setStep(3)} className="px-8 py-3 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition text-sm">Continue →</button>
       </div>
     </div>
   );
 
   const Step3 = () => (
     <div className="fade-up">
-      <h2 className="text-2xl font-serif font-semibold text-stone-800 mb-2">Budget & timeline</h2>
-      <p className="text-stone-500 mb-6 text-sm">No pressure — this helps your provider build a plan that fits your life.</p>
-      <p className="text-sm font-medium text-stone-700 mb-3">Comfortable first-visit budget</p>
+      <h2 className="text-2xl font-serif font-semibold text-zinc-800 mb-2">Budget & timeline</h2>
+      <p className="text-zinc-500 mb-6 text-sm">No pressure — this helps your provider build a plan that fits your life.</p>
+      <p className="text-sm font-medium text-zinc-700 mb-3">Comfortable first-visit budget</p>
       <div className="grid grid-cols-2 gap-2 mb-6">
         {BUDGET_OPTS.map(b=>(
           <button key={b} onClick={()=>set('budget',b)}
-            className={`py-2.5 px-4 rounded-xl border text-sm font-medium transition-all text-left ${data.budget===b?'border-stone-900 bg-stone-900 text-white':'border-stone-200 text-stone-700 hover:border-stone-400'}`}>{b}</button>
+            className={`py-2.5 px-4 rounded-xl border text-sm font-medium transition-all text-left ${data.budget===b?'border-zinc-900 bg-zinc-900 text-white':'border-zinc-200 text-zinc-700 hover:border-zinc-400'}`}>{b}</button>
         ))}
       </div>
-      <p className="text-sm font-medium text-stone-700 mb-3">Your timeline</p>
+      <p className="text-sm font-medium text-zinc-700 mb-3">Your timeline</p>
       <div className="space-y-2 mb-6">
         {TIMELINE_OPTS.map(t=>(
           <button key={t} onClick={()=>set('timeline',t)}
-            className={`w-full py-2.5 px-4 rounded-xl border text-sm font-medium transition-all text-left ${data.timeline===t?'border-stone-900 bg-stone-900 text-white':'border-stone-200 text-stone-700 hover:border-stone-400'}`}>{t}</button>
+            className={`w-full py-2.5 px-4 rounded-xl border text-sm font-medium transition-all text-left ${data.timeline===t?'border-zinc-900 bg-zinc-900 text-white':'border-zinc-200 text-zinc-700 hover:border-zinc-400'}`}>{t}</button>
         ))}
       </div>
-      <p className="text-sm font-medium text-stone-700 mb-3">Downtime tolerance</p>
+      <p className="text-sm font-medium text-zinc-700 mb-3">Downtime tolerance</p>
       <div className="flex flex-wrap gap-2 mb-6">
         {DOWNTIME_OPTS.map(d=>(
           <button key={d} onClick={()=>set('downtime',d)}
-            className={`px-4 py-2 rounded-full border text-sm font-medium transition-all ${data.downtime===d?'bg-stone-900 text-white border-stone-900':'border-stone-200 text-stone-700 hover:border-stone-400'}`}>{d}</button>
+            className={`px-4 py-2 rounded-full border text-sm font-medium transition-all ${data.downtime===d?'bg-zinc-900 text-white border-zinc-900':'border-zinc-200 text-zinc-700 hover:border-zinc-400'}`}>{d}</button>
         ))}
       </div>
       <div className="flex gap-3">
-        <button onClick={()=>setStep(2)} className="px-6 py-3 border border-stone-200 text-stone-600 rounded-xl hover:bg-stone-50 transition text-sm">Back</button>
-        <button disabled={!data.budget||!data.timeline||!data.downtime} onClick={()=>setStep(4)} className="px-8 py-3 bg-stone-900 text-white font-medium rounded-xl hover:bg-stone-800 transition text-sm disabled:opacity-30">Continue →</button>
+        <button onClick={()=>setStep(2)} className="px-6 py-3 border border-zinc-200 text-zinc-600 rounded-xl hover:bg-zinc-50 transition text-sm">Back</button>
+        <button disabled={!data.budget||!data.timeline||!data.downtime} onClick={()=>setStep(4)} className="px-8 py-3 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition text-sm disabled:opacity-30">Continue →</button>
       </div>
     </div>
   );
@@ -315,23 +315,23 @@ const IntakeWizard = ({ clientName, onComplete }) => {
     const mockUpload = () => { setUploading(true); setTimeout(()=>{ setUploading(false); setDone(true); }, 2200); };
     return (
       <div className="fade-up">
-        <h2 className="text-2xl font-serif font-semibold text-stone-800 mb-2">Photo upload</h2>
-        <p className="text-stone-500 mb-2 text-sm leading-relaxed">Upload 4 views so your provider can prepare before you arrive. Good lighting, hair pulled back, neutral expression. <strong className="text-stone-700">No filters.</strong></p>
-        <div className="mb-4 p-3 bg-stone-50 rounded-xl border border-stone-200 text-xs text-stone-500 flex items-start gap-2">
-          <Icon name="Lock" size={13} className="shrink-0 mt-0.5 text-stone-400"/>
+        <h2 className="text-2xl font-serif font-semibold text-zinc-800 mb-2">Photo upload</h2>
+        <p className="text-zinc-500 mb-2 text-sm leading-relaxed">Upload 4 views so your provider can prepare before you arrive. Good lighting, hair pulled back, neutral expression. <strong className="text-zinc-700">No filters.</strong></p>
+        <div className="mb-4 p-3 bg-zinc-50 rounded-xl border border-zinc-200 text-xs text-zinc-500 flex items-start gap-2">
+          <Icon name="Lock" size={13} className="shrink-0 mt-0.5 text-zinc-400"/>
           Photos are stored securely and only visible to your care team. You consent to their use for this consultation only.
         </div>
         {!done ? (
           <>
             <div className="grid grid-cols-2 gap-3 mb-6">
               {['Front — Neutral','Front — Smiling','Left Profile','Right Profile'].map((v,i)=>(
-                <div key={v} className={`aspect-[3/4] rounded-2xl border-2 border-dashed flex flex-col items-center justify-center p-4 text-center cursor-pointer transition-all ${uploading&&i===0?'border-amber-400 bg-amber-50':'border-stone-200 hover:border-amber-300 hover:bg-stone-50'}`}>
-                  {uploading&&i===0 ? <div className="w-10 h-10 shimmer rounded-xl mb-2"/> : <Icon name="Camera" size={22} className="text-stone-300 mb-2"/>}
-                  <span className="text-xs font-semibold text-stone-500 uppercase tracking-wide">{v}</span>
+                <div key={v} className={`aspect-[3/4] rounded-2xl border-2 border-dashed flex flex-col items-center justify-center p-4 text-center cursor-pointer transition-all ${uploading&&i===0?'border-violet-400 bg-violet-50':'border-zinc-200 hover:border-violet-300 hover:bg-zinc-50'}`}>
+                  {uploading&&i===0 ? <div className="w-10 h-10 shimmer rounded-xl mb-2"/> : <Icon name="Camera" size={22} className="text-zinc-300 mb-2"/>}
+                  <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wide">{v}</span>
                 </div>
               ))}
             </div>
-            <button onClick={mockUpload} disabled={uploading} className="w-full py-3.5 bg-stone-900 text-white font-medium rounded-xl hover:bg-stone-800 transition flex items-center justify-center gap-2 disabled:opacity-60">
+            <button onClick={mockUpload} disabled={uploading} className="w-full py-3.5 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition flex items-center justify-center gap-2 disabled:opacity-60">
               {uploading ? <><Icon name="Loader" size={16} className="animate-spin"/><span>Uploading & checking quality…</span></> : <><Icon name="Upload" size={16}/><span>Upload & Submit</span></>}
             </button>
           </>
@@ -340,9 +340,9 @@ const IntakeWizard = ({ clientName, onComplete }) => {
             <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-100">
               <Icon name="CheckCircle2" size={32} className="text-green-500"/>
             </div>
-            <h3 className="text-xl font-serif font-semibold text-stone-800 mb-2">You're all set.</h3>
-            <p className="text-stone-500 text-sm mb-6">Your provider is reviewing your intake and will have a personalized plan ready before your appointment.</p>
-            <button onClick={()=>onComplete(data)} className="px-8 py-3.5 bg-stone-900 text-white font-medium rounded-xl hover:bg-stone-800 transition">
+            <h3 className="text-xl font-serif font-semibold text-zinc-800 mb-2">You're all set.</h3>
+            <p className="text-zinc-500 text-sm mb-6">Your provider is reviewing your intake and will have a personalized plan ready before your appointment.</p>
+            <button onClick={()=>onComplete(data)} className="px-8 py-3.5 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition">
               View my dashboard →
             </button>
           </div>
@@ -374,19 +374,19 @@ const ConsultationBoard = ({ client, plan, db }) => {
   const isGLP1 = client.intake?.glp1;
   const fmt = n => '$'+n.toLocaleString();
   const severity = ['','Mild','Moderate','Notable'];
-  const sevColor = [,'text-sage-600','text-amber-600','text-orange-600'];
+  const sevColor = [,'text-sage-600','text-violet-600','text-orange-600'];
 
   return (
     <div className="bg-white min-h-screen font-sans scrollbar-thin overflow-y-auto">
       {/* Header */}
-      <div className="border-b border-stone-100 px-8 py-6 flex items-start justify-between">
+      <div className="border-b border-zinc-100 px-8 py-6 flex items-start justify-between">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400 mb-1">{db.organization.name}</p>
-          <h1 className="text-2xl font-serif font-semibold text-stone-800">Facial Harmony Assessment</h1>
-          <p className="text-sm text-stone-500 mt-0.5">Prepared for <strong className="text-stone-700">{client.name}</strong>, age {client.age}</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-1">{db.organization.name}</p>
+          <h1 className="text-2xl font-serif font-semibold text-zinc-800">Facial Harmony Assessment</h1>
+          <p className="text-sm text-zinc-500 mt-0.5">Prepared for <strong className="text-zinc-700">{client.name}</strong>, age {client.age}</p>
         </div>
         <div className="text-right">
-          <Badge color="amber">Provider Review Draft</Badge>
+          <Badge color="violet">Provider Review Draft</Badge>
           {isGLP1 && <div className="mt-2"><Badge color="sage">GLP-1 Pathway Active</Badge></div>}
         </div>
       </div>
@@ -394,21 +394,21 @@ const ConsultationBoard = ({ client, plan, db }) => {
       <div className="px-8 py-6 space-y-10">
         {/* Client summary strip */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="p-4 bg-stone-50 rounded-2xl border border-stone-100">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Aesthetic Goal</p>
-            <p className="text-sm font-semibold text-stone-800">{client.intake?.aesthetic||'Natural but noticeable'}</p>
+          <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-100">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Aesthetic Goal</p>
+            <p className="text-sm font-semibold text-zinc-800">{client.intake?.aesthetic||'Natural but noticeable'}</p>
           </div>
-          <div className="p-4 bg-stone-50 rounded-2xl border border-stone-100">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Budget Range</p>
-            <p className="text-sm font-semibold text-stone-800">{client.intake?.budget}</p>
+          <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-100">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Budget Range</p>
+            <p className="text-sm font-semibold text-zinc-800">{client.intake?.budget}</p>
           </div>
-          <div className="p-4 bg-stone-50 rounded-2xl border border-stone-100">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Timeline</p>
-            <p className="text-sm font-semibold text-stone-800">{client.intake?.timeline}</p>
+          <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-100">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Timeline</p>
+            <p className="text-sm font-semibold text-zinc-800">{client.intake?.timeline}</p>
           </div>
-          <div className="p-4 bg-stone-50 rounded-2xl border border-stone-100">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1">Downtime</p>
-            <p className="text-sm font-semibold text-stone-800">{client.intake?.downtime}</p>
+          <div className="p-4 bg-zinc-50 rounded-2xl border border-zinc-100">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1">Downtime</p>
+            <p className="text-sm font-semibold text-zinc-800">{client.intake?.downtime}</p>
           </div>
         </div>
 
@@ -430,16 +430,16 @@ const ConsultationBoard = ({ client, plan, db }) => {
 
         {/* Facial analysis */}
         <div>
-          <h2 className="text-xs font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 pb-3 mb-5">Facial Analysis</h2>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 border-b border-zinc-100 pb-3 mb-5">Facial Analysis</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {plan.analysis.map((a,i)=>(
-              <div key={i} className="p-5 bg-stone-50 rounded-2xl border border-stone-100">
+              <div key={i} className="p-5 bg-zinc-50 rounded-2xl border border-zinc-100">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="font-serif text-stone-800 font-medium">{a.region}</p>
+                  <p className="font-serif text-zinc-800 font-medium">{a.region}</p>
                   <span className={`text-xs font-bold ${sevColor[a.severity]||''}`}>{severity[a.severity]}</span>
                 </div>
-                <div className="flex gap-1 mb-3">{Array.from({length:3}).map((_,j)=><div key={j} className={`h-1.5 flex-1 rounded-full ${j<a.severity?'bg-amber-400':'bg-stone-200'}`}/>)}</div>
-                <p className="text-sm text-stone-600 leading-relaxed">{a.finding}</p>
+                <div className="flex gap-1 mb-3">{Array.from({length:3}).map((_,j)=><div key={j} className={`h-1.5 flex-1 rounded-full ${j<a.severity?'bg-violet-400':'bg-zinc-200'}`}/>)}</div>
+                <p className="text-sm text-zinc-600 leading-relaxed">{a.finding}</p>
               </div>
             ))}
           </div>
@@ -447,25 +447,25 @@ const ConsultationBoard = ({ client, plan, db }) => {
 
         {/* Treatment plan */}
         <div>
-          <h2 className="text-xs font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 pb-3 mb-5">Treatment Recommendations</h2>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 border-b border-zinc-100 pb-3 mb-5">Treatment Recommendations</h2>
           <div className="space-y-3">
             {plan.items.filter(i=>i.enabled).map(item=>(
-              <div key={item.id} className="border border-stone-200 rounded-2xl overflow-hidden">
+              <div key={item.id} className="border border-zinc-200 rounded-2xl overflow-hidden">
                 <div className="flex items-center gap-4 p-4 bg-white">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <p className="font-serif text-stone-800 font-medium">{item.tx}</p>
-                      <Badge color="amber">Phase {item.phase}</Badge>
+                      <p className="font-serif text-zinc-800 font-medium">{item.tx}</p>
+                      <Badge color="violet">Phase {item.phase}</Badge>
                     </div>
                     <ROIBar score={item.roi}/>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-lg font-serif font-semibold text-stone-800">{fmt(item.units*item.low)}<span className="text-stone-400 text-sm mx-1">–</span>{fmt(item.units*item.high)}</p>
-                    <p className="text-xs text-stone-500">{item.units} {item.units>1?'units/syringes/vials':'session'} · lasts {item.longevity}</p>
+                    <p className="text-lg font-serif font-semibold text-zinc-800">{fmt(item.units*item.low)}<span className="text-zinc-400 text-sm mx-1">–</span>{fmt(item.units*item.high)}</p>
+                    <p className="text-xs text-zinc-500">{item.units} {item.units>1?'units/syringes/vials':'session'} · lasts {item.longevity}</p>
                   </div>
                 </div>
                 <div className="px-4 pb-4 pt-0">
-                  <p className="text-sm text-stone-600 leading-relaxed">{item.rationale}</p>
+                  <p className="text-sm text-zinc-600 leading-relaxed">{item.rationale}</p>
                 </div>
               </div>
             ))}
@@ -474,17 +474,17 @@ const ConsultationBoard = ({ client, plan, db }) => {
 
         {/* Cost forecast */}
         <div>
-          <h2 className="text-xs font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 pb-3 mb-5">Investment Forecast</h2>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 border-b border-zinc-100 pb-3 mb-5">Investment Forecast</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              { label:'First Visit (Phase 1)', low:firstVisitLow, high:firstVisitHigh, note:'Tox + priority structural work', accent:'bg-stone-900 text-white' },
-              { label:'Full Plan (All Phases)', low:allLow, high:allHigh, note:'Complete recommended journey', accent:'bg-amber-600 text-white' },
-              { label:'Annual Maintenance', low:Math.round(annualLow*0.6), high:Math.round(annualHigh*0.6), note:'Tox + upkeep estimate', accent:'bg-stone-100 text-stone-800' },
+              { label:'First Visit (Phase 1)', low:firstVisitLow, high:firstVisitHigh, note:'Tox + priority structural work', accent:'bg-zinc-900 text-white' },
+              { label:'Full Plan (All Phases)', low:allLow, high:allHigh, note:'Complete recommended journey', accent:'bg-violet-600 text-white' },
+              { label:'Annual Maintenance', low:Math.round(annualLow*0.6), high:Math.round(annualHigh*0.6), note:'Tox + upkeep estimate', accent:'bg-zinc-100 text-zinc-800' },
             ].map(({label,low,high,note,accent})=>(
               <div key={label} className={`p-6 rounded-2xl ${accent}`}>
-                <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${accent.includes('stone-9')||accent.includes('amber')?'text-white/70':'text-stone-400'}`}>{label}</p>
-                <p className={`text-2xl font-serif font-semibold mb-1 ${accent.includes('stone-9')||accent.includes('amber')?'text-white':'text-stone-800'}`}>{fmt(low)}<span className="opacity-50 text-lg mx-1">–</span>{fmt(high)}</p>
-                <p className={`text-xs ${accent.includes('stone-9')||accent.includes('amber')?'text-white/60':'text-stone-500'}`}>{note}</p>
+                <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${accent.includes('zinc-9')||accent.includes('amber')?'text-white/70':'text-zinc-400'}`}>{label}</p>
+                <p className={`text-2xl font-serif font-semibold mb-1 ${accent.includes('zinc-9')||accent.includes('amber')?'text-white':'text-zinc-800'}`}>{fmt(low)}<span className="opacity-50 text-lg mx-1">–</span>{fmt(high)}</p>
+                <p className={`text-xs ${accent.includes('zinc-9')||accent.includes('amber')?'text-white/60':'text-zinc-500'}`}>{note}</p>
               </div>
             ))}
           </div>
@@ -492,7 +492,7 @@ const ConsultationBoard = ({ client, plan, db }) => {
 
         {/* Skincare journey */}
         <div>
-          <h2 className="text-xs font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 pb-3 mb-5">Skincare Journey</h2>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 border-b border-zinc-100 pb-3 mb-5">Skincare Journey</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             {[{label:'AM Routine', steps:SKINCARE_AM, icon:'Sun'},{label:'PM Routine', steps:SKINCARE_PM, icon:'Moon'}].map(({label,steps,icon})=>(
               <div key={label} className="p-5 bg-sage-50 border border-sage-100 rounded-2xl">
@@ -516,10 +516,10 @@ const ConsultationBoard = ({ client, plan, db }) => {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             {SKINCARE_PHASES.map((p,i)=>(
-              <div key={i} className="p-3 bg-white border border-stone-200 rounded-xl">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-amber-700 mb-1">{p.phase}</p>
-                <p className="text-xs font-semibold text-stone-800 mb-1">{p.title}</p>
-                <p className="text-[11px] text-stone-500 leading-relaxed">{p.desc}</p>
+              <div key={i} className="p-3 bg-white border border-zinc-200 rounded-xl">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-violet-700 mb-1">{p.phase}</p>
+                <p className="text-xs font-semibold text-zinc-800 mb-1">{p.title}</p>
+                <p className="text-[11px] text-zinc-500 leading-relaxed">{p.desc}</p>
               </div>
             ))}
           </div>
@@ -527,23 +527,23 @@ const ConsultationBoard = ({ client, plan, db }) => {
 
         {/* Simulation */}
         <div>
-          <h2 className="text-xs font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 pb-3 mb-5">Aesthetic Simulation</h2>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 border-b border-zinc-100 pb-3 mb-5">Aesthetic Simulation</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <ImageSlider src={client.photo}/>
-              <p className="text-sm font-serif text-stone-700 mt-3">Natural Facial Balancing — {isGLP1?'Collagen-First':'Full Plan'}</p>
-              <p className="text-xs text-stone-400 flex items-center gap-1 mt-1"><Icon name="ShieldCheck" size={12} className="text-green-500"/> Identity preservation validated</p>
-              <p className="text-xs text-stone-400 flex items-center gap-1"><Icon name="Info" size={12}/> Simulation is an approximation — not a guaranteed result</p>
+              <p className="text-sm font-serif text-zinc-700 mt-3">Natural Facial Balancing — {isGLP1?'Collagen-First':'Full Plan'}</p>
+              <p className="text-xs text-zinc-400 flex items-center gap-1 mt-1"><Icon name="ShieldCheck" size={12} className="text-green-500"/> Identity preservation validated</p>
+              <p className="text-xs text-zinc-400 flex items-center gap-1"><Icon name="Info" size={12}/> Simulation is an approximation — not a guaranteed result</p>
             </div>
             <div className="space-y-3">
-              <p className="text-sm font-medium text-stone-700">Simulation type</p>
+              <p className="text-sm font-medium text-zinc-700">Simulation type</p>
               {['Full Facial Balancing','Neuromodulator Only','Biostimulator / Collagen', isGLP1?'Weight-Loss + Support':'Skin Rejuvenation'].map(t=>(
-                <div key={t} className="flex items-center gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200 cursor-pointer hover:border-amber-300 transition">
-                  <div className="w-10 h-10 bg-stone-200 rounded-lg overflow-hidden shrink-0">
+                <div key={t} className="flex items-center gap-3 p-3 bg-zinc-50 rounded-xl border border-zinc-200 cursor-pointer hover:border-violet-300 transition">
+                  <div className="w-10 h-10 bg-zinc-200 rounded-lg overflow-hidden shrink-0">
                     <img src={client.photo} className="w-full h-full object-cover opacity-70"/>
                   </div>
-                  <p className="text-sm font-medium text-stone-700">{t}</p>
-                  <Icon name="ChevronRight" size={16} className="ml-auto text-stone-400"/>
+                  <p className="text-sm font-medium text-zinc-700">{t}</p>
+                  <Icon name="ChevronRight" size={16} className="ml-auto text-zinc-400"/>
                 </div>
               ))}
             </div>
@@ -551,7 +551,7 @@ const ConsultationBoard = ({ client, plan, db }) => {
         </div>
 
         {/* Disclaimer */}
-        <p className="text-center text-xs text-stone-400 max-w-2xl mx-auto leading-relaxed border-t border-stone-100 pt-8">
+        <p className="text-center text-xs text-zinc-400 max-w-2xl mx-auto leading-relaxed border-t border-zinc-100 pt-8">
           This report is educational only and does not constitute a medical diagnosis or treatment recommendation. Final decisions must be made with your licensed provider. Simulations are approximations and do not guarantee specific outcomes. Results vary.
         </p>
       </div>
@@ -592,26 +592,26 @@ const ClinicianApp = ({ db, onUpdateDb }) => {
 
   if (view==='dashboard') return (
     <div className="min-h-screen font-sans flex flex-col">
-      <header className="bg-stone-900 px-6 py-4 flex items-center justify-between text-white shrink-0">
+      <header className="bg-gradient-to-r from-zinc-950 to-zinc-900 px-6 py-4 flex items-center justify-between text-white shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center"><Icon name="Stethoscope" size={16}/></div>
           <div>
             <h1 className="text-base font-serif font-medium">{db.organization.name}</h1>
-            <p className="text-stone-400 text-xs">Provider Dashboard · Dr. Aisha</p>
+            <p className="text-zinc-400 text-xs">Provider Dashboard · Dr. Aisha</p>
           </div>
         </div>
-        <div className="flex items-center gap-4 text-sm text-stone-300">
-          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-400"/>{cols.review.length} pending review</span>
-          <div className="w-8 h-8 bg-stone-700 rounded-full flex items-center justify-center"><Icon name="User" size={15}/></div>
+        <div className="flex items-center gap-4 text-sm text-zinc-300">
+          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-violet-400"/>{cols.review.length} pending review</span>
+          <div className="w-8 h-8 bg-zinc-700 rounded-full flex items-center justify-center"><Icon name="User" size={15}/></div>
         </div>
       </header>
       <main className="flex-grow p-6 overflow-x-auto">
-        <h2 className="text-xl font-serif font-semibold text-stone-800 mb-6">Consultation Pipeline</h2>
+        <h2 className="text-xl font-serif font-semibold text-zinc-800 mb-6">Consultation Pipeline</h2>
         <div className="flex gap-5 min-w-[900px]">
           {[
-            { key:'invited', label:'Awaiting Intake', color:'text-stone-400', bg:'bg-stone-50 border-dashed border-stone-200', cnt:'bg-stone-200 text-stone-600' },
+            { key:'invited', label:'Awaiting Intake', color:'text-zinc-400', bg:'bg-zinc-50 border-dashed border-zinc-200', cnt:'bg-zinc-200 text-zinc-600' },
             { key:'analyzing', label:'AI Processing', color:'text-blue-600', bg:'bg-blue-50/40 border-blue-100', cnt:'bg-blue-100 text-blue-700' },
-            { key:'review', label:'Needs Review', color:'text-amber-700', bg:'bg-amber-50/40 border-amber-200', cnt:'bg-amber-100 text-amber-800' },
+            { key:'review', label:'Needs Review', color:'text-violet-700', bg:'bg-violet-50/40 border-violet-200', cnt:'bg-violet-100 text-violet-800' },
             { key:'approved', label:'Approved / Sent', color:'text-green-600', bg:'bg-green-50/40 border-green-200', cnt:'bg-green-100 text-green-700' },
           ].map(col=>(
             <div key={col.key} className="flex-1 flex flex-col gap-3">
@@ -621,26 +621,26 @@ const ClinicianApp = ({ db, onUpdateDb }) => {
               </div>
               <div className={`flex-1 rounded-2xl border p-3 space-y-3 ${col.bg} min-h-48`}>
                 {cols[col.key].map(c=>(
-                  <div key={c.id} className={`bg-white p-4 rounded-xl border shadow-sm transition-all ${c.state==='needs_review'?'border-amber-300 hover:shadow-md hover:-translate-y-0.5 cursor-pointer':'border-stone-200'}`}
+                  <div key={c.id} className={`bg-white p-4 rounded-xl border shadow-sm transition-all ${c.state==='needs_review'?'border-violet-300 hover:shadow-md hover:-translate-y-0.5 cursor-pointer':'border-zinc-200'}`}
                     onClick={c.state==='needs_review'?()=>openReview(c.id):undefined}>
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="w-9 h-9 rounded-full overflow-hidden bg-stone-100 shrink-0">
+                      <div className="w-9 h-9 rounded-full overflow-hidden bg-zinc-100 shrink-0">
                         {c.photo&&<img src={c.photo} className="w-full h-full object-cover" alt=""/>}
                       </div>
                       <div className="min-w-0">
-                        <p className="font-medium text-stone-800 text-sm truncate">{c.name}</p>
-                        <p className="text-xs text-stone-400">Age {c.age} · {c.provider}</p>
+                        <p className="font-medium text-zinc-800 text-sm truncate">{c.name}</p>
+                        <p className="text-xs text-zinc-400">Age {c.age} · {c.provider}</p>
                       </div>
                     </div>
-                    {c.intake?.goals && <div className="flex flex-wrap gap-1 mb-3">{c.intake.goals.slice(0,2).map(g=><Badge key={g} color="stone">{g}</Badge>)}</div>}
+                    {c.intake?.goals && <div className="flex flex-wrap gap-1 mb-3">{c.intake.goals.slice(0,2).map(g=><Badge key={g} color="zinc">{g}</Badge>)}</div>}
                     {c.intake?.glp1 && <Badge color="sage">GLP-1 pathway</Badge>}
-                    {c.state==='needs_review' && <button className="w-full mt-2 py-1.5 bg-stone-900 text-white text-xs font-medium rounded-lg">Review & Build Board →</button>}
+                    {c.state==='needs_review' && <button className="w-full mt-2 py-1.5 bg-zinc-900 text-white text-xs font-medium rounded-lg">Review & Build Board →</button>}
                     {c.state==='approved' && <p className="text-xs text-green-600 flex items-center gap-1 mt-1"><Icon name="CheckCircle2" size={12}/> Plan approved & sent</p>}
                     {c.state==='analyzing' && <p className="text-xs text-blue-500 flex items-center gap-1 mt-1"><Icon name="Activity" size={12}/> Generating analysis…</p>}
-                    {c.state==='invited' && <p className="text-xs text-stone-400 flex items-center gap-1 mt-1"><Icon name="Clock" size={12}/> Awaiting client intake</p>}
+                    {c.state==='invited' && <p className="text-xs text-zinc-400 flex items-center gap-1 mt-1"><Icon name="Clock" size={12}/> Awaiting client intake</p>}
                   </div>
                 ))}
-                {cols[col.key].length===0&&<p className="text-center text-stone-300 text-xs py-6">Empty</p>}
+                {cols[col.key].length===0&&<p className="text-center text-zinc-300 text-xs py-6">Empty</p>}
               </div>
             </div>
           ))}
@@ -655,22 +655,22 @@ const ClinicianApp = ({ db, onUpdateDb }) => {
 
   return (
     <div className="min-h-screen font-sans flex flex-col h-screen overflow-hidden">
-      <header className="bg-white/90 backdrop-blur border-b border-stone-200 px-4 py-3 flex items-center gap-4 shrink-0">
-        <button onClick={()=>setView('dashboard')} className="p-1.5 hover:bg-stone-100 rounded-lg transition"><Icon name="ChevronLeft" size={20} className="text-stone-500"/></button>
+      <header className="bg-white/90 backdrop-blur border-b border-zinc-200 px-4 py-3 flex items-center gap-4 shrink-0">
+        <button onClick={()=>setView('dashboard')} className="p-1.5 hover:bg-zinc-100 rounded-lg transition"><Icon name="ChevronLeft" size={20} className="text-zinc-500"/></button>
         <div className="flex-1 min-w-0">
-          <h1 className="font-serif text-lg font-semibold text-stone-800 truncate">Reviewing: {client.name}</h1>
-          <p className="text-xs text-stone-400">AI draft ready · Age {client.age} · {client.intake?.aesthetic}</p>
+          <h1 className="font-serif text-lg font-semibold text-zinc-800 truncate">Reviewing: {client.name}</h1>
+          <p className="text-xs text-zinc-400">AI draft ready · Age {client.age} · {client.intake?.aesthetic}</p>
         </div>
         {client.intake?.glp1 && <Badge color="sage">GLP-1</Badge>}
         <div className="flex gap-2">
-          <button className="px-4 py-2 border border-stone-200 text-stone-700 text-sm font-medium rounded-lg hover:bg-stone-50">Save Draft</button>
-          <button onClick={()=>approve(selectedId)} className="px-5 py-2 bg-stone-900 text-white text-sm font-medium rounded-lg hover:bg-stone-800 shadow-sm">Approve & Send →</button>
+          <button className="px-4 py-2 border border-zinc-200 text-zinc-700 text-sm font-medium rounded-lg hover:bg-zinc-50">Save Draft</button>
+          <button onClick={()=>approve(selectedId)} className="px-5 py-2 bg-zinc-900 text-white text-sm font-medium rounded-lg hover:bg-zinc-800 shadow-sm">Approve & Send →</button>
         </div>
       </header>
-      <div className="flex border-b border-stone-200 px-4 bg-white shrink-0">
+      <div className="flex border-b border-zinc-200 px-4 bg-white shrink-0">
         {[{key:'board',label:'Consultation Board',icon:'FileText'},{key:'plan',label:'Edit Plan',icon:'Sliders'},{key:'sim',label:'Simulations',icon:'Eye'}].map(t=>(
           <button key={t.key} onClick={()=>setReviewTab(t.key)}
-            className={`flex items-center gap-1.5 px-4 py-3 text-sm font-medium border-b-2 transition-all ${reviewTab===t.key?'border-stone-900 text-stone-900':'border-transparent text-stone-500 hover:text-stone-700'}`}>
+            className={`flex items-center gap-1.5 px-4 py-3 text-sm font-medium border-b-2 transition-all ${reviewTab===t.key?'border-zinc-900 text-zinc-900':'border-transparent text-zinc-500 hover:text-zinc-700'}`}>
             <Icon name={t.icon} size={14}/>{t.label}
           </button>
         ))}
@@ -683,21 +683,21 @@ const ClinicianApp = ({ db, onUpdateDb }) => {
         )}
         {reviewTab==='plan' && (
           <div className="h-full flex overflow-hidden">
-            <div className="w-5/12 bg-stone-50 border-r border-stone-200 p-5 overflow-y-auto scrollbar-thin space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500">Client Evidence</h3>
-              <div className="bg-white rounded-2xl border border-stone-200 p-4">
+            <div className="w-5/12 bg-zinc-50 border-r border-zinc-200 p-5 overflow-y-auto scrollbar-thin space-y-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500">Client Evidence</h3>
+              <div className="bg-white rounded-2xl border border-zinc-200 p-4">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-stone-100">
+                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-zinc-100">
                     <img src={client.photo} className="w-full h-full object-cover"/>
                   </div>
                   <div>
-                    <p className="font-medium text-stone-800">{client.name}</p>
-                    <p className="text-xs text-stone-500">{client.intake?.aesthetic} · {client.intake?.budget}</p>
+                    <p className="font-medium text-zinc-800">{client.name}</p>
+                    <p className="text-xs text-zinc-500">{client.intake?.aesthetic} · {client.intake?.budget}</p>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-1">{(client.intake?.goals||[]).map(g=><Badge key={g} color="stone">{g}</Badge>)}</div>
+                <div className="flex flex-wrap gap-1">{(client.intake?.goals||[]).map(g=><Badge key={g} color="zinc">{g}</Badge>)}</div>
               </div>
-              <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
+              <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden">
                 <div className="aspect-[4/3]"><ImageSlider src={client.photo}/></div>
               </div>
               {client.intake?.glp1 && (
@@ -709,34 +709,34 @@ const ClinicianApp = ({ db, onUpdateDb }) => {
             </div>
             <div className="w-7/12 bg-white p-6 overflow-y-auto scrollbar-thin">
               <div className="space-y-4 max-w-2xl">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-stone-400 border-b border-stone-100 pb-2">Facial Analysis</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 border-b border-zinc-100 pb-2">Facial Analysis</h3>
                 {draft.analysis.map((a,i)=>(
-                  <div key={i} className="bg-stone-50 border border-stone-200 rounded-xl p-4">
-                    <p className="text-xs font-bold text-stone-700 mb-1">{a.region}</p>
-                    <textarea className="w-full bg-transparent text-sm text-stone-600 resize-none focus:outline-none" rows={2} value={a.finding}
+                  <div key={i} className="bg-zinc-50 border border-zinc-200 rounded-xl p-4">
+                    <p className="text-xs font-bold text-zinc-700 mb-1">{a.region}</p>
+                    <textarea className="w-full bg-transparent text-sm text-zinc-600 resize-none focus:outline-none" rows={2} value={a.finding}
                       onChange={e=>{const na=[...draft.analysis];na[i]={...na[i],finding:e.target.value};setDraft({...draft,analysis:na});}}/>
                   </div>
                 ))}
-                <h3 className="text-xs font-bold uppercase tracking-wider text-stone-400 border-b border-stone-100 pb-2 pt-2">Treatment Plan</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 border-b border-zinc-100 pb-2 pt-2">Treatment Plan</h3>
                 {draft.items.map(item=>(
-                  <div key={item.id} className={`rounded-2xl border overflow-hidden transition-all ${item.enabled?'border-amber-300':'border-stone-200 opacity-60'}`}>
+                  <div key={item.id} className={`rounded-2xl border overflow-hidden transition-all ${item.enabled?'border-violet-300':'border-zinc-200 opacity-60'}`}>
                     <div className="flex items-center gap-3 p-4 bg-white">
-                      <input type="checkbox" checked={item.enabled} onChange={()=>toggleItem(item.id)} className="w-5 h-5 accent-amber-600 cursor-pointer"/>
+                      <input type="checkbox" checked={item.enabled} onChange={()=>toggleItem(item.id)} className="w-5 h-5 accent-violet-600 cursor-pointer"/>
                       <div className="flex-1 min-w-0">
-                        <p className="font-serif text-stone-800 font-medium text-sm">{item.tx}</p>
+                        <p className="font-serif text-zinc-800 font-medium text-sm">{item.tx}</p>
                         <ROIBar score={item.roi}/>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <input type="number" value={item.units} min={1} disabled={!item.enabled}
                           onChange={e=>updateItem(item.id,'units',Number(e.target.value))}
-                          className="w-16 p-1.5 border border-stone-200 rounded-lg text-sm text-center"/>
-                        <span className="text-xs text-stone-500">units</span>
+                          className="w-16 p-1.5 border border-zinc-200 rounded-lg text-sm text-center"/>
+                        <span className="text-xs text-zinc-500">units</span>
                       </div>
                     </div>
                     {item.enabled&&(
-                      <div className="px-4 pb-4 bg-stone-50">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-stone-400 mb-1 block">Clinical Rationale</label>
-                        <textarea className="w-full bg-white border border-stone-200 text-sm text-stone-700 rounded-lg p-2 resize-none focus:outline-amber-400" rows={2} value={item.rationale}
+                      <div className="px-4 pb-4 bg-zinc-50">
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1 block">Clinical Rationale</label>
+                        <textarea className="w-full bg-white border border-zinc-200 text-sm text-zinc-700 rounded-lg p-2 resize-none focus:outline-violet-400" rows={2} value={item.rationale}
                           onChange={e=>updateItem(item.id,'rationale',e.target.value)}/>
                       </div>
                     )}
@@ -748,13 +748,13 @@ const ClinicianApp = ({ db, onUpdateDb }) => {
         )}
         {reviewTab==='sim' && (
           <div className="h-full overflow-y-auto scrollbar-thin p-8">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-stone-400 mb-6">Aesthetic Simulations</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-6">Aesthetic Simulations</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl">
               {['Full Facial Balancing','Neuromodulator Only','Biostimulator / Collagen', client.intake?.glp1?'Weight-Loss + Support':'Skin Rejuvenation'].map(t=>(
                 <div key={t}>
                   <ImageSlider src={client.photo}/>
-                  <p className="font-serif text-stone-800 mt-3 text-sm">{t}</p>
-                  <p className="text-xs text-stone-400 mt-0.5 flex items-center gap-1"><Icon name="ShieldCheck" size={11} className="text-green-500"/> Identity validated</p>
+                  <p className="font-serif text-zinc-800 mt-3 text-sm">{t}</p>
+                  <p className="text-xs text-zinc-400 mt-0.5 flex items-center gap-1"><Icon name="ShieldCheck" size={11} className="text-green-500"/> Identity validated</p>
                 </div>
               ))}
             </div>
@@ -782,67 +782,67 @@ const ClientApp = ({ db, clientId, onUpdateDb }) => {
 
   return (
     <div className="min-h-screen font-sans flex flex-col">
-      <header className="bg-white/90 backdrop-blur border-b border-stone-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
-        <h1 className="font-serif text-lg text-stone-800 font-semibold">{db.organization.name} <span className="text-stone-400 font-sans font-normal text-sm ml-1">Client Portal</span></h1>
+      <header className="bg-white/90 backdrop-blur border-b border-zinc-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+        <h1 className="font-serif text-lg text-zinc-800 font-semibold">{db.organization.name} <span className="text-zinc-400 font-sans font-normal text-sm ml-1">Client Portal</span></h1>
         <div className="flex items-center gap-4">
-          <button onClick={()=>setView('dashboard')} className={`text-sm font-medium ${view==='dashboard'?'text-stone-900':'text-stone-500 hover:text-stone-800'}`}>Dashboard</button>
-          <button onClick={()=>setView('board')} disabled={!isApproved} className={`text-sm font-medium transition ${!isApproved?'text-stone-300 cursor-not-allowed':view==='board'?'text-stone-900':'text-stone-500 hover:text-stone-800'}`}>My Assessment</button>
-          <button onClick={()=>setView('skincare')} disabled={!isApproved} className={`text-sm font-medium transition ${!isApproved?'text-stone-300 cursor-not-allowed':view==='skincare'?'text-stone-900':'text-stone-500 hover:text-stone-800'}`}>Skincare Plan</button>
-          <div className="w-9 h-9 bg-stone-100 rounded-full flex items-center justify-center"><Icon name="User" size={16} className="text-stone-500"/></div>
+          <button onClick={()=>setView('dashboard')} className={`text-sm font-medium ${view==='dashboard'?'text-zinc-900':'text-zinc-500 hover:text-zinc-800'}`}>Dashboard</button>
+          <button onClick={()=>setView('board')} disabled={!isApproved} className={`text-sm font-medium transition ${!isApproved?'text-zinc-300 cursor-not-allowed':view==='board'?'text-zinc-900':'text-zinc-500 hover:text-zinc-800'}`}>My Assessment</button>
+          <button onClick={()=>setView('skincare')} disabled={!isApproved} className={`text-sm font-medium transition ${!isApproved?'text-zinc-300 cursor-not-allowed':view==='skincare'?'text-zinc-900':'text-zinc-500 hover:text-zinc-800'}`}>Skincare Plan</button>
+          <div className="w-9 h-9 bg-zinc-100 rounded-full flex items-center justify-center"><Icon name="User" size={16} className="text-zinc-500"/></div>
         </div>
       </header>
       <main className="flex-grow max-w-4xl mx-auto w-full p-6">
         {view==='dashboard' && (
           <div className="space-y-6 fade-up">
-            <h2 className="text-3xl font-serif font-semibold text-stone-800 pt-2">Welcome, {client.name.split(' ')[0]}.</h2>
+            <h2 className="text-3xl font-serif font-semibold text-zinc-800 pt-2">Welcome, {client.name.split(' ')[0]}.</h2>
             {client.state==='analyzing' && (
-              <div className="bg-white border border-stone-200 rounded-3xl p-8 flex gap-5 shadow-sm">
+              <div className="bg-white border border-zinc-200 rounded-3xl p-8 flex gap-5 shadow-sm">
                 <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0"><Icon name="Activity" size={22} className="text-blue-500"/></div>
                 <div>
-                  <h3 className="font-semibold text-stone-800 mb-1">Your intake is being reviewed</h3>
-                  <p className="text-stone-500 text-sm leading-relaxed">AI has analyzed your photos and goals. Dr. Aisha is customizing your personalized consultation board. You'll receive an email when it's ready.</p>
+                  <h3 className="font-semibold text-zinc-800 mb-1">Your intake is being reviewed</h3>
+                  <p className="text-zinc-500 text-sm leading-relaxed">AI has analyzed your photos and goals. Dr. Aisha is customizing your personalized consultation board. You'll receive an email when it's ready.</p>
                   <div className="flex gap-2 mt-3 flex-wrap">
-                    {(client.intake?.goals||[]).map(g=><Badge key={g} color="stone">{g}</Badge>)}
+                    {(client.intake?.goals||[]).map(g=><Badge key={g} color="zinc">{g}</Badge>)}
                     {client.intake?.glp1&&<Badge color="sage">GLP-1 pathway</Badge>}
                   </div>
                 </div>
               </div>
             )}
             {isApproved && (
-              <div className="bg-gradient-to-br from-stone-900 to-stone-800 rounded-3xl p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl text-white">
+              <div className="bg-gradient-to-br from-zinc-950 to-violet-950 rounded-3xl p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl text-white">
                 <div className="flex gap-5">
                   <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0"><Icon name="CheckCircle2" size={24} className="text-green-400"/></div>
                   <div>
                     <h3 className="text-lg font-semibold mb-1">Your assessment is ready</h3>
-                    <p className="text-stone-400 text-sm">Dr. Aisha has completed your facial analysis, treatment plan, and skincare journey.</p>
+                    <p className="text-zinc-400 text-sm">Dr. Aisha has completed your facial analysis, treatment plan, and skincare journey.</p>
                   </div>
                 </div>
                 <div className="flex gap-3 shrink-0">
                   <button onClick={()=>setView('skincare')} className="px-5 py-2.5 bg-white/10 text-white text-sm font-medium rounded-xl hover:bg-white/20 transition">Skincare Plan</button>
-                  <button onClick={()=>setView('board')} className="px-5 py-2.5 bg-white text-stone-900 text-sm font-medium rounded-xl hover:bg-stone-100 transition shadow-sm">View My Assessment →</button>
+                  <button onClick={()=>setView('board')} className="px-5 py-2.5 bg-white text-zinc-900 text-sm font-medium rounded-xl hover:bg-zinc-100 transition shadow-sm">View My Assessment →</button>
                 </div>
               </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-stone-400 mb-5">Upcoming</h4>
+              <div className="bg-white p-6 rounded-3xl border border-zinc-200 shadow-sm">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-5">Upcoming</h4>
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-stone-50 rounded-2xl border border-stone-100 flex flex-col items-center justify-center shrink-0">
-                    <span className="text-[10px] font-bold text-amber-700 uppercase">Jul</span>
-                    <span className="text-xl font-serif font-semibold text-stone-800">18</span>
+                  <div className="w-14 h-14 bg-zinc-50 rounded-2xl border border-zinc-100 flex flex-col items-center justify-center shrink-0">
+                    <span className="text-[10px] font-bold text-violet-700 uppercase">Jul</span>
+                    <span className="text-xl font-serif font-semibold text-zinc-800">18</span>
                   </div>
                   <div>
-                    <p className="font-medium text-stone-800">Virtual Consultation</p>
-                    <p className="text-sm text-stone-500">2:00 PM · 30 min · Video Call</p>
+                    <p className="font-medium text-zinc-800">Virtual Consultation</p>
+                    <p className="text-sm text-zinc-500">2:00 PM · 30 min · Video Call</p>
                   </div>
                 </div>
               </div>
-              <div className="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-stone-400 mb-4">Quick Actions</h4>
+              <div className="bg-white p-6 rounded-3xl border border-zinc-200 shadow-sm">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-4">Quick Actions</h4>
                 <div className="space-y-2">
-                  <button className="w-full flex items-center gap-2 text-sm text-stone-700 hover:text-amber-700 py-1.5 transition font-medium"><Icon name="MessageSquare" size={16}/> Message my provider</button>
-                  <button className="w-full flex items-center gap-2 text-sm text-stone-700 hover:text-amber-700 py-1.5 transition font-medium"><Icon name="Camera" size={16}/> Upload progress photos</button>
-                  <button className="w-full flex items-center gap-2 text-sm text-stone-700 hover:text-amber-700 py-1.5 transition font-medium"><Icon name="CalendarPlus" size={16}/> Book appointment</button>
+                  <button className="w-full flex items-center gap-2 text-sm text-zinc-700 hover:text-violet-700 py-1.5 transition font-medium"><Icon name="MessageSquare" size={16}/> Message my provider</button>
+                  <button className="w-full flex items-center gap-2 text-sm text-zinc-700 hover:text-violet-700 py-1.5 transition font-medium"><Icon name="Camera" size={16}/> Upload progress photos</button>
+                  <button className="w-full flex items-center gap-2 text-sm text-zinc-700 hover:text-violet-700 py-1.5 transition font-medium"><Icon name="CalendarPlus" size={16}/> Book appointment</button>
                 </div>
               </div>
             </div>
@@ -856,24 +856,24 @@ const ClientApp = ({ db, clientId, onUpdateDb }) => {
         {view==='skincare' && isApproved && (
           <div className="space-y-8 pb-16 fade-up">
             <div>
-              <h2 className="text-3xl font-serif font-semibold text-stone-800 mb-1">Your Skincare Journey</h2>
-              <p className="text-stone-500">Prepared by Dr. Aisha · Updated every 4–6 weeks</p>
+              <h2 className="text-3xl font-serif font-semibold text-zinc-800 mb-1">Your Skincare Journey</h2>
+              <p className="text-zinc-500">Prepared by Dr. Aisha · Updated every 4–6 weeks</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[{label:'Morning Routine',steps:SKINCARE_AM,icon:'Sun',accent:'bg-amber-50 border-amber-100'},{label:'Evening Routine',steps:SKINCARE_PM,icon:'Moon',accent:'bg-sage-50 border-sage-100'}].map(({label,steps,icon,accent})=>(
+              {[{label:'Morning Routine',steps:SKINCARE_AM,icon:'Sun',accent:'bg-violet-50 border-violet-100'},{label:'Evening Routine',steps:SKINCARE_PM,icon:'Moon',accent:'bg-sage-50 border-sage-100'}].map(({label,steps,icon,accent})=>(
                 <div key={label} className={`p-6 rounded-3xl border ${accent}`}>
                   <div className="flex items-center gap-2 mb-5">
-                    <Icon name={icon} size={18} className="text-stone-600"/>
-                    <h3 className="font-serif text-lg text-stone-800 font-medium">{label}</h3>
+                    <Icon name={icon} size={18} className="text-zinc-600"/>
+                    <h3 className="font-serif text-lg text-zinc-800 font-medium">{label}</h3>
                   </div>
                   <div className="space-y-4">
                     {steps.map((s,i)=>(
                       <div key={i} className="flex gap-3">
-                        <span className="w-6 h-6 rounded-full bg-white border border-stone-200 text-stone-600 text-xs font-bold flex items-center justify-center shrink-0">{i+1}</span>
+                        <span className="w-6 h-6 rounded-full bg-white border border-zinc-200 text-zinc-600 text-xs font-bold flex items-center justify-center shrink-0">{i+1}</span>
                         <div>
-                          <p className="font-semibold text-stone-800 text-sm">{s.step}</p>
-                          <p className="text-xs text-stone-600">{s.product}</p>
-                          <p className="text-xs text-stone-400 mt-0.5">{s.reason}</p>
+                          <p className="font-semibold text-zinc-800 text-sm">{s.step}</p>
+                          <p className="text-xs text-zinc-600">{s.product}</p>
+                          <p className="text-xs text-zinc-400 mt-0.5">{s.reason}</p>
                         </div>
                       </div>
                     ))}
@@ -882,16 +882,16 @@ const ClientApp = ({ db, clientId, onUpdateDb }) => {
               ))}
             </div>
             <div>
-              <h3 className="text-sm font-bold text-stone-700 mb-4">12-Week Skin Phase Plan</h3>
+              <h3 className="text-sm font-bold text-zinc-700 mb-4">12-Week Skin Phase Plan</h3>
               <div className="relative">
-                <div className="absolute top-5 left-5 right-5 h-0.5 bg-stone-200 z-0"/>
+                <div className="absolute top-5 left-5 right-5 h-0.5 bg-zinc-200 z-0"/>
                 <div className="relative z-10 grid grid-cols-5 gap-3">
                   {SKINCARE_PHASES.map((p,i)=>(
                     <div key={i} className="text-center">
-                      <div className="w-10 h-10 rounded-full bg-white border-2 border-stone-900 flex items-center justify-center mx-auto mb-3 text-xs font-bold text-stone-800">{i+1}</div>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-amber-700 mb-1">{p.phase}</p>
-                      <p className="text-xs font-semibold text-stone-800 mb-1">{p.title}</p>
-                      <p className="text-[11px] text-stone-500 leading-relaxed">{p.desc}</p>
+                      <div className="w-10 h-10 rounded-full bg-white border-2 border-zinc-900 flex items-center justify-center mx-auto mb-3 text-xs font-bold text-zinc-800">{i+1}</div>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-violet-700 mb-1">{p.phase}</p>
+                      <p className="text-xs font-semibold text-zinc-800 mb-1">{p.title}</p>
+                      <p className="text-[11px] text-zinc-500 leading-relaxed">{p.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -915,38 +915,38 @@ function App() {
       {!persona ? (
         <div className="min-h-screen flex items-center justify-center font-sans p-6">
           <div className="text-center max-w-md fade-up">
-            <div className="w-20 h-20 rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-xl bg-gradient-to-br from-stone-800 to-stone-950 ring-1 ring-white/10">
+            <div className="w-20 h-20 rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-xl bg-gradient-to-br from-zinc-800 to-zinc-950 ring-1 ring-white/10">
               <span className="text-white font-serif text-4xl">A</span>
             </div>
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-amber-700 mb-3">Aesthetic Intelligence Platform</p>
-            <h1 className="text-5xl font-serif font-semibold text-stone-800 mb-3">AestheticSim</h1>
-            <p className="text-stone-500 mb-2 text-lg leading-relaxed">Intake → Analysis → Simulation → Treatment Plan → Skincare Journey</p>
-            <p className="text-stone-400 text-sm mb-10">A full consultation operating system for modern medspas.</p>
-            <div className="bg-white border border-stone-200 rounded-3xl p-6 shadow-lg text-left space-y-3">
-              <p className="text-xs font-bold uppercase tracking-wider text-stone-400 mb-4">Explore the prototype</p>
-              <button onClick={()=>setPersona({role:'client',id:'c4'})} className="w-full py-3 bg-stone-900 text-white rounded-xl text-sm font-medium flex items-center gap-3 px-4 hover:bg-stone-800 transition">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-violet-700 mb-3">Aesthetic Intelligence Platform</p>
+            <h1 className="text-5xl font-serif font-semibold text-zinc-800 mb-3">AestheticSim</h1>
+            <p className="text-zinc-500 mb-2 text-lg leading-relaxed">Intake → Analysis → Simulation → Treatment Plan → Skincare Journey</p>
+            <p className="text-zinc-400 text-sm mb-10">A full consultation operating system for modern medspas.</p>
+            <div className="bg-white border border-zinc-200 rounded-3xl p-6 shadow-lg text-left space-y-3">
+              <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-4">Explore the prototype</p>
+              <button onClick={()=>setPersona({role:'client',id:'c4'})} className="w-full py-3 bg-zinc-900 text-white rounded-xl text-sm font-medium flex items-center gap-3 px-4 hover:bg-zinc-800 transition">
                 <Icon name="UserCheck" size={16}/>
                 <div className="text-left"><div>New Client — Complete Intake</div><div className="text-white/50 text-xs">5-step intake wizard → AI analysis flow</div></div>
               </button>
-              <div className="border-t border-stone-100 pt-3">
-                <p className="text-xs text-stone-500 mb-2 font-medium">Provider / Clinician</p>
-                <button onClick={()=>setPersona({role:'clinician'})} className="w-full py-3 border border-stone-200 text-stone-700 rounded-xl text-sm font-medium flex items-center gap-3 px-4 hover:bg-stone-50 transition">
-                  <Icon name="Stethoscope" size={16} className="text-stone-500"/>
-                  <div className="text-left"><div>Clinician Dashboard</div><div className="text-stone-400 text-xs">Pipeline · Consultation Board · Edit Plans</div></div>
+              <div className="border-t border-zinc-100 pt-3">
+                <p className="text-xs text-zinc-500 mb-2 font-medium">Provider / Clinician</p>
+                <button onClick={()=>setPersona({role:'clinician'})} className="w-full py-3 border border-zinc-200 text-zinc-700 rounded-xl text-sm font-medium flex items-center gap-3 px-4 hover:bg-zinc-50 transition">
+                  <Icon name="Stethoscope" size={16} className="text-zinc-500"/>
+                  <div className="text-left"><div>Clinician Dashboard</div><div className="text-zinc-400 text-xs">Pipeline · Consultation Board · Edit Plans</div></div>
                 </button>
               </div>
-              <div className="border-t border-stone-100 pt-3">
-                <p className="text-xs text-stone-500 mb-2 font-medium">View as existing client</p>
+              <div className="border-t border-zinc-100 pt-3">
+                <p className="text-xs text-zinc-500 mb-2 font-medium">View as existing client</p>
                 {db.clients.filter(c=>c.id!=='c4').map(c=>{
                   const labels = { needs_review:'Board in review', approved:'Plan approved', analyzing:'AI analyzing' };
                   return (
                     <button key={c.id} onClick={()=>setPersona({role:'client',id:c.id})}
-                      className="w-full flex items-center justify-between text-sm px-3 py-2 hover:bg-stone-50 rounded-xl group transition">
+                      className="w-full flex items-center justify-between text-sm px-3 py-2 hover:bg-zinc-50 rounded-xl group transition">
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full overflow-hidden bg-stone-100 shrink-0">{c.photo&&<img src={c.photo} className="w-full h-full object-cover"/>}</div>
-                        <span className="text-stone-700 font-medium group-hover:text-stone-900">{c.name}</span>
+                        <div className="w-7 h-7 rounded-full overflow-hidden bg-zinc-100 shrink-0">{c.photo&&<img src={c.photo} className="w-full h-full object-cover"/>}</div>
+                        <span className="text-zinc-700 font-medium group-hover:text-zinc-900">{c.name}</span>
                       </div>
-                      <Badge color={c.state==='approved'?'green':c.state==='needs_review'?'amber':'stone'}>{labels[c.state]||c.state}</Badge>
+                      <Badge color={c.state==='approved'?'green':c.state==='needs_review'?'violet':'zinc'}>{labels[c.state]||c.state}</Badge>
                     </button>
                   );
                 })}
@@ -962,7 +962,7 @@ function App() {
       )}
       <div className="fixed bottom-5 left-5 z-50 flex flex-col items-start gap-2">
         {persona && (
-          <button onClick={()=>setPersona(null)} className="flex items-center gap-2 px-4 py-2 bg-white border border-stone-200 rounded-full shadow-md text-xs font-bold text-stone-700 hover:bg-stone-50 transition">
+          <button onClick={()=>setPersona(null)} className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-full shadow-md text-xs font-bold text-zinc-700 hover:bg-zinc-50 transition">
             <Icon name="LayoutGrid" size={13}/> Switch role
           </button>
         )}
