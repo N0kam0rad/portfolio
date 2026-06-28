@@ -564,6 +564,17 @@ const ClinicianApp = ({ db, onUpdateDb }) => {
   const [view, setView] = useState('dashboard');
   const [selectedId, setSelectedId] = useState(null);
   const [reviewTab, setReviewTab] = useState('plan');
+  const [draft, setDraft] = useState(null);
+
+  // Keep draft in sync whenever the selected client changes
+  useEffect(() => {
+    if (selectedId && db.plans?.[selectedId]) {
+      setDraft(JSON.parse(JSON.stringify(db.plans[selectedId])));
+    }
+  }, [selectedId]);
+
+  const toggleItem = id => setDraft(p=>p?{...p,items:p.items.map(i=>i.id===id?{...i,enabled:!i.enabled}:i)}:p);
+  const updateItem = (id,field,val) => setDraft(p=>p?{...p,items:p.items.map(i=>i.id===id?{...i,[field]:val}:i)}:p);
 
   const cols = {
     invited: db.clients.filter(c=>c.state==='invited'),
@@ -639,12 +650,8 @@ const ClinicianApp = ({ db, onUpdateDb }) => {
   );
 
   const client = db.clients.find(c=>c.id===selectedId);
-  const plan = db.plans?.[selectedId];
+  const plan = draft || db.plans?.[selectedId];
   if (!client||!plan) return null;
-
-  const [draft, setDraft] = useState(JSON.parse(JSON.stringify(plan)));
-  const toggleItem = id => setDraft(p=>({...p,items:p.items.map(i=>i.id===id?{...i,enabled:!i.enabled}:i)}));
-  const updateItem = (id,field,val) => setDraft(p=>({...p,items:p.items.map(i=>i.id===id?{...i,[field]:val}:i)}));
 
   return (
     <div className="min-h-screen font-sans flex flex-col h-screen overflow-hidden">
