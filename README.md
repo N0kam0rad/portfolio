@@ -63,65 +63,65 @@ Version and last-updated values are maintained by GitHub Actions. Version is gen
     <tr>
       <td><a href="specs/aure.html"><strong>Aurë</strong></a></td>
       <td>Fragrance intelligence + scent wardrobe app</td>
-      <td>Beta</td>
-      <td><code>pending</code></td>
-      <td>pending</td>
+      <td>In progress</td>
+      <td><code>rev-d8fd700</code></td>
+      <td>2026-06-25</td>
     </tr>
     <tr>
       <td><a href="specs/accord.html"><strong>ACCORD</strong></a></td>
       <td>Weather-based perfume ritual automation</td>
-      <td>In the lab</td>
-      <td><code>pending</code></td>
-      <td>pending</td>
+      <td>In progress</td>
+      <td><code>rev-d8fd700</code></td>
+      <td>2026-06-25</td>
     </tr>
     <tr>
       <td><a href="posts/how-i-built-a-consistent-ai-cast.html"><strong>BonnetNoona</strong></a></td>
       <td>AI-directed claymation comedy series</td>
-      <td>In production</td>
-      <td><code>pending</code></td>
-      <td>pending</td>
+      <td>In progress</td>
+      <td><code>rev-cce3e18</code></td>
+      <td>2026-06-27</td>
     </tr>
     <tr>
       <td><a href="specs/aesthetic-sim.html"><strong>AestheticSim</strong></a></td>
       <td>Facial simulation + treatment-planning platform</td>
-      <td>Prototype</td>
-      <td><code>pending</code></td>
-      <td>pending</td>
+      <td>In progress</td>
+      <td><code>rev-d8fd700</code></td>
+      <td>2026-06-25</td>
     </tr>
     <tr>
       <td><a href="specs/roommate-tracker.html"><strong>Roommate Tracker</strong></a></td>
       <td>Shared-rent and payment tracker</td>
-      <td>Built</td>
-      <td><code>pending</code></td>
-      <td>pending</td>
+      <td>Done</td>
+      <td><code>rev-d8fd700</code></td>
+      <td>2026-06-25</td>
     </tr>
     <tr>
       <td><a href="specs/plate-planner.html"><strong>My Plate Planner</strong></a></td>
       <td>Diet-aware meal planner + grocery helper</td>
-      <td>Built</td>
-      <td><code>pending</code></td>
-      <td>pending</td>
+      <td>Done</td>
+      <td><code>rev-d8fd700</code></td>
+      <td>2026-06-25</td>
     </tr>
     <tr>
       <td><a href="specs/interior-render.html"><strong>Interior Render Studio</strong></a></td>
       <td>AI room rendering and style exploration tool</td>
-      <td>Prototype</td>
-      <td><code>pending</code></td>
-      <td>pending</td>
+      <td>In progress</td>
+      <td><code>rev-d8fd700</code></td>
+      <td>2026-06-25</td>
     </tr>
     <tr>
       <td><a href="specs/aurelias-rituals.html"><strong>Kids’ Habit + Reward App</strong></a></td>
       <td>Routine, reward, and puzzle system for kids</td>
-      <td>Built · testing</td>
-      <td><code>pending</code></td>
-      <td>pending</td>
+      <td>Done</td>
+      <td><code>rev-4f8a141</code></td>
+      <td>2026-06-24</td>
     </tr>
     <tr>
       <td><a href="specs/helix7.html"><strong>Helix7</strong></a></td>
       <td>Voice-note-to-web-novel workflow</td>
-      <td>Drafting</td>
-      <td><code>pending</code></td>
-      <td>pending</td>
+      <td>In progress</td>
+      <td><code>rev-d8fd700</code></td>
+      <td>2026-06-25</td>
     </tr>
   </tbody>
 </table>
