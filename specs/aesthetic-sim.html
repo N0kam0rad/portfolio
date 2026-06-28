@@ -4,154 +4,27 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AestheticSim — Product Spec · Tamara Richards</title>
-<meta name="description" content="Mini product spec for AestheticSim: an identity-preserving facial-simulation and treatment-planning tool for aesthetic clinics. What it is, why it was built, who it helps, and how it monetizes." />
+<meta name="description" content="Product spec for AestheticSim, a beauty consultation prototype with a demo video, workflow notes, and build lessons." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Fraunces:ital,wght@1,500&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
 <style>
-  :root{--bg:#F4EEE2;--ink:#1A1613;--paper:#FFFDF8;--red:#ED3A24;--blue:#2F6BFF;--green:#11B981;
-    --coral:#FF7A3D;--purple:#7C4DFF;--yellow:#FFC835;--lime:#C2F23D;--muted:#6E665B;
-    --shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink)}
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
-  h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-height:1.0;letter-spacing:-0.025em}
-  .serif{font-family:"Fraunces",serif;font-style:italic;font-weight:500}
-  a{color:var(--blue)}
-  .accentbar{height:12px;display:flex}.accentbar span{flex:1}
-  .accentbar span:nth-child(1){background:var(--blue)}.accentbar span:nth-child(2){background:var(--red)}
-  .accentbar span:nth-child(3){background:var(--green)}.accentbar span:nth-child(4){background:var(--yellow)}
-  nav{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:2px solid var(--ink)}
-  nav .in{max-width:880px;margin:0 auto;padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between}
-  nav .back{font-weight:700;text-decoration:none;color:var(--ink)}
-  nav .name{font-family:"Bricolage Grotesque";font-weight:800}
-  .article{max-width:880px;margin:0 auto;padding:0 24px}
-  header.post{padding:50px 0 26px}
-  .crumb{font-weight:700;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--blue)}
-  h1.h{font-size:clamp(2.2rem,6vw,3.4rem);margin:13px 0 12px}
-  .sub{font-size:1.2rem;color:var(--muted);max-width:60ch}
-  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
-  .pill{font-size:0.74rem;font-weight:600;border:2px solid var(--ink);border-radius:999px;padding:4px 11px;background:var(--paper)}
-  .status{background:var(--blue);color:#fff}
-
-  .spec{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:30px 0}
-  @media(max-width:720px){.spec{grid-template-columns:1fr}}
-  .card{background:var(--paper);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--shadow-sm);padding:24px;position:relative;overflow:hidden}
-  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px}
-  .card.c-blue::before{background:var(--blue)}.card.c-red::before{background:var(--red)}
-  .card.c-green::before{background:var(--green)}.card.c-purple::before{background:var(--purple)}
-  .card.c-coral::before{background:var(--coral)}.card.c-yellow::before{background:var(--yellow)}
-  .card .lab{font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:8px;padding-left:8px}
-  .card h3{font-size:1.15rem;margin-bottom:8px;padding-left:8px}
-  .card p{font-size:0.98rem;padding-left:8px}
-  .card.wide{grid-column:1 / -1}
-
-  .tools{display:flex;flex-wrap:wrap;gap:8px;padding-left:8px;margin-top:6px}
-  .money{background:var(--ink);color:var(--bg);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--shadow);padding:28px;margin:8px 0 0}
-  .money .lab{color:var(--yellow)}
-  .money h3{color:var(--bg)}.money p,.money li{color:#d8d1c6}
-  .money ul{margin:10px 0 0 20px}.money li{margin:6px 0;font-size:0.98rem}
-  .money b{color:var(--lime)}
-
-  .cta{background:var(--purple);color:#fff;border:2px solid var(--ink);border-radius:22px;box-shadow:var(--shadow);padding:30px;text-align:center;margin:40px 0 20px}
-  .cta h3{font-size:1.7rem;margin-bottom:8px}
-  .cta p{color:#efeaff;max-width:54ch;margin:0 auto 6px}
-  .cta .serif{color:var(--yellow)}
-  .cta a{display:inline-block;margin-top:16px;background:#fff;color:var(--ink);font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:13px;padding:13px 22px;box-shadow:var(--shadow-sm)}
-  footer{border-top:2px solid var(--ink);margin-top:30px;padding:30px 0;text-align:center;color:var(--muted);font-size:0.9rem}
+:root{--bg:#F4EEE2;--ink:#1A1613;--paper:#FFFDF8;--red:#ED3A24;--blue:#2F6BFF;--green:#11B981;--purple:#7C4DFF;--yellow:#FFC835;--lime:#C2F23D;--muted:#6E665B;--shadow:6px 6px 0 var(--ink)}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;line-height:1.65}a{color:var(--blue);font-weight:800}.bar{height:12px;display:flex}.bar span{flex:1}.bar span:nth-child(1){background:var(--blue)}.bar span:nth-child(2){background:var(--red)}.bar span:nth-child(3){background:var(--green)}.bar span:nth-child(4){background:var(--yellow)}nav{position:sticky;top:0;background:var(--bg);border-bottom:2px solid var(--ink);z-index:2}nav .in{max-width:900px;margin:0 auto;padding:0 24px;height:62px;display:flex;justify-content:space-between;align-items:center}.back{text-decoration:none;color:var(--ink)}main{max-width:900px;margin:0 auto;padding:44px 24px}h1,h2,h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;line-height:1;letter-spacing:-.025em}h1{font-size:clamp(2.4rem,7vw,4.6rem);margin:14px 0}.eyebrow{font-weight:800;font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}.lede{font-size:1.15rem;color:var(--muted);max-width:65ch}.meta{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 28px}.pill{font-size:.74rem;font-weight:800;border:2px solid var(--ink);border-radius:999px;background:var(--paper);padding:5px 12px}.pill.served{background:var(--lime)}.demo{background:var(--ink);color:var(--bg);border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);overflow:hidden;margin:26px 0 34px}.demo video{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;background:#111}.demo .cap{padding:18px 22px}.demo b{font-family:"Bricolage Grotesque";font-size:1.2rem}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:28px 0}@media(max-width:760px){.grid{grid-template-columns:1fr}}.card{background:var(--paper);border:2px solid var(--ink);border-radius:20px;box-shadow:4px 4px 0 var(--ink);padding:24px}.card h3{font-size:1.25rem;margin-bottom:8px}.card p{color:#342e27}.wide{grid-column:1/-1}.cta{margin:38px 0;background:var(--purple);color:#fff;border:2px solid var(--ink);border-radius:24px;box-shadow:var(--shadow);padding:28px}.cta a{color:var(--yellow)}footer{text-align:center;color:var(--muted);padding:30px;border-top:2px solid var(--ink)}
 </style>
 </head>
 <body>
-<div class="accentbar"><span></span><span></span><span></span><span></span></div>
-<nav><div class="in"><a class="back" href="../portfolio.html">← All work</a><span class="name">Product Spec</span></div></nav>
-
-<article>
-<header class="post"><div class="article">
-  <div class="crumb">Product Spec · App 03</div>
-  <h1 class="h">AestheticSim</h1>
-  <p class="sub">An identity-preserving facial-simulation &amp; treatment-planning platform for aesthetic clinics — a client portal and a clinician cockpit in one.</p>
-  <div class="meta"><span class="pill status">Prototype</span><span class="pill">B2B SaaS</span><span class="pill">Two-sided</span><span class="pill">AI-assisted</span></div>
-</div></header>
-
-<div class="article">
-  <div class="spec">
-    <div class="card c-blue">
-      <div class="lab">What it is</div>
-      <h3>The 10-second version</h3>
-      <p>A web app where a clinic invites a client, the client consents and uploads photos, AI generates a before/after simulation plus a draft treatment plan, and the clinician reviews, edits, and sends it — with identity-preservation guardrails and confidence scoring built in.</p>
-    </div>
-    <div class="card c-red">
-      <div class="lab">Why I built it</div>
-      <h3>The spark</h3>
-      <p>Aesthetic consults run on imagination — clients are asked to trust an outcome they can't see, and providers hand-write plans from scratch every time. I wanted to turn that fuzzy, high-stakes conversation into something visual, structured, and repeatable.</p>
-    </div>
-    <div class="card c-coral">
-      <div class="lab">The problem it solved for me</div>
-      <h3>Idea → demoable product</h3>
-      <p>I had a full two-sided platform in my head and no engineering team. Using AI, I took it from concept to a clickable, role-switching prototype I can actually show a clinic — fast enough to test the idea before spending a dollar on development.</p>
-    </div>
-    <div class="card c-green">
-      <div class="lab">The problem it solves for a user</div>
-      <h3>Conversions &amp; clinician time</h3>
-      <p>Clinics lose bookings when clients can't picture (or trust) the result, and clinicians burn hours drafting plans by hand. AestheticSim gives clients a credible, identity-safe before/after and gives clinicians an editable, priced plan in minutes — lifting consult-to-booking conversion while cutting admin time.</p>
-    </div>
-    <div class="card c-purple wide">
-      <div class="lab">How it works</div>
-      <h3>Under the hood</h3>
-      <p>A React prototype with a role "impersonator" to demo every state. The client flow handles consent → guided photo capture → status → before/after slider → treatment plan with live pricing. The clinician flow is a Kanban pipeline (AI Processing → Needs Review → Approved) feeding a dual-pane review cockpit where the AI-drafted analysis and plan are fully editable before sending. Identity-preservation and confidence checks are surfaced as trust signals throughout.</p>
-      <div class="tools">
-        <span class="pill">React</span><span class="pill">Gemini (build)</span><span class="pill">Prompt design</span><span class="pill">Mock data layer</span><span class="pill">Tailwind</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="money">
-    <div class="lab">Where it's going · how it monetizes</div>
-    <h3>The business model</h3>
-    <p>A B2B SaaS sold to clinics and med-spas, not consumers:</p>
-    <ul>
-      <li><b>Per-clinic subscription</b> — a monthly base tier by location, with seats for each clinician.</li>
-      <li><b>Usage tiers</b> — priced by consultation volume, so it scales with the clinic's growth.</li>
-      <li><b>Add-ons</b> — white-labeled client portal, outcome analytics, and a booking integration as upsells.</li>
-      <li><b>Wedge</b> — land with the free-feeling "client visualization" hook, expand into the full plan-and-pipeline workflow.</li>
-    </ul>
-    <p style="margin-top:12px">Next steps: validate pricing with 3–5 clinics, then build the real photo pipeline and consent/compliance layer.</p>
-  </div>
-
-  <h2 style="font-size:1.7rem;margin:42px 0 4px">What I learned building it</h2>
-  <div class="spec">
-    <div class="card c-blue">
-      <div class="lab">How I directed the AI</div>
-      <h3>Give it the data model first</h3>
-      <p>I handed the AI a complete mock database (clients, consultations, plans, pricing) before any screens. With the data contract fixed up front, the two sides — client app and clinician cockpit — stayed coherent instead of drifting. A built-in role "impersonator" let me demo every state without auth.</p>
-    </div>
-    <div class="card c-red">
-      <div class="lab">What broke &amp; how I fixed it</div>
-      <h3>AI defaults to generic</h3>
-      <p>The first pass looked like a stock CRUD dashboard. I had to explicitly push for clinical-luxe editorial design and <em>trust signals</em> (identity-preservation badges, confidence scores) — the things that make a medical tool feel safe. Specific design direction beat "make it nice" every time.</p>
-    </div>
-    <div class="card c-green">
-      <div class="lab">The automation win</div>
-      <h3>A clickable demo before a backend</h3>
-      <p>The mock-data layer plus the role switcher means I can walk a clinic through the entire flow — today, with zero backend. Validate the idea and the pricing with real buyers <em>before</em> spending a dollar building infrastructure.</p>
-    </div>
-    <div class="card c-yellow">
-      <div class="lab">Tools that did the work</div>
-      <h3>Gemini → React → polish</h3>
-      <p>Gemini Canvas to scaffold the two-sided prototype fast, React for the interactive build, then a dedicated design-polish pass (editorial type, layered shadows) to take it from "prototype" to "pitch-ready."</p>
-    </div>
-  </div>
-
-  <div class="cta">
-    <h3>This is the work I do on consult.</h3>
-    <p>Problem framing, two-sided UX, trust guardrails, a pricing model — taking a fuzzy idea to a demoable, monetizable product. <span class="serif">If you've got an idea sitting in your head, let's get it out.</span></p>
-    <a href="../contact.html">Work with me →</a>
-  </div>
-
-  <p style="text-align:center;color:var(--muted);font-size:0.85rem;margin-bottom:10px">Want to poke the live demo? It's behind the unlock on the <a href="../portfolio.html">work page</a>.</p>
-</div>
-</article>
-
-<footer>Tamara Richards — (almost)CEO · Ideas, shipped with AI.</footer>
+<div class="bar"><span></span><span></span><span></span><span></span></div>
+<nav><div class="in"><a class="back" href="../portfolio.html">← All work</a><b>Product Spec</b></div></nav>
+<main>
+<div class="eyebrow">Product spec · Served</div>
+<h1>AestheticSim</h1>
+<p class="lede">A clickable beauty-consultation prototype that turns a fuzzy service idea into a guided demo flow with intake, review, planning, and a client-ready output.</p>
+<div class="meta"><span class="pill served">Served</span><span class="pill">React prototype</span><span class="pill">Demo video</span><span class="pill">AI-assisted build</span></div>
+<section class="demo" aria-label="AestheticSim demo video"><video controls preload="metadata" poster="../assets/aesthetic-sim-thumb.jpg"><source src="../assets/aesthetic-sim-demo.mp4" type="video/mp4" />Your browser does not support the video tag.</video><div class="cap"><b>Demo walkthrough</b><p>The video shows the working board, review panels, and final plan flow in motion.</p></div></section>
+<section class="grid"><div class="card"><h3>What it is</h3><p>A two-sided prototype with a guided client side and an operator side, built to show the full concept before investing in a production backend.</p></div><div class="card"><h3>Why I built it</h3><p>The original idea lived in my head as a high-trust service workflow. I wanted to make it visible, clickable, and easy to pitch.</p></div><div class="card"><h3>How I built it</h3><p>I started with the data model and states first, then used AI to scaffold the interface, tighten the flow, and polish the story of the demo.</p></div><div class="card"><h3>What changed</h3><p>The first pass felt too generic. The stronger version needed clearer hierarchy, trust language, and a more memorable board-style interface.</p></div><div class="card wide"><h3>Next step</h3><p>Validate the workflow with real service providers, then decide what belongs in a production build versus what should stay as demo-only storytelling.</p></div></section>
+<div class="cta"><h2>Related build log</h2><p><a href="../posts/aestheticsim-build-log.html">Read how I built it →</a></p></div>
+</main>
+<footer>Tamara Richards — Ideas, prototyped with AI.</footer>
 </body>
 </html>
