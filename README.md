@@ -106,8 +106,8 @@ Version and last-updated values are maintained by GitHub Actions. Version is gen
       <td><a href="specs/aesthetic-sim.html"><strong>AestheticSim</strong></a></td>
       <td>Facial simulation + treatment-planning platform</td>
       <td>In progress</td>
-      <td><code>rev-d8fd700</code></td>
-      <td>2026-06-25</td>
+      <td><code>rev-12a604e</code></td>
+      <td>2026-06-28</td>
     </tr>
     <tr>
       <td><a href="specs/roommate-tracker.html"><strong>Roommate Tracker</strong></a></td>
