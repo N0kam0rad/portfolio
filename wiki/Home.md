@@ -34,11 +34,13 @@ Key paths:
 
 - [Repo Map](Repo-Map.md)
 - [Project Roster](Project-Roster.md)
+- [UI Build Queue](UI-Build-Queue.md)
 - [Portfolio Operating Manual](Portfolio-Operating-Manual.md)
 - [Privacy and QA](Privacy-and-QA.md)
 - [AestheticSim](AestheticSim.md)
 - [Thumbnails and Visuals](Thumbnails-and-Visuals.md)
 - [Blog Standards](Blog-Standards.md)
+- [Build Documentation Checklist](Build-Documentation-Checklist.md)
 
 ## Working principle
 
@@ -50,3 +52,5 @@ The portfolio should make the work feel real, usable, and product-minded. Every 
 4. What did AI help with?
 5. What did human judgment still control?
 6. What would be built next?
+7. How would I pitch it?
+8. What should someone do after reading?
