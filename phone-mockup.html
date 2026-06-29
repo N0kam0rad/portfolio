@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: #0d0d17;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+
+  /* ── Phone body ──────────────────────────────────────── */
+  .phone {
+    position: relative;
+    width: 346px;
+    height: 748px;
+    background: linear-gradient(160deg, #2a2a2a 0%, #1a1a1a 40%, #0e0e0e 100%);
+    border-radius: 48px;
+    box-shadow:
+      inset 0 0 0 1.5px rgba(255,255,255,.13),
+      inset 0 2px 0 rgba(255,255,255,.08),
+      0 0 0 1px rgba(0,0,0,.9),
+      0 24px 80px rgba(0,0,0,.8),
+      0 4px 16px rgba(0,0,0,.6);
+  }
+
+  /* Side buttons */
+  .phone::before {
+    content:'';
+    position:absolute;
+    right:-3px; top:120px;
+    width:3px; height:60px;
+    background:linear-gradient(to bottom, #222, #333, #222);
+    border-radius:0 2px 2px 0;
+    box-shadow:0 80px 0 #2a2a2a, 0 144px 0 #2a2a2a;
+  }
+  .phone::after {
+    content:'';
+    position:absolute;
+    left:-3px; top:154px;
+    width:3px; height:36px;
+    background:linear-gradient(to bottom, #222, #333, #222);
+    border-radius:2px 0 0 2px;
+    box-shadow:0 52px 0 #2a2a2a;
+  }
+
+  /* ── Screen bezel ────────────────────────────────────── */
+  .screen-bezel {
+    position: absolute;
+    top: 12px; left: 12px; right: 12px; bottom: 12px;
+    background: #000;
+    border-radius: 38px;
+    overflow: hidden;
+  }
+
+  /* ── Dynamic Island ──────────────────────────────────── */
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 108px;
+    height: 32px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 10;
+  }
+
+  /* ── Video fills the screen ──────────────────────────── */
+  video {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 38px;
+  }
+
+  /* ── Home bar ────────────────────────────────────────── */
+  .home-bar {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 5px;
+    background: rgba(255,255,255,.35);
+    border-radius: 3px;
+    z-index: 10;
+  }
+
+  /* ── Subtle screen glare ─────────────────────────────── */
+  .glare {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255,255,255,.06) 0%,
+      rgba(255,255,255,.01) 40%,
+      transparent 60%
+    );
+    border-radius: 38px;
+    pointer-events: none;
+    z-index: 20;
+  }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="screen-bezel">
+    <video id="v" autoplay muted playsinline loop>
+      <source src="assets/aesthetic-sim-demo.mp4" type="video/mp4">
+    </video>
+    <div class="dynamic-island"></div>
+    <div class="home-bar"></div>
+    <div class="glare"></div>
+  </div>
+</div>
+<script>
+  const v = document.getElementById('v');
+  v.addEventListener('loadedmetadata', () => v.play().catch(()=>{}));
+</script>
+</body>
+</html>
