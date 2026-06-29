@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html, body {
+    width: 1280px;
+    height: 800px;
+    overflow: hidden;
+    background: #090912;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 52px;
+  }
+
+  /* Violet glow behind laptop */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 50%; left: 38%;
+    transform: translate(-50%, -50%);
+    width: 720px; height: 560px;
+    background: radial-gradient(ellipse, rgba(124,58,237,.14) 0%, transparent 68%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  /* Soft blue accent behind phone */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 58%; right: 12%;
+    transform: translate(50%, -50%);
+    width: 320px; height: 320px;
+    background: radial-gradient(ellipse, rgba(59,130,246,.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── MacBook ─────────────────────────────────────────────── */
+  .macbook {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  .macbook-lid {
+    width: 524px;
+    background: linear-gradient(168deg, #c4c4c4 0%, #9e9e9e 55%, #848484 100%);
+    border-radius: 13px 13px 2px 2px;
+    padding: 13px 13px 10px;
+    position: relative;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.32),
+      inset 0 1px 0 rgba(255,255,255,.4),
+      0 30px 80px rgba(0,0,0,.88),
+      0 8px 20px rgba(0,0,0,.55);
+  }
+
+  /* Webcam dot */
+  .macbook-camera {
+    position: absolute;
+    top: 6px; left: 50%;
+    transform: translateX(-50%);
+    width: 5px; height: 5px;
+    background: #3c3c3c;
+    border-radius: 50%;
+    z-index: 2;
+  }
+  .macbook-camera::after {
+    content: '';
+    position: absolute;
+    top: 1px; left: 1px;
+    width: 2px; height: 2px;
+    background: rgba(255,255,255,.18);
+    border-radius: 50%;
+  }
+
+  /* Screen */
+  .macbook-screen {
+    width: 498px;   /* 524 − 13 − 13 */
+    height: 311px;  /* 498 × 10/16 */
+    background: #0d0d0d;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .macbook-screen video {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  /* Subtle screen glare */
+  .macbook-screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.055) 0%, transparent 48%);
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Hinge */
+  .macbook-hinge {
+    width: 524px;
+    height: 3px;
+    background: linear-gradient(to bottom, #5c5c5c, #4c4c4c);
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Base / palm rest */
+  .macbook-base {
+    width: 548px;          /* ~4.5% wider than lid */
+    margin-left: -12px;
+    height: 22px;
+    background: linear-gradient(to bottom, #aaaaaa 0%, #8c8c8c 50%, #7a7a7a 100%);
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 10px 28px rgba(0,0,0,.75), 0 2px 6px rgba(0,0,0,.45);
+  }
+
+  /* Trackpad divot suggestion */
+  .macbook-trackpad {
+    width: 88px; height: 3px;
+    background: rgba(0,0,0,.16);
+    border-radius: 2px;
+  }
+
+  /* ── iPhone ──────────────────────────────────────────────── */
+  .phone {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    width: 162px;
+    height: 352px;
+    background: linear-gradient(162deg, #2c2c2c 0%, #1c1c1c 40%, #0f0f0f 100%);
+    border-radius: 33px;
+    margin-top: 42px; /* offset lower for visual interest */
+    box-shadow:
+      inset 0 0 0 1.5px rgba(255,255,255,.14),
+      inset 0 2px 0 rgba(255,255,255,.09),
+      0 0 0 1px rgba(0,0,0,.9),
+      0 22px 60px rgba(0,0,0,.82),
+      0 4px 10px rgba(0,0,0,.5);
+  }
+
+  /* Right side power button */
+  .phone::before {
+    content: '';
+    position: absolute;
+    right: -2px; top: 58px;
+    width: 2px; height: 27px;
+    background: linear-gradient(to bottom, #1e1e1e, #2e2e2e, #1e1e1e);
+    border-radius: 0 2px 2px 0;
+    box-shadow: 0 38px 0 #252525, 0 70px 0 #252525;
+  }
+  /* Left side volume buttons */
+  .phone::after {
+    content: '';
+    position: absolute;
+    left: -2px; top: 73px;
+    width: 2px; height: 18px;
+    background: linear-gradient(to bottom, #1e1e1e, #2e2e2e, #1e1e1e);
+    border-radius: 2px 0 0 2px;
+    box-shadow: 0 26px 0 #252525;
+  }
+
+  /* Screen bezel */
+  .screen-bezel {
+    position: absolute;
+    top: 6px; left: 6px; right: 6px; bottom: 6px;
+    background: #000;
+    border-radius: 28px;
+    overflow: hidden;
+  }
+
+  /* Dynamic Island */
+  .dynamic-island {
+    position: absolute;
+    top: 7px; left: 50%;
+    transform: translateX(-50%);
+    width: 54px; height: 16px;
+    background: #000;
+    border-radius: 10px;
+    z-index: 10;
+  }
+
+  .screen-bezel video {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 28px;
+  }
+
+  /* Home bar */
+  .home-bar {
+    position: absolute;
+    bottom: 5px; left: 50%;
+    transform: translateX(-50%);
+    width: 56px; height: 3px;
+    background: rgba(255,255,255,.25);
+    border-radius: 3px;
+    z-index: 10;
+  }
+
+  /* Screen glare */
+  .glare {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,.06) 0%, rgba(255,255,255,.01) 40%, transparent 60%);
+    border-radius: 28px;
+    pointer-events: none;
+    z-index: 20;
+  }
+</style>
+</head>
+<body>
+
+<!-- MacBook -->
+<div class="macbook">
+  <div class="macbook-lid">
+    <div class="macbook-camera"></div>
+    <div class="macbook-screen">
+      <video id="vl" autoplay muted loop playsinline>
+        <source src="assets/aesthetic-sim-demo.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+  <div class="macbook-hinge"></div>
+  <div class="macbook-base">
+    <div class="macbook-trackpad"></div>
+  </div>
+</div>
+
+<!-- iPhone -->
+<div class="phone">
+  <div class="screen-bezel">
+    <video id="vp" autoplay muted loop playsinline>
+      <source src="assets/aesthetic-sim-demo.mp4" type="video/mp4">
+    </video>
+    <div class="dynamic-island"></div>
+    <div class="home-bar"></div>
+    <div class="glare"></div>
+  </div>
+</div>
+
+<script>
+  ['vl', 'vp'].forEach(id => {
+    const v = document.getElementById(id);
+    v.addEventListener('loadedmetadata', () => v.play().catch(() => {}));
+  });
+</script>
+</body>
+</html>
