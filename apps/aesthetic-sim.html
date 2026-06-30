@@ -112,6 +112,10 @@ const CLINICAL_SOURCES = {
   safety:       { label:'Filler vascular danger zones — Wollina 2020; ASDS task force', url:'https://onlinelibrary.wiley.com/doi/10.1111/dth.14285' },
   sim3d:        { label:'3D sim accuracy vs satisfaction — PMC12493035; Crisalix; VECTRA', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12493035/' },
   mediapipe:    { label:'MediaPipe Face Landmarker (478 3D pts, transforms) — Google AI Edge', url:'https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker/web_js' },
+  vectraXt:     { label:'VECTRA XT — Face Sculptor, Gray Mode, volume-difference mapping', url:'https://www.canfieldsci.com/imaging-systems/vectra-xt-3d-imaging-system/' },
+  accurateSim:  { label:'ACCURATE/BeautySim — VR + haptic injection-training simulator', url:'https://unicamillus.org/en/news/simulators-by-accurate-in-aesthetic-medicine-to-reduce-complications-of-facial-injections-and-detect-symptoms-at-an-early-stage/' },
+  flame:        { label:'FLAME — parametric 3D head model (license-gated, evaluated not integrated)', url:'https://github.com/TimoBolkart/FLAME-Universe' },
+  keentools:    { label:'KeenTools — multi-photo 3D head reconstruction (evaluated not integrated)', url:'https://keentools.io/products/api' },
 };
 
 // Provider treatment library (dropdown) + classifier for the Injectables/Facials filter.
@@ -268,6 +272,7 @@ const ADMIN_SETTINGS_INITIAL = {
     showSkincareProtocol: true,
     showPricing: true,
     showClientDoses: true,
+    enableSimulation: true,
     watermark: true,
   },
 };
@@ -997,6 +1002,12 @@ const AdminPanel = ({ settings, onSave, onBack }) => {
               <h2 className="text-xl font-serif font-semibold text-zinc-800 mb-1">Board Settings</h2>
               <p className="text-sm text-zinc-500 mb-8">Control which sections are included in the downloadable consultation board.</p>
 
+              <div className="p-4 bg-violet-50 border border-violet-200 rounded-2xl mb-6">
+                <Toggle checked={local.board.enableSimulation !== false}
+                  onChange={v=>upd('board','enableSimulation',v)}
+                  label="Enable facial-balancing simulation (3D scan + on-photo preview)"/>
+                <p className="text-xs text-violet-700 mt-2 ml-[3.25rem]">Clinic-level kill switch. When off, the simulation is hidden everywhere — client dashboard, provider Simulations tab, and the live scan results — leaving the skin-analysis heatmap and treatment plan untouched. Some jurisdictions regulate digitally-simulated before/afters in medical advertising; this lets a clinic opt out without a code change.</p>
+              </div>
               <div className="space-y-4 mb-8">
                 <Toggle checked={local.board.showSimGallery}
                   onChange={v=>upd('board','showSimGallery',v)}
@@ -1765,6 +1776,7 @@ const BalancingSimulator = ({ image, landmarks, markers, scores, defaultActive, 
   const [busy, setBusy] = useState(true);
   const [showPins, setShowPins] = useState(true);
   const [showMesh, setShowMesh] = useState(false);
+  const [contourMode, setContourMode] = useState(false);
   const [simPoints, setSimPoints] = useState([]);
   const beforeRef=useRef(null), afterRef=useRef(null), overlayRef=useRef(null), wrapRef=useRef(null);
   const srcData=useRef(null), dims=useRef({w:0,h:0});
@@ -1792,8 +1804,10 @@ const BalancingSimulator = ({ image, landmarks, markers, scores, defaultActive, 
     const {w,h}=dims.current; if(!w||!h) return;
     const actx=cv.getContext('2d');
     setBusy(true);
+    let builtCtrls=[];
     if (src && hasLandmarks) {
       const built = buildSimControls(landmarks,w,h,active,intensity);
+      builtCtrls = built.ctrls;
       const warped = built.ctrls.length ? warpImageData(src,w,h,built.ctrls) : src;
       actx.putImageData(warped,0,0);
       applySmooth(actx,w,h,built.smooth);     // neuromodulator line-softening
@@ -1802,6 +1816,7 @@ const BalancingSimulator = ({ image, landmarks, markers, scores, defaultActive, 
       const img=new Image(); img.crossOrigin='anonymous'; img.onload=()=>{ actx.drawImage(img,0,0,w,h); applyGlow(actx,w,h); }; img.src=image; return;
     }
     applyGlow(actx,w,h);
+    if (contourMode) applyContour(actx,w,h,builtCtrls);
     drawMesh();
     setBusy(false);
   };
@@ -1825,6 +1840,23 @@ const BalancingSimulator = ({ image, landmarks, markers, scores, defaultActive, 
     actx.clip(); actx.filter='blur(3px)'; actx.globalAlpha=0.6; actx.drawImage(tmp,0,0);
     actx.restore(); actx.filter='none'; actx.globalAlpha=1;
   };
+  // VECTRA-style "Gray Mode" + volume-difference map: desaturate to read shape, then shade
+  // where volume was simulated — warm = added volume (filler/biostimulator), cool = lift/displacement (tox/PRF)
+  const applyContour = (actx,w,h,ctrls) => {
+    const snap=actx.getImageData(0,0,w,h);
+    const tmp=document.createElement('canvas'); tmp.width=w; tmp.height=h; tmp.getContext('2d').putImageData(snap,0,0);
+    actx.save();
+    actx.filter='grayscale(1) contrast(1.15) brightness(0.92)'; actx.drawImage(tmp,0,0); actx.filter='none';
+    actx.globalCompositeOperation='screen';
+    ctrls.forEach(c=>{
+      const col = c.t==='bloat' ? '#f59e0b' : '#38bdf8';
+      const g=actx.createRadialGradient(c.p.x,c.p.y,0,c.p.x,c.p.y,c.r);
+      g.addColorStop(0, col+'99'); g.addColorStop(1, col+'00');
+      actx.fillStyle=g; actx.beginPath(); actx.arc(c.p.x,c.p.y,c.r,0,Math.PI*2); actx.fill();
+    });
+    actx.globalCompositeOperation='source-over';
+    actx.restore();
+  };
   // 3D face-mesh wireframe overlay (visible "3D model")
   const drawMesh = () => {
     const cv=overlayRef.current; if(!cv) return; const {w,h}=dims.current; if(!w||!h) return;
@@ -1840,7 +1872,7 @@ const BalancingSimulator = ({ image, landmarks, markers, scores, defaultActive, 
       ctx.stroke();
     }
   };
-  useEffect(()=>{ if(srcData.current!==undefined) renderAfter(); }, [active, intensity]);
+  useEffect(()=>{ if(srcData.current!==undefined) renderAfter(); }, [active, intensity, contourMode]);
   useEffect(()=>{ drawMesh(); }, [showMesh, simPoints]);
 
   const move = x => { const r=wrapRef.current?.getBoundingClientRect(); if(!r) return; setPos(Math.max(4,Math.min(96,((x-r.left)/r.width)*100))); };
@@ -1893,6 +1925,7 @@ const BalancingSimulator = ({ image, landmarks, markers, scores, defaultActive, 
           ))}
         </div>
         <button onClick={()=>setShowMesh(s=>!s)} disabled={!hasLandmarks} className={`text-[11px] font-medium flex items-center gap-1 ${showMesh?'text-violet-700':'text-zinc-500 hover:text-zinc-700'} ${!hasLandmarks?'opacity-40':''}`}><Icon name="Grid3x3" size={12}/>{showMesh?'Hide 3D mesh':'3D mesh'}</button>
+        <button onClick={()=>setContourMode(s=>!s)} disabled={!hasLandmarks} title="VECTRA-style gray + volume-difference view" className={`text-[11px] font-medium flex items-center gap-1 ${contourMode?'text-violet-700':'text-zinc-500 hover:text-zinc-700'} ${!hasLandmarks?'opacity-40':''}`}><Icon name="CircleDot" size={12}/>{contourMode?'Hide contour map':'Contour map'}</button>
         <button onClick={()=>setShowPins(s=>!s)} className="ml-auto text-[11px] font-medium text-zinc-500 hover:text-zinc-700 flex items-center gap-1"><Icon name={showPins?'EyeOff':'Eye'} size={12}/>{showPins?'Hide zones':'Zones'}</button>
       </div>
     </div>
@@ -1900,7 +1933,7 @@ const BalancingSimulator = ({ image, landmarks, markers, scores, defaultActive, 
 };
 
 // Full scan flow: choose camera or upload → analyze → results (Lovi-style)
-const SkinScan = ({ onComplete, onClose, ctaLabel='Use these results →' }) => {
+const SkinScan = ({ onComplete, onClose, ctaLabel='Use these results →', enableSim=true }) => {
   const [mode, setMode] = useState(null);       // null | 'camera' | 'upload'
   const [phase, setPhase] = useState('choose'); // choose | capture | analyzing | results | error
   const [image, setImage] = useState(null);
@@ -2078,11 +2111,18 @@ const SkinScan = ({ onComplete, onClose, ctaLabel='Use these results →' }) => 
         </div>
       </div>
 
-      <div className="mt-6">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Facial balancing simulation — see your result</h3>
-        <BalancingSimulator image={image} landmarks={result.landmarks} markers={result.markers} scores={result.scores}/>
-        <p className="text-[11px] text-zinc-400 mt-3">Toggle treatments to preview the shape change on your own face, then drag to compare. This is an approximate planning visual driven by your facial landmarks — not a guaranteed outcome.</p>
-      </div>
+      {enableSim ? (
+        <div className="mt-6">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Facial balancing simulation — see your result</h3>
+          <BalancingSimulator image={image} landmarks={result.landmarks} markers={result.markers} scores={result.scores}/>
+          <p className="text-[11px] text-zinc-400 mt-3">Toggle treatments to preview the shape change on your own face, then drag to compare. This is an approximate planning visual driven by your facial landmarks — not a guaranteed outcome.</p>
+        </div>
+      ) : (
+        <div className="mt-6 p-4 bg-zinc-50 border border-zinc-200 rounded-2xl text-xs text-zinc-500 flex items-start gap-2">
+          <Icon name="Info" size={13} className="shrink-0 mt-0.5 text-zinc-400"/>
+          Facial-balancing simulation is currently disabled by your clinic. Your skin analysis above is still complete and shared with your provider.
+        </div>
+      )}
 
       <div className="flex gap-3 mt-6">
         <button onClick={reset} className="px-5 py-3 border border-zinc-200 text-zinc-600 rounded-xl text-sm hover:bg-zinc-50">Rescan</button>
@@ -2411,6 +2451,12 @@ const ClinicianApp = ({ db, onUpdateDb, settings }) => {
         {reviewTab==='sim' && (
           <div className="h-full overflow-y-auto scrollbar-thin p-8">
             <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1">Facial Balancing Simulation</h3>
+            {settings?.board?.enableSimulation===false ? (
+              <div className="max-w-xl p-5 bg-zinc-50 border border-zinc-200 rounded-2xl text-sm text-zinc-500 flex items-start gap-2">
+                <Icon name="Info" size={14} className="shrink-0 mt-0.5 text-zinc-400"/>
+                <span>Facial-balancing simulation is turned off in <b>Admin → Board Settings</b>. Re-enable it there to preview treatments on the client's photo.</span>
+              </div>
+            ) : (<>
             <p className="text-sm text-zinc-500 mb-6 flex items-center gap-1"><Icon name="ShieldCheck" size={13} className="text-green-500"/> Driven by the client's facial landmarks · identity preserved · approximate planning visual</p>
             {client.skinScan?.image ? (
               <div className="max-w-xl">
@@ -2429,6 +2475,7 @@ const ClinicianApp = ({ db, onUpdateDb, settings }) => {
                 <p className="text-xs text-amber-600 mt-4 flex items-center gap-1"><Icon name="Info" size={12}/> This client hasn't completed an on-device scan yet, so the shape simulator is unavailable — showing a generic tone preview. Ask them to run a scan from their dashboard.</p>
               </div>
             )}
+            </>)}
           </div>
         )}
       </div>
@@ -2596,7 +2643,7 @@ const ClientApp = ({ db, clientId, onUpdateDb, settings }) => {
                 </div>
               )}
             </div>
-            {client.skinScan?.landmarks && (
+            {client.skinScan?.landmarks && settings?.board?.enableSimulation !== false && (
               <div className="bg-white p-6 rounded-3xl border border-zinc-200 shadow-sm">
                 <div className="flex items-center justify-between mb-1">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">Your Facial Balancing Simulation</h4>
@@ -2610,7 +2657,7 @@ const ClientApp = ({ db, clientId, onUpdateDb, settings }) => {
         )}
         {view==='scan' && (
           <div className="fade-up max-w-2xl mx-auto bg-white border border-zinc-200 rounded-3xl shadow-sm p-6 md:p-8">
-            <SkinScan onComplete={saveScan} onClose={()=>setView('dashboard')} ctaLabel="Save to my profile →"/>
+            <SkinScan onComplete={saveScan} onClose={()=>setView('dashboard')} ctaLabel="Save to my profile →" enableSim={settings?.board?.enableSimulation !== false}/>
           </div>
         )}
         {view==='board' && isApproved && plan && (
@@ -2742,7 +2789,7 @@ function App() {
           {persona.role==='scan' && (
             <div className="min-h-screen font-sans flex items-center justify-center p-6">
               <div className="max-w-2xl w-full bg-white border border-zinc-200 rounded-3xl shadow-lg p-6 md:p-8 my-8">
-                <SkinScan onClose={()=>setPersona(null)} ctaLabel="Done" onComplete={()=>setPersona(null)}/>
+                <SkinScan onClose={()=>setPersona(null)} ctaLabel="Done" onComplete={()=>setPersona(null)} enableSim={settings?.board?.enableSimulation !== false}/>
               </div>
             </div>
           )}
