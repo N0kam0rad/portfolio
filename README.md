@@ -17,6 +17,7 @@ I turn fuzzy ideas, personal problems, voice notes, and “wait, this should exi
 [![Builds](https://img.shields.io/badge/Builds-Featured-11B981?style=for-the-badge)](#featured-builds)
 [![Colors](https://img.shields.io/badge/Colors-System-7C4DFF?style=for-the-badge)](#color-system)
 [![Structure](https://img.shields.io/badge/Repo-Structure-1A1613?style=for-the-badge)](#repo-structure)
+[![Changelog](https://img.shields.io/badge/Changelog-What%20changed-2F6BFF?style=for-the-badge)](./CHANGELOG.md)
 
 </div>
 
@@ -181,8 +182,11 @@ portfolio/
 ├── scripts/            # repo automation helpers
 ├── .github/workflows/  # GitHub Actions automation
 ├── .nojekyll           # GitHub Pages helper
+├── CHANGELOG.md        # dated history of notable changes
 └── README.md           # this file
 ```
+
+Notable changes are tracked in [`CHANGELOG.md`](./CHANGELOG.md), grouped by date.
 
 ---
 
