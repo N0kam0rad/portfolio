@@ -101,6 +101,28 @@
 
   <div class="callout"><b>The strongest demo path:</b> open Marcus Webb → run through the clinician board → click "Generate board" → download the PDF. That is the one sequence that shows the full value in under two minutes.</div>
 
+  <h2 id="clinical">Clinical grounding &amp; research</h2>
+  <p>A simulation that invents numbers is worse than no simulation — it sets wrong expectations. So the dosing, the treatment longevity, and the simulation physics are all grounded in published ranges, encoded in a single <code>CLINICAL_REFERENCE</code> constant in the app so the figures can't drift between the plan, the units, and the on-photo simulation. The idea was sparked by a study using <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11334672/" target="_blank" rel="noopener noreferrer">3D-printed facial models to train injectors</a> — anatomy-first, not vibes-first.</p>
+
+  <h3>Units per area</h3>
+  <ul>
+    <li><b>Neuromodulator (Botox):</b> glabella 15–25 U · forehead 10–20 U (label 20 U) · crow's feet ~24 U · masseter 40–60 U total. Onset 3–7 days, peak ~2 wks, lasts 3–4 mo. It <i>relaxes muscle and lifts</i> — it adds no volume. <a href="https://injectco.com/botox-dosage-guide/" target="_blank" rel="noopener noreferrer">Dosing</a> · <a href="https://onlinelibrary.wiley.com/doi/10.1111/jocd.13702" target="_blank" rel="noopener noreferrer">mechanism</a></li>
+    <li><b>HA filler:</b> cheek 1–2 mL · tear trough 0.5–1 mL · lips ~1 mL · chin 1–2 mL · jawline 2–4 mL (~4 mL/session, ~1:1 volume). Lasts 6–18 mo by area. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8012343/" target="_blank" rel="noopener noreferrer">MD Codes</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11250456/" target="_blank" rel="noopener noreferrer">longevity (MRI)</a></li>
+    <li><b>Biostimulator (Sculptra):</b> 2–4 vials, ~1 vial/decade; collagen builds over 8–12 wks; ~2-yr result — no instant fill. <a href="https://alumapdx.com/sculptra-how-it-works-what-to-expect-and-why-its-different-from-filler/" target="_blank" rel="noopener noreferrer">Sculptra</a></li>
+    <li><b>Regenerative / energy:</b> PRF for under-eyes (results 2–6 wks on); RF microneedling collagen peaks 6–12 wks, lasts 12–18 mo. <a href="https://www.selphyl.com/post/prf-under-eyes-a-critical-consideration-of-benefits" target="_blank" rel="noopener noreferrer">PRF</a> · <a href="https://www.novuskin.com/rf-microneedling-results-duration/" target="_blank" rel="noopener noreferrer">RF microneedling</a></li>
+  </ul>
+
+  <h3>Why the simulation physics differ by treatment</h3>
+  <p>The on-photo simulator runs a landmark-driven warp, but each treatment behaves the way it does clinically: <b>filler</b> adds outward volume (scaled by mL), <b>neuromodulator</b> lifts the brow and softens lines or slims the masseter (never a balloon effect), <b>biostimulator</b> volumizes gradually, and <b>energy/skincare</b> is a tone-and-glow pass. Injection points are anchored to the real MD-Code zones and colour-coded by treatment type.</p>
+
+  <h3>The 3D model</h3>
+  <p>The scan runs entirely on-device via Google's <a href="https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker/web_js" target="_blank" rel="noopener noreferrer">MediaPipe Face Landmarker</a> — 478 3D landmarks (with depth), blendshapes, and a facial transformation matrix — so the warp is depth-aware and the injection zones sit on a real face mesh. This mirrors how clinical tools like <a href="https://www.crisalix.com/en/news/crisalix-3d-imaging-platform-transforming-patient-consultations" target="_blank" rel="noopener noreferrer">Crisalix</a> and <a href="https://www.canfieldsci.com/imaging-systems/vectra-m3-3d-imaging-system/" target="_blank" rel="noopener noreferrer">Canfield VECTRA</a> work — and the research matters: <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12493035/" target="_blank" rel="noopener noreferrer">simulation accuracy correlates with patient satisfaction</a> (r = 0.66), which is exactly why the app frames every render as an approximate planning visual, not a promise.</p>
+
+  <h3>Safety</h3>
+  <p>The intake's medical flags map to the real high-risk picture: the nose, glabella, tear trough, and nasolabial fold are the <a href="https://onlinelibrary.wiley.com/doi/10.1111/dth.14285" target="_blank" rel="noopener noreferrer">vascular danger zones</a> where occlusion (≈1/5,000 syringes) can cause necrosis or vision loss — managed with prompt hyaluronidase. That's why a planning tool should inform the consult, never replace the clinician.</p>
+
+  <div class="callout">Every number in AestheticSim traces to a citation above — and a provider toggle controls whether clients see exact doses or just treatment names.</div>
+
   <h2>What comes next</h2>
   <p>The full build log will cover: the exact prompts used for facial analysis, how I structured the two-sided role system, the design decisions that keep AestheticSim visually distinct from the warm portfolio brand, and what a real medspa integration would need to make this production-ready.</p>
 

@@ -36,19 +36,19 @@ tailwind.config = {
     if (_ready) return _ready;
     _ready = (async () => {
       const { FaceLandmarker, FilesetResolver } = await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`);
+      // expose the canonical 3D face-mesh tessellation + region connectors to the Babel app (for the mesh overlay)
+      window.__FACE_MESH = {
+        tesselation: FaceLandmarker.FACE_LANDMARKS_TESSELATION,
+        oval: FaceLandmarker.FACE_LANDMARKS_FACE_OVAL,
+        lips: FaceLandmarker.FACE_LANDMARKS_LIPS,
+        leftEye: FaceLandmarker.FACE_LANDMARKS_LEFT_EYE,
+        rightEye: FaceLandmarker.FACE_LANDMARKS_RIGHT_EYE,
+      };
       const fileset = await FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+      const opts = delegate => ({ baseOptions: { modelAssetPath: MODEL, delegate }, runningMode: 'IMAGE', numFaces: 1, outputFacialTransformationMatrixes: true });
       let landmarker;
-      try {
-        landmarker = await FaceLandmarker.createFromOptions(fileset, {
-          baseOptions: { modelAssetPath: MODEL, delegate: 'GPU' },
-          runningMode: 'IMAGE', numFaces: 1,
-        });
-      } catch (e) {
-        landmarker = await FaceLandmarker.createFromOptions(fileset, {
-          baseOptions: { modelAssetPath: MODEL, delegate: 'CPU' },
-          runningMode: 'IMAGE', numFaces: 1,
-        });
-      }
+      try { landmarker = await FaceLandmarker.createFromOptions(fileset, opts('GPU')); }
+      catch (e) { landmarker = await FaceLandmarker.createFromOptions(fileset, opts('CPU')); }
       return landmarker;
     })();
     return _ready;
@@ -98,19 +98,42 @@ const TIMELINE_OPTS = ['Event in 2 weeks','Event in 1–3 months','3–6 month g
 const DOWNTIME_OPTS = ['None at all','1–2 days','3–5 days','Up to 1 week','Flexible'];
 const MED_FLAGS = ['Pregnant or breastfeeding','Neuromuscular disorder','Active infection or cold sore','History of filler complications','Taking blood thinners','Keloid scarring history','Recent isotretinoin (Accutane)','Autoimmune condition','Recent dental work (past 2 wks)'];
 
-// Provider treatment library (dropdown) + classifier for the Injectables/Facials filter
+// ─── CLINICAL REFERENCE ─────────────────────────────────────────────────────────
+// Units/dosing grounded in published ranges. Full cited write-up lives in
+// posts/aestheticsim-build-log.html → "Clinical grounding & research".
+const CLINICAL_SOURCES = {
+  botoxDose:    { label:'Botox dosing by area — InjectCo / DoctorMedica / PMC9964918', url:'https://injectco.com/botox-dosage-guide/' },
+  botoxKinetics:{ label:'BoNT-A mechanism + onset/duration — Nestor 2020 (JCD); ASJ', url:'https://onlinelibrary.wiley.com/doi/10.1111/jocd.13702' },
+  fillerMD:     { label:'MD Codes HA filler volumes — PMC8012343', url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC8012343/' },
+  fillerLong:   { label:'HA filler longevity (MRI) — PMC11250456', url:'https://pmc.ncbi.nlm.nih.gov/articles/PMC11250456/' },
+  sculptra:     { label:'Sculptra PLLA dosing — Aluma PDX; PMC12686807', url:'https://alumapdx.com/sculptra-how-it-works-what-to-expect-and-why-its-different-from-filler/' },
+  prf:          { label:'PRF periorbital evidence — Selphyl', url:'https://www.selphyl.com/post/prf-under-eyes-a-critical-consideration-of-benefits' },
+  rfMicro:      { label:'RF microneedling timeline/duration — Novuskin', url:'https://www.novuskin.com/rf-microneedling-results-duration/' },
+  safety:       { label:'Filler vascular danger zones — Wollina 2020; ASDS task force', url:'https://onlinelibrary.wiley.com/doi/10.1111/dth.14285' },
+  sim3d:        { label:'3D sim accuracy vs satisfaction — PMC12493035; Crisalix; VECTRA', url:'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12493035/' },
+  mediapipe:    { label:'MediaPipe Face Landmarker (478 3D pts, transforms) — Google AI Edge', url:'https://ai.google.dev/edge/mediapipe/solutions/vision/face_landmarker/web_js' },
+};
+
+// Provider treatment library (dropdown) + classifier for the Injectables/Facials filter.
+// kind drives the SIMULATION physics: filler=adds volume, neuromodulator=relaxes/lifts (no volume),
+// biostimulator=gradual volume, regenerative=skin quality, energy=resurfacing/glow.
+// dose = clinically-correct amount; low/high = price per `unit`; units = quantity (for cost math).
 const TREATMENT_LIBRARY = [
-  { tx:'Neuromodulator (Tox)',      category:'injectable', unit:'units',    low:12,  high:16,  units:40, roi:9, longevity:'3–4 mos',  rationale:'Soften dynamic expression lines while preserving natural movement.' },
-  { tx:'HA Filler (Midface)',       category:'injectable', unit:'syringes', low:700, high:900, units:2,  roi:8, longevity:'12–18 mos', rationale:'Restore malar support and lift the midface triangle.' },
-  { tx:'HA Filler (Lips)',          category:'injectable', unit:'syringes', low:650, high:800, units:1,  roi:7, longevity:'6–12 mos',  rationale:'Subtle hydration and border definition.' },
-  { tx:'Sculptra (Biostimulator)',  category:'injectable', unit:'vials',    low:800, high:1000,units:2,  roi:9, longevity:'24 mos',    rationale:'Gradual collagen stimulation for long-term support.' },
-  { tx:'PRF / EZ Gel',              category:'injectable', unit:'session',  low:600, high:900, units:1,  roi:8, longevity:'6–12 mos',  rationale:'Under-eye and skin quality — autologous, low vascular risk.' },
-  { tx:'RF Microneedling',          category:'facial',     unit:'sessions', low:500, high:700, units:3,  roi:7, longevity:'12 mos',    rationale:'Texture, pore refinement, collagen. Series of 3 spaced 4–6 wks.' },
-  { tx:'Sofwave (Energy Device)',   category:'facial',     unit:'session',  low:1200,high:2500,units:1,  roi:8, longevity:'12–24 mos', rationale:'Non-invasive lifting and skin tightening.' },
-  { tx:'Chemical Peel',             category:'facial',     unit:'sessions', low:200, high:450, units:3,  roi:6, longevity:'1–2 mos',   rationale:'Even tone, soften pigment, restore glow.' },
-  { tx:'Hydrafacial',               category:'facial',     unit:'session',  low:175, high:300, units:1,  roi:5, longevity:'~1 mo',     rationale:'Deep hydration and immediate radiance.' },
-  { tx:'Medical Skincare Protocol', category:'facial',     unit:'kit',      low:250, high:500, units:1,  roi:7, longevity:'ongoing',   rationale:'Daily actives to support and extend in-office results.' },
+  { tx:'Neuromodulator (Tox)',        kind:'neuromodulator', category:'injectable', unit:'U',        units:50, low:12,  high:16,  dose:'40–64 U (upper face)',        onset:'3–7 days, peak ~2 wks',  roi:9, longevity:'3–4 mos',   src:'botoxDose',  rationale:'Relaxes mimetic muscles (glabella 15–25U, forehead 10–20U, crow’s feet ~24U) to soften dynamic lines and lift the brow — adds no volume.' },
+  { tx:'Masseter Slimming (Tox)',     kind:'neuromodulator', category:'injectable', unit:'U',        units:50, low:11,  high:14,  dose:'40–60 U (20–30/side)',        onset:'peaks 2–4 wks',          roi:7, longevity:'3–6 mos',   src:'botoxDose',  rationale:'Relaxes the masseter to slim a wide/square jaw and reduce clenching.' },
+  { tx:'HA Filler (Midface)',         kind:'filler',         category:'injectable', unit:'mL',       units:2,  low:650, high:900, dose:'1–2 mL',                      onset:'immediate, settles ~4 wks', roi:8, longevity:'12–18 mos', src:'fillerMD',   rationale:'Restores malar support and lifts the midface triangle (Foundation: Ck1–4). ~1:1 volume correction.' },
+  { tx:'HA Filler (Lips)',            kind:'filler',         category:'injectable', unit:'mL',       units:1,  low:650, high:850, dose:'~1 mL',                       onset:'immediate',              roi:7, longevity:'6–12 mos',  src:'fillerMD',   rationale:'Hydration, border definition and subtle volume (Lp1–8). Lips metabolize filler faster than cheeks.' },
+  { tx:'HA Filler (Chin)',            kind:'filler',         category:'injectable', unit:'mL',       units:1,  low:700, high:900, dose:'1–2 mL',                      onset:'immediate',              roi:8, longevity:'12–18 mos', src:'fillerMD',   rationale:'Projects and balances the chin for profile harmony (Contour: C1–6).' },
+  { tx:'HA Filler (Jawline)',         kind:'filler',         category:'injectable', unit:'mL',       units:3,  low:650, high:850, dose:'2–4 mL',                      onset:'immediate',              roi:8, longevity:'12–18 mos', src:'fillerMD',   rationale:'Defines the jawline and ramus (Contour: Jw1–4).' },
+  { tx:'Tear-Trough (PRF / EZ Gel)',  kind:'regenerative',   category:'injectable', unit:'session',  units:1,  low:600, high:900, dose:'PRF (or 0.5–1 mL HA)',        onset:'2–6 wks',                roi:8, longevity:'6–12 mos',  src:'prf',        rationale:'Autologous growth factors improve under-eye quality; lower vascular risk than deep tear-trough filler.' },
+  { tx:'Sculptra (Biostimulator)',    kind:'biostimulator',  category:'injectable', unit:'vials',    units:2,  low:800, high:1000,dose:'2–4 vials (~1/decade)',       onset:'gradual, 8–12 wks',      roi:9, longevity:'~24 mos',   src:'sculptra',   rationale:'PLLA stimulates the patient’s own collagen for gradual, long-lasting volume — no instant fill.' },
+  { tx:'RF Microneedling',            kind:'energy',         category:'facial',     unit:'sessions', units:3,  low:500, high:700, dose:'series of 3',                 onset:'collagen peaks 6–12 wks',roi:7, longevity:'12–18 mos', src:'rfMicro',    rationale:'Texture, pores and collagen via fractional RF; series of 3 spaced 4–6 wks.' },
+  { tx:'Sofwave (Energy Device)',     kind:'energy',         category:'facial',     unit:'session',  units:1,  low:1200,high:2500,dose:'1 session',                   onset:'6–12 wks',               roi:8, longevity:'12–24 mos', src:'rfMicro',    rationale:'Ultrasound-based non-invasive lifting and tightening.' },
+  { tx:'Chemical Peel',               kind:'energy',         category:'facial',     unit:'sessions', units:3,  low:200, high:450, dose:'series',                      onset:'1–2 wks',                roi:6, longevity:'1–2 mos',   src:'rfMicro',    rationale:'Resurfaces for tone, pigment and glow.' },
+  { tx:'Hydrafacial',                 kind:'energy',         category:'facial',     unit:'session',  units:1,  low:175, high:300, dose:'1 session',                   onset:'immediate',              roi:5, longevity:'~1 mo',     src:'rfMicro',    rationale:'Deep cleanse and hydration for immediate radiance.' },
+  { tx:'Medical Skincare Protocol',   kind:'energy',         category:'facial',     unit:'kit',      units:1,  low:250, high:500, dose:'daily regimen',               onset:'4–12 wks',               roi:7, longevity:'ongoing',   src:'rfMicro',    rationale:'Daily actives (retinoid, vitamin C, SPF) to extend in-office results.' },
 ];
+const txMeta = tx => TREATMENT_LIBRARY.find(t=>t.tx===tx) || {};
 const PRODUCT_CATALOG = [
   { id:'p1', name:'Vitamin C 15% Serum',     brand:'SkinCeuticals', price:169, category:'facial',     benefit:'Antioxidant + brightening',          sponsored:true,  payout:18 },
   { id:'p2', name:'Tretinoin 0.025% (Rx)',   brand:'Compounded',    price:75,  category:'facial',     benefit:'Collagen renewal, texture',          sponsored:false },
@@ -133,11 +156,13 @@ function generateStarterPlan(client){
     { region:'Under-eye', severity: has('Under-Eye')?2:1, finding: has('Under-Eye')?'Tear-trough hollowing with shadowing — PRF preferred at this depth over filler.':'Mild under-eye hollowing; monitor.' },
     { region:'Skin Quality', severity: (has('Texture')||has('Redness'))?2:1, finding: (has('Texture')||has('Redness'))?'Texture/tone irregularity and redness — RF microneedling plus a medical skincare protocol indicated.':'Generally healthy skin; maintenance focus.' },
   ];
+  // Build each item from the clinical library so units/dose/kind stay correct and cited
+  const fromLib = (tx, over={}) => { const m=txMeta(tx); return { id:over.id, tx, kind:m.kind, unit:m.unit, units:m.units, low:m.low, high:m.high, dose:m.dose, onset:m.onset, longevity:m.longevity, roi:m.roi, category:m.category, rationale:m.rationale, phase:1, enabled:true, ...over }; };
   const items = [
-    { id:'g1', tx:'Neuromodulator (Tox)', units:40, low:12, high:16, rationale:"Soften forehead, glabella and crow's feet while preserving full expression.", enabled:true, phase:1, roi:9, longevity:'3–4 mos', category:'injectable' },
-    { id:'g2', tx:'HA Filler (Midface)', units:2, low:700, high:900, rationale:'Restore malar support bilaterally for a naturally lifted midface.', enabled: has('Firmness'), phase:1, roi:8, longevity:'12–18 mos', category:'injectable' },
-    { id:'g3', tx:'PRF / EZ Gel', units:1, low:600, high:900, rationale:'Under-eye rejuvenation — autologous, low vascular risk at this depth.', enabled: has('Under-Eye'), phase:2, roi:8, longevity:'6–12 mos', category:'injectable' },
-    { id:'g4', tx:'RF Microneedling', units:3, low:500, high:700, rationale:'Texture, pore refinement and collagen stimulation. Series of 3 spaced 4–6 weeks.', enabled: true, phase:2, roi:7, longevity:'12 mos', category:'facial' },
+    fromLib('Neuromodulator (Tox)',  { id:'g1', phase:1, enabled:true }),
+    fromLib('HA Filler (Midface)',   { id:'g2', phase:1, enabled: has('Firmness') }),
+    fromLib('Tear-Trough (PRF / EZ Gel)', { id:'g3', phase:2, enabled: has('Under-Eye') }),
+    fromLib('RF Microneedling',      { id:'g4', phase:2, enabled: true }),
   ];
   return { analysis, items, products:[] };
 }
@@ -199,11 +224,11 @@ const MOCK_DB_INITIAL = {
         { region:'Skin Quality', severity:2, finding:'Mild textural irregularity and early pigmentation. RF microneedling + retinoid protocol indicated.' },
       ],
       items:[
-        { id:'i1', tx:'Neuromodulator (Tox)', units:45, low:12, high:16, rationale:'Soften forehead + glabella + crow\'s feet. Preserve full expression.', enabled:true, phase:1, roi:9, longevity:'3–4 mos' },
-        { id:'i2', tx:'HA Filler (Midface)', units:2, low:700, high:900, rationale:'Restore malar support bilaterally. Lift nasolabial shadows naturally.', enabled:true, phase:1, roi:8, longevity:'12–18 mos' },
-        { id:'i3', tx:'PRF / EZ Gel', units:1, low:600, high:900, rationale:'Under-eye hollowing — PRF preferred over filler at this depth. No risk of vascular complication.', enabled:true, phase:2, roi:8, longevity:'6–12 mos' },
-        { id:'i4', tx:'RF Microneedling', units:3, low:500, high:700, rationale:'Skin texture, pore refinement, collagen stimulation. Series of 3 spaced 4–6 wks.', enabled:true, phase:2, roi:7, longevity:'12 mos' },
-        { id:'i5', tx:'Sculptra (Biostimulator)', units:2, low:800, high:1000, rationale:'Long-term collagen synthesis. Optional phase 3 add-on for sustained lift.', enabled:false, phase:3, roi:9, longevity:'24 mos' },
+        { id:'i1', tx:'Neuromodulator (Tox)', kind:'neuromodulator', unit:'U', units:45, low:12, high:16, dose:'~45 U (upper face)', onset:'3–7 days, peak ~2 wks', rationale:'Soften forehead + glabella + crow\'s feet. Preserve full expression.', enabled:true, phase:1, roi:9, longevity:'3–4 mos' },
+        { id:'i2', tx:'HA Filler (Midface)', kind:'filler', unit:'mL', units:2, low:700, high:900, dose:'~2 mL', onset:'immediate, settles ~4 wks', rationale:'Restore malar support bilaterally. Lift nasolabial shadows naturally.', enabled:true, phase:1, roi:8, longevity:'12–18 mos' },
+        { id:'i3', tx:'Tear-Trough (PRF / EZ Gel)', kind:'regenerative', unit:'session', units:1, low:600, high:900, dose:'PRF', onset:'2–6 wks', rationale:'Under-eye hollowing — PRF preferred over filler at this depth. No risk of vascular complication.', enabled:true, phase:2, roi:8, longevity:'6–12 mos' },
+        { id:'i4', tx:'RF Microneedling', kind:'energy', unit:'sessions', units:3, low:500, high:700, dose:'series of 3', onset:'collagen peaks 6–12 wks', rationale:'Skin texture, pore refinement, collagen stimulation. Series of 3 spaced 4–6 wks.', enabled:true, phase:2, roi:7, longevity:'12–18 mos' },
+        { id:'i5', tx:'Sculptra (Biostimulator)', kind:'biostimulator', unit:'vials', units:2, low:800, high:1000, dose:'2 vials', onset:'gradual, 8–12 wks', rationale:'Long-term collagen synthesis. Optional phase 3 add-on for sustained lift.', enabled:false, phase:3, roi:9, longevity:'~24 mos' },
       ],
     },
     c2: {
@@ -212,7 +237,7 @@ const MOCK_DB_INITIAL = {
         { region:'Lower Face', severity:1, finding:'Mild masseter hypertrophy. Optional masseter tox for mild slimming.' },
       ],
       items:[
-        { id:'i1', tx:'Neuromodulator (Tox)', units:64, low:12, high:16, rationale:'Standard male dosing — forehead, glabella, crow\'s feet. Review at 14 days.', enabled:true, phase:1, roi:9, longevity:'3–4 mos' },
+        { id:'i1', tx:'Neuromodulator (Tox)', kind:'neuromodulator', unit:'U', units:64, low:12, high:16, dose:'~64 U (male upper face)', onset:'3–7 days, peak ~2 wks', rationale:'Standard male dosing — forehead, glabella, crow\'s feet. Review at 14 days.', enabled:true, phase:1, roi:9, longevity:'3–4 mos' },
       ],
     },
   },
@@ -242,6 +267,7 @@ const ADMIN_SETTINGS_INITIAL = {
     showCostForecast: true,
     showSkincareProtocol: true,
     showPricing: true,
+    showClientDoses: true,
     watermark: true,
   },
 };
@@ -457,7 +483,7 @@ const IntakeWizard = ({ clientName, onComplete }) => {
       if (!url) return resolve(null);
       const img = new Image();
       img.onload = async () => {
-        try { const r = await analyzeFace(img); resolve({ scores:r.scores, summary:r.summary, image:url, markers:r.markers, landmarks:r.landmarks }); }
+        try { const r = await analyzeFace(img); resolve({ scores:r.scores, summary:r.summary, image:url, markers:r.markers, landmarks:r.landmarks, intensity:r.intensity }); }
         catch(e){ resolve(null); }
       };
       img.onerror = () => resolve(null);
@@ -984,6 +1010,9 @@ const AdminPanel = ({ settings, onSave, onBack }) => {
                 <Toggle checked={local.board.showPricing}
                   onChange={v=>upd('board','showPricing',v)}
                   label="Show pricing ranges in the board"/>
+                <Toggle checked={local.board.showClientDoses !== false}
+                  onChange={v=>upd('board','showClientDoses',v)}
+                  label="Show exact doses (units / mL / vials) to clients"/>
                 <Toggle checked={local.board.watermark}
                   onChange={v=>upd('board','watermark',v)}
                   label="Show simulation disclaimer watermark"/>
@@ -1529,6 +1558,7 @@ async function analyzeFace(srcEl) {
   const markers = markerPool.filter(m=>ranked.includes(m.concern));
 
   return { landmarks:lms, scores, intensity, regions:reg, markers,
+    transform: det.facialTransformationMatrixes?.[0]?.data || null,
     summary: ranked.slice(0,3).map(k=>SKIN_CONCERNS.find(c=>c.key===k).label) };
 }
 
@@ -1567,6 +1597,26 @@ const HeatmapCanvas = ({ image, result, concern }) => {
     img.src = image;
   }, [image, concern, result]);
   return <canvas ref={ref} className="w-full h-auto block rounded-2xl"/>;
+};
+
+// Heatmap + concern chips, reusable wherever a stored scan (with intensity+landmarks) exists
+const ScanHeatmapPanel = ({ scan }) => {
+  const [concern, setConcern] = useState(null);
+  if(!scan?.image || !scan?.intensity || !(scan.landmarks?.length>200)) return null;
+  return (
+    <div>
+      <div className="relative">
+        <HeatmapCanvas image={scan.image} result={scan} concern={concern}/>
+        <div className="absolute top-2 left-2"><Badge color={concern?'violet':'zinc'}>{concern? SKIN_CONCERNS.find(c=>c.key===concern).label+' map' : 'Tap a concern →'}</Badge></div>
+      </div>
+      <div className="flex flex-wrap gap-1 mt-2">
+        <button onClick={()=>setConcern(null)} className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${!concern?'bg-zinc-900 text-white border-zinc-900':'border-zinc-200 text-zinc-500'}`}>Photo</button>
+        {SKIN_CONCERNS.map(c=>(
+          <button key={c.key} onClick={()=>setConcern(c.key)} className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border transition ${concern===c.key?'text-white border-transparent':'border-zinc-200 text-zinc-600 hover:border-zinc-400'}`} style={concern===c.key?{background:c.color}:{}}>{c.label}</button>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 // Before/After slider on the REAL photo: retouched "after" + treatment marker pins
@@ -1613,28 +1663,81 @@ const RetouchSlider = ({ image, result, showMarkers=true }) => {
 };
 
 // ─── FACIAL BALANCING SIMULATOR (landmark-driven liquify warp) ──────────────────
+// Each treatment carries a `kind` that drives the physics:
+//   filler → adds volume (bloat, scaled by mL) · neuromodulator → relaxes/lifts (push/smooth, NO volume)
+//   regenerative → subtle under-eye lift · energy → glow/texture pass.
 const SIM_TREATMENTS = [
-  { key:'cheeks',   label:'Cheek volume',    icon:'Sparkles', tx:'HA Filler / Biostimulator (midface)' },
-  { key:'lips',     label:'Lip enhancement', icon:'Heart',    tx:'HA Filler (lips)' },
-  { key:'undereye', label:'Under-eye',       icon:'Eye',      tx:'PRF / EZ Gel' },
-  { key:'chin',     label:'Chin balance',    icon:'Triangle', tx:'HA Filler (chin)' },
-  { key:'jaw',      label:'Jawline',         icon:'Gem',      tx:'Filler / biostimulator (jaw)' },
-  { key:'brow',     label:'Brow lift',       icon:'ChevronUp',tx:'Neuromodulator (brow)' },
-  { key:'glow',     label:'Skin glow',       icon:'Droplets', tx:'Microneedling / skincare' },
+  { key:'cheeks',   label:'Cheek volume',    icon:'Sparkles', kind:'filler',         dose:'~1–2 mL HA',   addresses:['firmness','evenness'] },
+  { key:'lips',     label:'Lip enhancement', icon:'Heart',    kind:'filler',         dose:'~1 mL HA',     addresses:['hydration'] },
+  { key:'undereye', label:'Under-eye',       icon:'Eye',      kind:'regenerative',   dose:'PRF / 0.5–1 mL', addresses:['undereye'] },
+  { key:'chin',     label:'Chin balance',    icon:'Triangle', kind:'filler',         dose:'~1–2 mL HA',   addresses:['firmness'] },
+  { key:'jaw',      label:'Jawline',         icon:'Gem',      kind:'filler',         dose:'~2–4 mL HA',   addresses:['firmness'] },
+  { key:'brow',     label:'Brow lift + lines', icon:'ChevronUp', kind:'neuromodulator', dose:'~6–10 U',  addresses:['firmness','texture'] },
+  { key:'masseter', label:'Jaw slimming',    icon:'Minimize2',kind:'neuromodulator', dose:'40–60 U',      addresses:[] },
+  { key:'glow',     label:'Skin glow',       icon:'Droplets', kind:'energy',         dose:'RF / skincare',addresses:['texture','redness','pores'] },
 ];
+const SIM_KIND_COLOR = { filler:'#7c3aed', neuromodulator:'#0ea5e9', regenerative:'#10b981', energy:'#f59e0b' };
 const SIM_INTENSITY = [{k:0.6,l:'Subtle'},{k:1,l:'Natural'},{k:1.6,l:'Bold'}];
 
-// build liquify control points (canvas-pixel space) from normalized landmarks
+// Pre-select simulation treatments from the scan scores (the diagnostic drives the sim)
+function deriveSimPlan(scores){
+  if(!scores) return { active:{ cheeks:true, undereye:true, brow:true, glow:true }, reasons:[] };
+  const low=(s,t=78)=> (scores[s] ?? 100) < t;
+  const active = {
+    cheeks: low('firmness') || low('evenness',74),
+    lips:   false,
+    undereye: low('undereye'),
+    chin:   low('firmness',72),
+    jaw:    low('firmness',72),
+    brow:   low('firmness') || low('texture',74),
+    masseter: false,
+    glow:   low('texture') || low('redness') || low('pores') || low('evenness'),
+  };
+  if(!Object.values(active).some(Boolean)){ active.cheeks=true; active.glow=true; }
+  const reasons=[];
+  if(active.cheeks||active.chin||active.jaw) reasons.push(`midface / jaw support — Firmness ${scores.firmness}`);
+  if(active.undereye) reasons.push(`under-eye — ${scores.undereye}`);
+  if(active.brow) reasons.push(`brow lift + line-softening — Texture ${scores.texture}`);
+  if(active.glow) reasons.push(`skin quality — Redness ${scores.redness}, Texture ${scores.texture}`);
+  return { active, reasons };
+}
+
+// Map an approved plan's enabled items → which sim treatments to show (post-approval the sim reflects the plan)
+function planToSimActive(plan){
+  const on = {}; if(!plan?.items) return null;
+  plan.items.filter(i=>i.enabled).forEach(i=>{ const t=(i.tx||'').toLowerCase();
+    if(/midface|cheek|sculptra|biostim/.test(t)) on.cheeks=true;
+    if(/lip/.test(t)) on.lips=true;
+    if(/tear|under-eye|prf|ez gel/.test(t)) on.undereye=true;
+    if(/chin/.test(t)) on.chin=true;
+    if(/jawline|jaw filler|filler \(jaw/.test(t)) on.jaw=true;
+    if(/masseter/.test(t)) on.masseter=true;
+    else if(/neuromod|tox|botox/.test(t)) on.brow=true;
+    if(/microneed|peel|hydrafacial|skincare|sofwave|energy|glow|sculptra/.test(t)) on.glow=true;
+  });
+  return Object.keys(on).length ? on : null;
+}
+
+// Build anatomically-anchored, depth-aware control points + smoothing zones + injection points.
+// Returns { ctrls, smooth, points }. Filler = bloat (volume); neuromodulator = lift/narrow/smooth; PRF = subtle lift.
 function buildSimControls(lms, w, h, active, strength) {
   const P = i => ({ x:lms[i].x*w, y:lms[i].y*h });
-  const R = Math.min(w,h); const c=[];
-  if (active.cheeks){ c.push({t:'bloat',p:P(50), r:R*0.17,s:0.42*strength}); c.push({t:'bloat',p:P(280),r:R*0.17,s:0.42*strength}); }
-  if (active.lips){ c.push({t:'bloat',p:P(0),r:R*0.06,s:0.4*strength}); c.push({t:'bloat',p:P(17),r:R*0.065,s:0.5*strength}); }
-  if (active.undereye){ c.push({t:'push',p:P(230),r:R*0.10,v:{x:0,y:-R*0.011*strength}}); c.push({t:'push',p:P(450),r:R*0.10,v:{x:0,y:-R*0.011*strength}}); }
-  if (active.chin){ c.push({t:'push',p:P(152),r:R*0.14,v:{x:0,y:R*0.02*strength}}); }
-  if (active.jaw){ c.push({t:'push',p:P(172),r:R*0.11,v:{x:-R*0.013*strength,y:R*0.006*strength}}); c.push({t:'push',p:P(397),r:R*0.11,v:{x:R*0.013*strength,y:R*0.006*strength}}); }
-  if (active.brow){ c.push({t:'push',p:P(105),r:R*0.09,v:{x:0,y:-R*0.013*strength}}); c.push({t:'push',p:P(334),r:R*0.09,v:{x:0,y:-R*0.013*strength}}); }
-  return c;
+  const R = Math.min(w,h);
+  // 3D depth weighting: frontal landmarks (smaller z toward camera) warp more than receding ones
+  let zMin=Infinity, zMax=-Infinity; for(const p of lms){ if(p.z<zMin)zMin=p.z; if(p.z>zMax)zMax=p.z; }
+  const zSpan=(zMax-zMin)||1; const dw = i => 1 - 0.45*clamp01((lms[i].z - zMin)/zSpan);
+  const ctrls=[], smooth=[], points=[];
+  const bloat=(i,r,s,meta)=>{ ctrls.push({t:'bloat',p:P(i),r:R*r,s:s*strength*dw(i)}); if(meta&&!meta._added){points.push({...meta,at:{x:lms[i].x,y:lms[i].y}});} };
+  const push=(i,r,vx,vy,meta)=>{ ctrls.push({t:'push',p:P(i),r:R*r,v:{x:vx*dw(i),y:vy*dw(i)}}); if(meta){points.push({...meta,at:{x:lms[i].x,y:lms[i].y}});} };
+  if (active.cheeks){ const m={zone:'Cheek',kind:'filler',dose:'~1–2 mL'}; bloat(50,0.17,0.40,m); bloat(280,0.17,0.40,{...m}); }
+  if (active.lips){ const m={zone:'Lips',kind:'filler',dose:'~1 mL'}; bloat(0,0.06,0.38,m); bloat(17,0.065,0.48,{...m}); }
+  if (active.undereye){ const m={zone:'Tear-trough',kind:'regenerative',dose:'PRF'}; push(230,0.10,0,-R*0.010*strength,m); push(450,0.10,0,-R*0.010*strength,{...m}); }
+  if (active.chin){ const m={zone:'Chin',kind:'filler',dose:'~1–2 mL'}; push(152,0.14,0,R*0.018*strength,m); }
+  if (active.jaw){ const m={zone:'Jawline',kind:'filler',dose:'~2–4 mL'}; push(172,0.11,-R*0.012*strength,R*0.005*strength,m); push(397,0.11,R*0.012*strength,R*0.005*strength,{...m}); }
+  if (active.masseter){ const m={zone:'Masseter (Tox)',kind:'neuromodulator',dose:'40–60 U'}; push(58,0.12,R*0.011*strength,0,m); push(288,0.12,-R*0.011*strength,0,{...m}); }
+  if (active.brow){ const m={zone:'Brow (Tox)',kind:'neuromodulator',dose:'~6–10 U'}; push(105,0.09,0,-R*0.012*strength,m); push(334,0.09,0,-R*0.012*strength,{...m});
+    smooth.push({p:P(9),r:R*0.17}); smooth.push({p:P(8),r:R*0.10}); }
+  return { ctrls, smooth, points };
 }
 // inverse-mapped bilinear warp of an ImageData given control points
 function warpImageData(src, w, h, ctrls) {
@@ -1654,13 +1757,16 @@ function warpImageData(src, w, h, ctrls) {
   return out;
 }
 
-const BalancingSimulator = ({ image, landmarks, markers, defaultActive }) => {
-  const [active, setActive] = useState(defaultActive || { cheeks:true, lips:false, undereye:true, chin:false, jaw:false, brow:true, glow:true });
+const BalancingSimulator = ({ image, landmarks, markers, scores, defaultActive, showDoses=true }) => {
+  const derived = deriveSimPlan(scores);
+  const [active, setActive] = useState(defaultActive || derived.active);
   const [intensity, setIntensity] = useState(1);
   const [pos, setPos] = useState(50);
   const [busy, setBusy] = useState(true);
   const [showPins, setShowPins] = useState(true);
-  const beforeRef=useRef(null), afterRef=useRef(null), wrapRef=useRef(null);
+  const [showMesh, setShowMesh] = useState(false);
+  const [simPoints, setSimPoints] = useState([]);
+  const beforeRef=useRef(null), afterRef=useRef(null), overlayRef=useRef(null), wrapRef=useRef(null);
   const srcData=useRef(null), dims=useRef({w:0,h:0});
   const hasLandmarks = Array.isArray(landmarks) && landmarks.length>200;
 
@@ -1672,7 +1778,7 @@ const BalancingSimulator = ({ image, landmarks, markers, defaultActive }) => {
       const maxW=380, scale=Math.min(1,maxW/img.naturalWidth);
       const w=Math.round(img.naturalWidth*scale), h=Math.round(img.naturalHeight*scale);
       dims.current={w,h};
-      [beforeRef.current, afterRef.current].forEach(cv=>{ if(cv){cv.width=w; cv.height=h;} });
+      [beforeRef.current, afterRef.current, overlayRef.current].forEach(cv=>{ if(cv){cv.width=w; cv.height=h;} });
       const bctx=beforeRef.current.getContext('2d',{willReadFrequently:true}); bctx.drawImage(img,0,0,w,h);
       try { srcData.current = bctx.getImageData(0,0,w,h); } catch(e){ srcData.current=null; }
       renderAfter();
@@ -1686,16 +1792,17 @@ const BalancingSimulator = ({ image, landmarks, markers, defaultActive }) => {
     const {w,h}=dims.current; if(!w||!h) return;
     const actx=cv.getContext('2d');
     setBusy(true);
-    // warp (only if we have pixels + landmarks)
     if (src && hasLandmarks) {
-      const ctrls=buildSimControls(landmarks,w,h,active,intensity);
-      const warped = ctrls.length ? warpImageData(src,w,h,ctrls) : src;
+      const built = buildSimControls(landmarks,w,h,active,intensity);
+      const warped = built.ctrls.length ? warpImageData(src,w,h,built.ctrls) : src;
       actx.putImageData(warped,0,0);
+      applySmooth(actx,w,h,built.smooth);     // neuromodulator line-softening
+      setSimPoints(built.points);
     } else {
-      // fallback: just draw original (glow applied below)
       const img=new Image(); img.crossOrigin='anonymous'; img.onload=()=>{ actx.drawImage(img,0,0,w,h); applyGlow(actx,w,h); }; img.src=image; return;
     }
     applyGlow(actx,w,h);
+    drawMesh();
     setBusy(false);
   };
   const applyGlow = (actx,w,h) => {
@@ -1708,7 +1815,33 @@ const BalancingSimulator = ({ image, landmarks, markers, defaultActive }) => {
     actx.globalAlpha=0.3; actx.filter='blur(2px) brightness(1.04)'; actx.drawImage(tmp,0,0);
     actx.restore(); actx.globalAlpha=1; actx.filter='none';
   };
+  // localized low-pass = softened dynamic lines (what a neuromodulator actually does)
+  const applySmooth = (actx,w,h,zones) => {
+    if(!zones || !zones.length) return;
+    const snap=actx.getImageData(0,0,w,h);
+    const tmp=document.createElement('canvas'); tmp.width=w; tmp.height=h; tmp.getContext('2d').putImageData(snap,0,0);
+    actx.save(); actx.beginPath();
+    zones.forEach(z=>{ actx.moveTo(z.p.x+z.r,z.p.y); actx.arc(z.p.x,z.p.y,z.r,0,Math.PI*2); });
+    actx.clip(); actx.filter='blur(3px)'; actx.globalAlpha=0.6; actx.drawImage(tmp,0,0);
+    actx.restore(); actx.filter='none'; actx.globalAlpha=1;
+  };
+  // 3D face-mesh wireframe overlay (visible "3D model")
+  const drawMesh = () => {
+    const cv=overlayRef.current; if(!cv) return; const {w,h}=dims.current; if(!w||!h) return;
+    const ctx=cv.getContext('2d'); ctx.clearRect(0,0,w,h);
+    if(!showMesh || !hasLandmarks) return;
+    const M=window.__FACE_MESH;
+    if(M?.tesselation){ ctx.strokeStyle='rgba(124,58,237,0.22)'; ctx.lineWidth=0.5; ctx.beginPath();
+      for(const c of M.tesselation){ const a=landmarks[c.start ?? c[0]], b=landmarks[c.end ?? c[1]]; if(!a||!b) continue; ctx.moveTo(a.x*w,a.y*h); ctx.lineTo(b.x*w,b.y*h); }
+      ctx.stroke();
+    }
+    if(M?.oval){ ctx.strokeStyle='rgba(124,58,237,0.5)'; ctx.lineWidth=1; ctx.beginPath();
+      for(const c of M.oval){ const a=landmarks[c.start ?? c[0]], b=landmarks[c.end ?? c[1]]; if(!a||!b) continue; ctx.moveTo(a.x*w,a.y*h); ctx.lineTo(b.x*w,b.y*h); }
+      ctx.stroke();
+    }
+  };
   useEffect(()=>{ if(srcData.current!==undefined) renderAfter(); }, [active, intensity]);
+  useEffect(()=>{ drawMesh(); }, [showMesh, simPoints]);
 
   const move = x => { const r=wrapRef.current?.getBoundingClientRect(); if(!r) return; setPos(Math.max(4,Math.min(96,((x-r.left)/r.width)*100))); };
   const toggle = k => setActive(a=>({...a,[k]:!a[k]}));
@@ -1716,22 +1849,26 @@ const BalancingSimulator = ({ image, landmarks, markers, defaultActive }) => {
 
   return (
     <div>
+      {scores && derived.reasons.length>0 && (
+        <p className="text-[11px] text-violet-700 mb-2 flex items-start gap-1"><Icon name="Sparkles" size={12} className="mt-0.5 shrink-0"/><span><strong>Personalized from your scan:</strong> {derived.reasons.join(' · ')}. Toggle treatments to explore.</span></p>
+      )}
       <div ref={wrapRef} className="relative w-full overflow-hidden rounded-2xl border border-zinc-200 cursor-ew-resize select-none bg-zinc-100"
         onMouseMove={e=>move(e.clientX)} onTouchMove={e=>move(e.touches[0].clientX)}>
         <canvas ref={afterRef} className="w-full h-auto block"/>
         <div className="absolute bottom-3 right-3"><Badge color="sage">Simulated</Badge></div>
         {busy && <div className="absolute top-3 right-3 bg-white/85 rounded-full px-2 py-0.5 text-[10px] font-semibold text-zinc-500 flex items-center gap-1"><Icon name="Loader" size={11} className="animate-spin"/>rendering</div>}
-        {showPins && markers?.map((m,i)=>(
-          <div key={i} className="absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none z-10" style={{ left:`${m.at.x*100}%`, top:`${m.at.y*100}%` }}>
-            <span className="w-2.5 h-2.5 rounded-full bg-violet-500 ring-2 ring-white shadow"/>
-            <span className="text-[9px] font-bold text-white bg-violet-600/90 px-1.5 py-0.5 rounded-full whitespace-nowrap shadow">{m.label}</span>
-          </div>
-        ))}
         <div className="absolute inset-0 overflow-hidden" style={{clipPath:`polygon(0 0,${pos}% 0,${pos}% 100%,0 100%)`}}>
           <canvas ref={beforeRef} className="w-full h-auto block"/>
           <div className="absolute bottom-3 left-3"><Badge color="zinc">Your photo</Badge></div>
         </div>
-        <div className="absolute top-0 bottom-0 flex items-center pointer-events-none" style={{left:`calc(${pos}% - 18px)`}}>
+        <canvas ref={overlayRef} className="absolute inset-0 w-full h-full pointer-events-none"/>
+        {showPins && simPoints.map((p,i)=>(
+          <div key={i} className="absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none z-10" style={{ left:`${p.at.x*100}%`, top:`${p.at.y*100}%` }}>
+            <span className="w-2.5 h-2.5 rounded-full ring-2 ring-white shadow" style={{background:SIM_KIND_COLOR[p.kind]||'#7c3aed'}}/>
+            <span className="text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full whitespace-nowrap shadow" style={{background:(SIM_KIND_COLOR[p.kind]||'#7c3aed')+'e6'}}>{p.zone}{showDoses?` · ${p.dose}`:''}</span>
+          </div>
+        ))}
+        <div className="absolute top-0 bottom-0 flex items-center pointer-events-none z-20" style={{left:`calc(${pos}% - 18px)`}}>
           <div className="w-9 h-9 bg-white rounded-full shadow-xl flex items-center justify-center border border-zinc-200"><Icon name="ChevronsLeftRight" size={15} className="text-zinc-600"/></div>
         </div>
       </div>
@@ -1740,21 +1877,23 @@ const BalancingSimulator = ({ image, landmarks, markers, defaultActive }) => {
         {SIM_TREATMENTS.map(t=>{
           const on=active[t.key]; const disabled = t.key!=='glow' && !hasLandmarks;
           return (
-            <button key={t.key} disabled={disabled} onClick={()=>toggle(t.key)}
-              className={`px-2.5 py-1.5 rounded-full text-[11px] font-semibold border flex items-center gap-1 transition ${disabled?'opacity-40 cursor-not-allowed border-zinc-200 text-zinc-400':on?'bg-violet-600 text-white border-violet-600':'border-zinc-200 text-zinc-600 hover:border-zinc-400'}`}>
-              <Icon name={t.icon} size={12}/>{t.label}
+            <button key={t.key} disabled={disabled} onClick={()=>toggle(t.key)} title={`${t.kind} · ${t.dose}`}
+              className={`px-2.5 py-1.5 rounded-full text-[11px] font-semibold border flex items-center gap-1 transition ${disabled?'opacity-40 cursor-not-allowed border-zinc-200 text-zinc-400':on?'text-white border-transparent':'border-zinc-200 text-zinc-600 hover:border-zinc-400'}`}
+              style={on&&!disabled?{background:SIM_KIND_COLOR[t.kind]||'#7c3aed'}:{}}>
+              <Icon name={t.icon} size={12}/>{t.label}{showDoses && <span className="font-normal opacity-80">· {t.dose}</span>}
             </button>
           );
         })}
       </div>
-      <div className="mt-3 flex items-center gap-2">
+      <div className="mt-3 flex items-center gap-2 flex-wrap">
         <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wide">Intensity</span>
         <div className="flex gap-1 bg-zinc-100 rounded-lg p-0.5">
           {SIM_INTENSITY.map(o=>(
             <button key={o.l} disabled={!hasLandmarks||!anyShape} onClick={()=>setIntensity(o.k)} className={`px-3 py-1 rounded-md text-[11px] font-semibold transition ${intensity===o.k?'bg-white text-zinc-900 shadow-sm':'text-zinc-500'} ${(!hasLandmarks||!anyShape)?'opacity-40':''}`}>{o.l}</button>
           ))}
         </div>
-        <button onClick={()=>setShowPins(s=>!s)} className="ml-auto text-[11px] font-medium text-zinc-500 hover:text-zinc-700 flex items-center gap-1"><Icon name={showPins?'EyeOff':'Eye'} size={12}/>{showPins?'Hide pins':'Show pins'}</button>
+        <button onClick={()=>setShowMesh(s=>!s)} disabled={!hasLandmarks} className={`text-[11px] font-medium flex items-center gap-1 ${showMesh?'text-violet-700':'text-zinc-500 hover:text-zinc-700'} ${!hasLandmarks?'opacity-40':''}`}><Icon name="Grid3x3" size={12}/>{showMesh?'Hide 3D mesh':'3D mesh'}</button>
+        <button onClick={()=>setShowPins(s=>!s)} className="ml-auto text-[11px] font-medium text-zinc-500 hover:text-zinc-700 flex items-center gap-1"><Icon name={showPins?'EyeOff':'Eye'} size={12}/>{showPins?'Hide zones':'Zones'}</button>
       </div>
     </div>
   );
@@ -1941,13 +2080,13 @@ const SkinScan = ({ onComplete, onClose, ctaLabel='Use these results →' }) => 
 
       <div className="mt-6">
         <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Facial balancing simulation — see your result</h3>
-        <BalancingSimulator image={image} landmarks={result.landmarks} markers={result.markers}/>
+        <BalancingSimulator image={image} landmarks={result.landmarks} markers={result.markers} scores={result.scores}/>
         <p className="text-[11px] text-zinc-400 mt-3">Toggle treatments to preview the shape change on your own face, then drag to compare. This is an approximate planning visual driven by your facial landmarks — not a guaranteed outcome.</p>
       </div>
 
       <div className="flex gap-3 mt-6">
         <button onClick={reset} className="px-5 py-3 border border-zinc-200 text-zinc-600 rounded-xl text-sm hover:bg-zinc-50">Rescan</button>
-        <button onClick={()=>onComplete && onComplete({ scores:result.scores, summary:result.summary, image, markers:result.markers, landmarks:result.landmarks })} className="flex-1 px-6 py-3 bg-zinc-900 text-white font-medium rounded-xl text-sm hover:bg-zinc-800">{ctaLabel}</button>
+        <button onClick={()=>onComplete && onComplete({ scores:result.scores, summary:result.summary, image, markers:result.markers, landmarks:result.landmarks, intensity:result.intensity })} className="flex-1 px-6 py-3 bg-zinc-900 text-white font-medium rounded-xl text-sm hover:bg-zinc-800">{ctaLabel}</button>
       </div>
     </div>
   );
@@ -2171,13 +2310,14 @@ const ClinicianApp = ({ db, onUpdateDb, settings }) => {
                           <Badge color={classifyTx(item.tx)==='facial'?'sage':'violet'}>{classifyTx(item.tx)==='facial'?'Facial':classifyTx(item.tx)==='injectable'?'Injectable':'Other'}</Badge>
                           {item.custom&&<Badge color="blue">Custom</Badge>}
                         </div>
+                        {(item.dose||txMeta(item.tx).dose) && <p className="text-[11px] text-zinc-500 mt-0.5">{item.dose||txMeta(item.tx).dose}{(item.onset||txMeta(item.tx).onset)?` · ${item.onset||txMeta(item.tx).onset}`:''}{(item.longevity)?` · lasts ${item.longevity}`:''}</p>}
                         <ROIBar score={item.roi}/>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <input type="number" value={item.units} min={1} disabled={!item.enabled}
                           onChange={e=>updateItem(item.id,'units',Number(e.target.value))}
                           className="w-16 p-1.5 border border-zinc-200 rounded-lg text-sm text-center"/>
-                        <span className="text-xs text-zinc-500">{item.unit||'units'}</span>
+                        <span className="text-xs text-zinc-500">{item.unit||txMeta(item.tx).unit||'units'}</span>
                         <button onClick={()=>removeItem(item.id)} title="Remove" className="p-1 text-zinc-300 hover:text-red-500 transition"><Icon name="Trash2" size={15}/></button>
                       </div>
                     </div>
@@ -2274,7 +2414,7 @@ const ClinicianApp = ({ db, onUpdateDb, settings }) => {
             <p className="text-sm text-zinc-500 mb-6 flex items-center gap-1"><Icon name="ShieldCheck" size={13} className="text-green-500"/> Driven by the client's facial landmarks · identity preserved · approximate planning visual</p>
             {client.skinScan?.image ? (
               <div className="max-w-xl">
-                <BalancingSimulator image={client.skinScan.image} landmarks={client.skinScan.landmarks} markers={client.skinScan.markers}/>
+                <BalancingSimulator image={client.skinScan.image} landmarks={client.skinScan.landmarks} markers={client.skinScan.markers} scores={client.skinScan.scores} showDoses={true}/>
               </div>
             ) : (
               <div className="max-w-xl">
@@ -2433,18 +2573,21 @@ const ClientApp = ({ db, clientId, onUpdateDb, settings }) => {
                 <button onClick={()=>setView('scan')} className="text-xs font-semibold text-violet-700 hover:text-violet-800 flex items-center gap-1"><Icon name="ScanFace" size={13}/> {client.skinScan?'Re-scan':'Start scan'}</button>
               </div>
               {client.skinScan ? (
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="text-center pr-3 mr-1 border-r border-zinc-100">
-                    <p className="text-2xl font-serif font-semibold" style={{color:scoreColor(client.skinScan.scores.overall)}}>{client.skinScan.scores.overall}</p>
-                    <p className="text-[10px] text-zinc-400 uppercase tracking-wide">Overall</p>
-                  </div>
-                  {SKIN_CONCERNS.map(c=>(
-                    <div key={c.key} className="px-2.5 py-1.5 rounded-lg bg-zinc-50 border border-zinc-100 text-center min-w-[68px]">
-                      <p className="text-sm font-bold" style={{color:scoreColor(client.skinScan.scores[c.key])}}>{client.skinScan.scores[c.key]}</p>
-                      <p className="text-[10px] text-zinc-400">{c.label}</p>
+                <div className="grid md:grid-cols-2 gap-4 items-start">
+                  <ScanHeatmapPanel scan={client.skinScan}/>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div className="text-center pr-3 mr-1 border-r border-zinc-100">
+                      <p className="text-2xl font-serif font-semibold" style={{color:scoreColor(client.skinScan.scores.overall)}}>{client.skinScan.scores.overall}</p>
+                      <p className="text-[10px] text-zinc-400 uppercase tracking-wide">Overall</p>
                     </div>
-                  ))}
-                  <p className="w-full text-xs text-zinc-400 mt-1">Focus areas: {client.skinScan.summary.join(' · ')} — shared with your provider.</p>
+                    {SKIN_CONCERNS.map(c=>(
+                      <div key={c.key} className="px-2.5 py-1.5 rounded-lg bg-zinc-50 border border-zinc-100 text-center min-w-[64px]">
+                        <p className="text-sm font-bold" style={{color:scoreColor(client.skinScan.scores[c.key])}}>{client.skinScan.scores[c.key]}</p>
+                        <p className="text-[10px] text-zinc-400">{c.label}</p>
+                      </div>
+                    ))}
+                    <p className="w-full text-xs text-zinc-400 mt-1">Focus areas: {client.skinScan.summary.join(' · ')} — shared with your provider.</p>
+                  </div>
                 </div>
               ) : (
                 <div className="flex items-center gap-4">
@@ -2460,7 +2603,7 @@ const ClientApp = ({ db, clientId, onUpdateDb, settings }) => {
                   {isApproved && <Badge color="green">Provider approved</Badge>}
                 </div>
                 <p className="text-sm text-zinc-500 mb-4">{isApproved ? 'Your provider has reviewed and approved your plan. Toggle treatments to preview your result.' : 'A preview from your scan. Your provider will confirm the final recommendations after review.'}</p>
-                <BalancingSimulator image={client.skinScan.image} landmarks={client.skinScan.landmarks} markers={client.skinScan.markers}/>
+                <BalancingSimulator image={client.skinScan.image} landmarks={client.skinScan.landmarks} markers={client.skinScan.markers} scores={client.skinScan.scores} defaultActive={isApproved && plan ? planToSimActive(plan) : undefined} showDoses={settings?.board?.showClientDoses !== false}/>
               </div>
             )}
           </div>
