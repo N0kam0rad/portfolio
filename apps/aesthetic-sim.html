@@ -27,6 +27,34 @@ tailwind.config = {
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<!-- MediaPipe Face Landmarker (real on-device facial analysis) loaded as ESM, exposed to the Babel app via a global -->
+<script type="module">
+  const VER = '0.10.12';
+  const MODEL = 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task';
+  let _ready = null;
+  window.__loadFaceLandmarker = () => {
+    if (_ready) return _ready;
+    _ready = (async () => {
+      const { FaceLandmarker, FilesetResolver } = await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}`);
+      const fileset = await FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VER}/wasm`);
+      let landmarker;
+      try {
+        landmarker = await FaceLandmarker.createFromOptions(fileset, {
+          baseOptions: { modelAssetPath: MODEL, delegate: 'GPU' },
+          runningMode: 'IMAGE', numFaces: 1,
+        });
+      } catch (e) {
+        landmarker = await FaceLandmarker.createFromOptions(fileset, {
+          baseOptions: { modelAssetPath: MODEL, delegate: 'CPU' },
+          runningMode: 'IMAGE', numFaces: 1,
+        });
+      }
+      return landmarker;
+    })();
+    return _ready;
+  };
+  window.__faceModelAvailable = true;
+</script>
 <style>
   html { scroll-behavior: smooth; }
   body { -webkit-font-smoothing: antialiased; background:#F1F1F5; min-height:100vh; }
@@ -34,6 +62,7 @@ tailwind.config = {
   @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
   .fade-up { animation:fadeUp .4s ease both; }
   @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  @keyframes scanline { 0%{top:-50%} 100%{top:100%} }
   .shimmer { background:linear-gradient(90deg,#E4E4ED 25%,#DCDCE8 50%,#E4E4ED 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; }
   .scrollbar-thin::-webkit-scrollbar { width:4px; }
   .scrollbar-thin::-webkit-scrollbar-track { background:transparent; }
@@ -69,6 +98,31 @@ const TIMELINE_OPTS = ['Event in 2 weeks','Event in 1–3 months','3–6 month g
 const DOWNTIME_OPTS = ['None at all','1–2 days','3–5 days','Up to 1 week','Flexible'];
 const MED_FLAGS = ['Pregnant or breastfeeding','Neuromuscular disorder','Active infection or cold sore','History of filler complications','Taking blood thinners','Keloid scarring history','Recent isotretinoin (Accutane)','Autoimmune condition','Recent dental work (past 2 wks)'];
 
+// Provider treatment library (dropdown) + classifier for the Injectables/Facials filter
+const TREATMENT_LIBRARY = [
+  { tx:'Neuromodulator (Tox)',      category:'injectable', unit:'units',    low:12,  high:16,  units:40, roi:9, longevity:'3–4 mos',  rationale:'Soften dynamic expression lines while preserving natural movement.' },
+  { tx:'HA Filler (Midface)',       category:'injectable', unit:'syringes', low:700, high:900, units:2,  roi:8, longevity:'12–18 mos', rationale:'Restore malar support and lift the midface triangle.' },
+  { tx:'HA Filler (Lips)',          category:'injectable', unit:'syringes', low:650, high:800, units:1,  roi:7, longevity:'6–12 mos',  rationale:'Subtle hydration and border definition.' },
+  { tx:'Sculptra (Biostimulator)',  category:'injectable', unit:'vials',    low:800, high:1000,units:2,  roi:9, longevity:'24 mos',    rationale:'Gradual collagen stimulation for long-term support.' },
+  { tx:'PRF / EZ Gel',              category:'injectable', unit:'session',  low:600, high:900, units:1,  roi:8, longevity:'6–12 mos',  rationale:'Under-eye and skin quality — autologous, low vascular risk.' },
+  { tx:'RF Microneedling',          category:'facial',     unit:'sessions', low:500, high:700, units:3,  roi:7, longevity:'12 mos',    rationale:'Texture, pore refinement, collagen. Series of 3 spaced 4–6 wks.' },
+  { tx:'Sofwave (Energy Device)',   category:'facial',     unit:'session',  low:1200,high:2500,units:1,  roi:8, longevity:'12–24 mos', rationale:'Non-invasive lifting and skin tightening.' },
+  { tx:'Chemical Peel',             category:'facial',     unit:'sessions', low:200, high:450, units:3,  roi:6, longevity:'1–2 mos',   rationale:'Even tone, soften pigment, restore glow.' },
+  { tx:'Hydrafacial',               category:'facial',     unit:'session',  low:175, high:300, units:1,  roi:5, longevity:'~1 mo',     rationale:'Deep hydration and immediate radiance.' },
+  { tx:'Medical Skincare Protocol', category:'facial',     unit:'kit',      low:250, high:500, units:1,  roi:7, longevity:'ongoing',   rationale:'Daily actives to support and extend in-office results.' },
+];
+const PRODUCT_CATALOG = [
+  { id:'p1', name:'Vitamin C 15% Serum',     brand:'SkinCeuticals', price:169, category:'facial',     benefit:'Antioxidant + brightening',          sponsored:true,  payout:18 },
+  { id:'p2', name:'Tretinoin 0.025% (Rx)',   brand:'Compounded',    price:75,  category:'facial',     benefit:'Collagen renewal, texture',          sponsored:false },
+  { id:'p3', name:'Mineral SPF 50',          brand:'EltaMD',        price:41,  category:'facial',     benefit:'Protects every treatment investment',sponsored:true,  payout:6 },
+  { id:'p4', name:'Ceramide Barrier Cream',  brand:'CeraVe',        price:22,  category:'facial',     benefit:'Barrier repair + hydration',         sponsored:false },
+  { id:'p5', name:'Copper Peptide Serum',    brand:'NIOD',          price:78,  category:'facial',     benefit:'Supports collagen between visits',   sponsored:true,  payout:9 },
+  { id:'p6', name:'Arnica + Bromelain',      brand:'Recovery',      price:34,  category:'injectable', benefit:'Reduces post-injectable bruising',   sponsored:false },
+];
+const classifyTx = tx => { const t=(tx||'').toLowerCase();
+  return /tox|neuromod|filler|sculptra|biostim|prf|ez gel|\blip|inject/.test(t) ? 'injectable'
+       : /microneed|sofwave|peel|hydrafacial|skincare|facial|laser|energy/.test(t) ? 'facial' : 'other'; };
+
 const SKINCARE_AM = [
   { step:'Cleanser', product:'Gentle sulfate-free cleanser', reason:'Preserve barrier function' },
   { step:'Vitamin C', product:'15% L-Ascorbic Acid serum', reason:'Antioxidant + pigment support' },
@@ -103,6 +157,7 @@ const MOCK_DB_INITIAL = {
     { id:'c1', name:'Jasmine Carter', email:'jasmine@example.com', age:38,
       photo:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&q=80&w=800',
       intake: { goals:['Natural facial balancing','Skin texture & quality','Preventative aging'], aesthetic:'Natural but noticeable', budget:'$1,500–$3,000', timeline:'3–6 month glow-up', downtime:'1–2 days', glp1:false, flags:[], treatments:['Botox / Dysport','HA Filler','RF Microneedling'] },
+      skinScan:{ scores:{ hydration:84, evenness:79, redness:58, texture:72, pores:81, undereye:69, firmness:74, overall:74 }, summary:['Redness','Under-Eye','Firmness'], image:'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&q=80&w=800' },
       state:'needs_review', provider:'Dr. Aisha' },
     { id:'c2', name:'Marcus Webb', email:'marcus@example.com', age:44,
       photo:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=800',
@@ -1291,21 +1346,450 @@ const PrintableBoard = ({ client, plan, db, settings, onClose }) => {
 };
 
 // ─── CLINICIAN APP ─────────────────────────────────────────────────────────────
+// ─── SKIN ANALYSIS ENGINE (real, on-device) ─────────────────────────────────────
+let _flPromise = null;
+const getFaceLandmarker = () => {
+  if (_flPromise) return _flPromise;
+  if (!window.__loadFaceLandmarker) return Promise.reject(new Error('model_unavailable'));
+  _flPromise = window.__loadFaceLandmarker();
+  return _flPromise;
+};
+
+const SKIN_CONCERNS = [
+  { key:'hydration', label:'Hydration',  icon:'Droplets',     color:'#38bdf8' },
+  { key:'evenness',  label:'Even Tone',  icon:'Palette',      color:'#a78bfa' },
+  { key:'redness',   label:'Redness',    icon:'Flame',        color:'#fb7185' },
+  { key:'texture',   label:'Texture',    icon:'Waves',        color:'#f59e0b' },
+  { key:'pores',     label:'Pores',      icon:'CircleDashed', color:'#f97316' },
+  { key:'undereye',  label:'Under-Eye',  icon:'Eye',          color:'#818cf8' },
+  { key:'firmness',  label:'Firmness',   icon:'Sparkles',     color:'#34d399' },
+];
+
+// MediaPipe FaceMesh (468) landmark index groups
+const LM_GROUPS = {
+  forehead:[10,67,69,109,108,151,337,338,297,299],
+  cheekL:[50,101,118,117,123,205,147],
+  cheekR:[280,330,347,346,352,425,376],
+  undereyeL:[117,118,119,120,230,231],
+  undereyeR:[346,347,348,349,450,451],
+  nose:[1,4,5,195,197,51,281],
+  chin:[152,175,199,200,148,377],
+  jawL:[58,172,136,150,149],
+  jawR:[288,397,365,379,378],
+  lips:[13,14,0,17,61,291],
+};
+// which regions feed each concern (for the heatmap overlay)
+const CONCERN_REGIONS = {
+  hydration:['forehead','cheekL','cheekR'],
+  evenness:['forehead','cheekL','cheekR','chin','nose'],
+  redness:['cheekL','cheekR','nose','chin'],
+  texture:['forehead','cheekL','cheekR','nose'],
+  pores:['nose','cheekL','cheekR'],
+  undereye:['undereyeL','undereyeR'],
+  firmness:['jawL','jawR','chin','cheekL','cheekR'],
+};
+
+const clamp01 = v => Math.max(0, Math.min(1, v));
+const norm = (v, lo, hi) => clamp01((v - lo) / (hi - lo));
+const centroid = (lms, idxs) => {
+  let x=0,y=0; idxs.forEach(i=>{ x+=lms[i].x; y+=lms[i].y; }); return { x:x/idxs.length, y:y/idxs.length };
+};
+
+// sample average color + local luminance variance around a set of normalized points
+function sampleRegion(data, w, h, lms, idxs) {
+  let rs=0,gs=0,bs=0,n=0; const lums=[];
+  const rad = Math.max(3, Math.round(w*0.013));
+  idxs.forEach(i=>{
+    const cx=Math.round(lms[i].x*w), cy=Math.round(lms[i].y*h);
+    for(let dy=-rad; dy<=rad; dy+=2){ for(let dx=-rad; dx<=rad; dx+=2){
+      const x=cx+dx, y=cy+dy; if(x<0||y<0||x>=w||y>=h) continue;
+      const p=(y*w+x)*4; const r=data[p],g=data[p+1],b=data[p+2];
+      rs+=r; gs+=g; bs+=b; n++; lums.push(0.299*r+0.587*g+0.114*b);
+    }}
+  });
+  if(!n) return { r:0,g:0,b:0,lum:0,std:0,redExcess:0 };
+  const r=rs/n,g=gs/n,b=bs/n;
+  const mean=lums.reduce((a,c)=>a+c,0)/lums.length;
+  const variance=lums.reduce((a,c)=>a+(c-mean)**2,0)/lums.length;
+  return { r,g,b,lum:mean, std:Math.sqrt(variance), redExcess:r-(g+b)/2 };
+}
+
+// run real analysis on an <img>/<video>-drawable element; returns scores + per-region severity + markers
+async function analyzeFace(srcEl) {
+  const fl = await getFaceLandmarker();
+  const det = fl.detect(srcEl);
+  if (!det.faceLandmarks || !det.faceLandmarks.length) { const e=new Error('no_face'); e.code='no_face'; throw e; }
+  const lms = det.faceLandmarks[0];
+  const natW = srcEl.naturalWidth || srcEl.videoWidth || srcEl.width;
+  const natH = srcEl.naturalHeight || srcEl.videoHeight || srcEl.height;
+  const scale = Math.min(1, 720/natW);
+  const w = Math.round(natW*scale), h = Math.round(natH*scale);
+  const cv = document.createElement('canvas'); cv.width=w; cv.height=h;
+  const ctx = cv.getContext('2d', { willReadFrequently:true });
+  ctx.drawImage(srcEl, 0, 0, w, h);
+  let data;
+  try { data = ctx.getImageData(0,0,w,h).data; }
+  catch(e){ const err=new Error('tainted'); err.code='tainted'; throw err; }
+
+  const reg = {};
+  Object.keys(LM_GROUPS).forEach(k=> reg[k]=sampleRegion(data,w,h,lms,LM_GROUPS[k]));
+
+  const faceLum = ['forehead','cheekL','cheekR','nose','chin'].reduce((a,k)=>a+reg[k].lum,0)/5;
+  const cheekLum = (reg.cheekL.lum+reg.cheekR.lum)/2;
+
+  // per-region concern intensity (0=clear .. 1=concern)
+  const intensity = {};
+  Object.keys(CONCERN_REGIONS).forEach(c=>{ intensity[c]={}; });
+  CONCERN_REGIONS.redness.forEach(k=> intensity.redness[k]=norm(reg[k].redExcess, 4, 34));
+  CONCERN_REGIONS.texture.forEach(k=> intensity.texture[k]=norm(reg[k].std, 7, 26));
+  CONCERN_REGIONS.pores.forEach(k=> intensity.pores[k]=norm(reg[k].std, 8, 24));
+  CONCERN_REGIONS.evenness.forEach(k=> intensity.evenness[k]=norm(Math.abs(reg[k].lum-faceLum), 5, 42));
+  CONCERN_REGIONS.hydration.forEach(k=> intensity.hydration[k]=clamp01(0.6*norm(reg[k].std,7,24)+0.4*norm(150-reg[k].lum,20,110)));
+  CONCERN_REGIONS.undereye.forEach(k=> intensity.undereye[k]=norm(cheekLum-reg[k].lum, 2, 46));
+  CONCERN_REGIONS.firmness.forEach(k=> intensity.firmness[k]=clamp01(0.55*norm(reg[k].std,7,24)+0.45*norm(reg[k].redExcess,4,30)));
+
+  const scores = {};
+  SKIN_CONCERNS.forEach(c=>{
+    const vals = Object.values(intensity[c.key]);
+    const mean = vals.reduce((a,v)=>a+v,0)/vals.length;
+    scores[c.key] = Math.round(100 - 46*mean);
+  });
+  scores.overall = Math.round(SKIN_CONCERNS.reduce((a,c)=>a+scores[c.key],0)/SKIN_CONCERNS.length);
+
+  // treatment markers anchored to real landmarks, surfaced from weakest concerns
+  const cForehead=centroid(lms,LM_GROUPS.forehead);
+  const cCheekL=centroid(lms,LM_GROUPS.cheekL), cCheekR=centroid(lms,LM_GROUPS.cheekR);
+  const cUnderL=centroid(lms,LM_GROUPS.undereyeL), cUnderR=centroid(lms,LM_GROUPS.undereyeR);
+  const cChin=centroid(lms,LM_GROUPS.chin), cNose=centroid(lms,LM_GROUPS.nose), cLips=centroid(lms,LM_GROUPS.lips);
+  const markerPool = [
+    { concern:'texture',  tx:'Neuromodulator', label:'Tox', at:cForehead },
+    { concern:'firmness', tx:'HA Filler / Biostimulator', label:'Volume', at:cCheekL },
+    { concern:'firmness', tx:'HA Filler / Biostimulator', label:'Volume', at:cCheekR },
+    { concern:'undereye', tx:'PRF / EZ Gel', label:'Under-eye', at:{x:(cUnderL.x+cUnderR.x)/2,y:(cUnderL.y+cUnderR.y)/2} },
+    { concern:'texture',  tx:'RF Microneedling', label:'Texture', at:cNose },
+    { concern:'hydration',tx:'Lip hydration', label:'Lips', at:cLips },
+    { concern:'firmness', tx:'Chin / jaw refinement', label:'Chin', at:cChin },
+  ];
+  const ranked = [...SKIN_CONCERNS].sort((a,b)=>scores[a.key]-scores[b.key]).slice(0,4).map(c=>c.key);
+  const markers = markerPool.filter(m=>ranked.includes(m.concern));
+
+  return { landmarks:lms, scores, intensity, regions:reg, markers,
+    summary: ranked.slice(0,3).map(k=>SKIN_CONCERNS.find(c=>c.key===k).label) };
+}
+
+const scoreColor = s => s>=80 ? '#16a34a' : s>=65 ? '#ca8a04' : '#e11d48';
+const scoreLabel = s => s>=80 ? 'Great' : s>=65 ? 'Fair' : 'Focus area';
+
+// Heatmap canvas: draws the photo + concern overlay anchored to landmarks
+const HeatmapCanvas = ({ image, result, concern }) => {
+  const ref = useRef(null);
+  useEffect(() => {
+    const cv = ref.current; if (!cv) return;
+    const img = new Image();
+    img.onload = () => {
+      const maxW = 560; const scale = Math.min(1, maxW/img.naturalWidth);
+      const w = Math.round(img.naturalWidth*scale), h = Math.round(img.naturalHeight*scale);
+      cv.width=w; cv.height=h;
+      const ctx = cv.getContext('2d');
+      ctx.clearRect(0,0,w,h);
+      ctx.drawImage(img,0,0,w,h);
+      if (concern && result.intensity[concern]) {
+        const col = SKIN_CONCERNS.find(c=>c.key===concern).color;
+        ctx.globalCompositeOperation = 'multiply';
+        CONCERN_REGIONS[concern].forEach(rk => {
+          const c = centroid(result.landmarks, LM_GROUPS[rk]);
+          const sev = result.intensity[concern][rk] || 0;
+          const cx=c.x*w, cy=c.y*h, rad=w*0.16;
+          const g = ctx.createRadialGradient(cx,cy,0,cx,cy,rad);
+          const a = (0.25 + 0.5*sev).toFixed(2);
+          g.addColorStop(0, col+Math.round(a*255).toString(16).padStart(2,'0'));
+          g.addColorStop(1, col+'00');
+          ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,rad,0,Math.PI*2); ctx.fill();
+        });
+        ctx.globalCompositeOperation='source-over';
+      }
+    };
+    img.src = image;
+  }, [image, concern, result]);
+  return <canvas ref={ref} className="w-full h-auto block rounded-2xl"/>;
+};
+
+// Before/After slider on the REAL photo: retouched "after" + treatment marker pins
+const RetouchSlider = ({ image, result, showMarkers=true }) => {
+  const [pos, setPos] = useState(50);
+  const beforeRef = useRef(null), afterRef = useRef(null), wrapRef = useRef(null);
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => {
+      const maxW=560; const scale=Math.min(1,maxW/img.naturalWidth);
+      const w=Math.round(img.naturalWidth*scale), h=Math.round(img.naturalHeight*scale);
+      [beforeRef.current, afterRef.current].forEach(cv=>{ if(cv){cv.width=w; cv.height=h;} });
+      const bctx=beforeRef.current.getContext('2d'); bctx.drawImage(img,0,0,w,h);
+      const actx=afterRef.current.getContext('2d');
+      actx.filter='brightness(1.06) saturate(1.06) contrast(0.97)';
+      actx.drawImage(img,0,0,w,h);
+      actx.globalAlpha=0.35; actx.filter='blur(2.5px) brightness(1.05)';
+      actx.drawImage(img,0,0,w,h);
+      actx.globalAlpha=1; actx.filter='none';
+    };
+    img.src = image;
+  }, [image]);
+  const move = x => { const r=wrapRef.current?.getBoundingClientRect(); if(!r) return; setPos(Math.max(4,Math.min(96,((x-r.left)/r.width)*100))); };
+  return (
+    <div ref={wrapRef} className="relative w-full overflow-hidden rounded-2xl border border-zinc-200 cursor-ew-resize select-none bg-zinc-100"
+      onMouseMove={e=>move(e.clientX)} onTouchMove={e=>move(e.touches[0].clientX)}>
+      <canvas ref={afterRef} className="w-full h-auto block"/>
+      <div className="absolute bottom-3 right-3"><Badge color="sage">Simulated</Badge></div>
+      {showMarkers && result?.markers?.map((m,i)=>(
+        <div key={i} className="absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none" style={{ left:`${m.at.x*100}%`, top:`${m.at.y*100}%` }}>
+          <span className="w-2.5 h-2.5 rounded-full bg-violet-500 ring-2 ring-white shadow"/>
+          <span className="text-[9px] font-bold text-white bg-violet-600/90 px-1.5 py-0.5 rounded-full whitespace-nowrap shadow">{m.label}</span>
+        </div>
+      ))}
+      <div className="absolute inset-0 overflow-hidden" style={{clipPath:`polygon(0 0,${pos}% 0,${pos}% 100%,0 100%)`}}>
+        <canvas ref={beforeRef} className="w-full h-auto block"/>
+        <div className="absolute bottom-3 left-3"><Badge color="zinc">Your photo</Badge></div>
+      </div>
+      <div className="absolute top-0 bottom-0 flex items-center" style={{left:`calc(${pos}% - 18px)`}}>
+        <div className="w-9 h-9 bg-white rounded-full shadow-xl flex items-center justify-center border border-zinc-200"><Icon name="ChevronsLeftRight" size={15} className="text-zinc-600"/></div>
+      </div>
+    </div>
+  );
+};
+
+// Full scan flow: choose camera or upload → analyze → results (Lovi-style)
+const SkinScan = ({ onComplete, onClose, ctaLabel='Use these results →' }) => {
+  const [mode, setMode] = useState(null);       // null | 'camera' | 'upload'
+  const [phase, setPhase] = useState('choose'); // choose | capture | analyzing | results | error
+  const [image, setImage] = useState(null);
+  const [result, setResult] = useState(null);
+  const [err, setErr] = useState('');
+  const [concern, setConcern] = useState(null);
+  const videoRef = useRef(null), streamRef = useRef(null), fileRef = useRef(null);
+
+  const stopCamera = () => { if(streamRef.current){ streamRef.current.getTracks().forEach(t=>t.stop()); streamRef.current=null; } };
+  useEffect(()=>()=>stopCamera(), []);
+
+  const startCamera = async () => {
+    setMode('camera'); setErr('');
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'user', width:{ideal:1280}, height:{ideal:1280} }, audio:false });
+      streamRef.current = stream;
+      setPhase('capture');
+      setTimeout(()=>{ if(videoRef.current){ videoRef.current.srcObject=stream; videoRef.current.play(); } }, 50);
+    } catch(e){ setErr('Camera access was blocked. You can upload a photo instead.'); setPhase('error'); }
+  };
+
+  const analyzeEl = async (el, dataUrl) => {
+    setImage(dataUrl); setPhase('analyzing'); setErr('');
+    try {
+      const r = await analyzeFace(el);
+      setResult(r); setConcern(null); setPhase('results');
+    } catch(e){
+      const msg = e.code==='no_face' ? "We couldn't find a clear face. Use even, front-facing light and fill the frame."
+        : e.code==='tainted' ? "That image can't be analyzed (cross-origin). Try uploading a photo from your device."
+        : e.message==='model_unavailable' ? "The analysis model couldn't load. Check your connection and try again."
+        : "Analysis failed to load. Please try again.";
+      setErr(msg); setPhase('error');
+    }
+  };
+
+  const capturePhoto = () => {
+    const v = videoRef.current; if(!v) return;
+    const cv = document.createElement('canvas'); cv.width=v.videoWidth; cv.height=v.videoHeight;
+    cv.getContext('2d').drawImage(v,0,0);
+    const url = cv.toDataURL('image/jpeg', 0.92);
+    stopCamera();
+    const img = new Image(); img.onload=()=>analyzeEl(img,url); img.src=url;
+  };
+
+  const onUpload = e => {
+    const f = e.target.files?.[0]; if(!f) return;
+    setMode('upload');
+    const reader = new FileReader();
+    reader.onload = () => { const img=new Image(); img.onload=()=>analyzeEl(img,reader.result); img.src=reader.result; };
+    reader.readAsDataURL(f);
+  };
+
+  const reset = () => { stopCamera(); setMode(null); setPhase('choose'); setImage(null); setResult(null); setErr(''); };
+
+  // ── CHOOSE ──
+  if (phase==='choose') return (
+    <div className="fade-up">
+      <div className="text-center mb-6">
+        <div className="w-12 h-12 rounded-2xl bg-violet-100 flex items-center justify-center mx-auto mb-3"><Icon name="ScanFace" size={24} className="text-violet-600"/></div>
+        <h2 className="text-2xl font-serif font-semibold text-zinc-800">Skin analysis</h2>
+        <p className="text-zinc-500 text-sm mt-1 max-w-sm mx-auto">A quick on-device scan reads your skin across 7 dimensions and maps a heat-analysis to your face. Nothing leaves your device.</p>
+      </div>
+      <div className="space-y-3">
+        <button onClick={startCamera} className="w-full p-4 rounded-2xl border-2 border-zinc-200 hover:border-violet-400 hover:bg-violet-50/40 transition flex items-center gap-4 text-left">
+          <div className="w-11 h-11 rounded-xl bg-zinc-900 text-white flex items-center justify-center shrink-0"><Icon name="Camera" size={20}/></div>
+          <div><p className="font-semibold text-zinc-800 text-sm">Scan with camera</p><p className="text-xs text-zinc-500">Live capture with a face guide — best results</p></div>
+          <Icon name="ChevronRight" size={18} className="text-zinc-300 ml-auto"/>
+        </button>
+        <button onClick={()=>fileRef.current?.click()} className="w-full p-4 rounded-2xl border-2 border-zinc-200 hover:border-violet-400 hover:bg-violet-50/40 transition flex items-center gap-4 text-left">
+          <div className="w-11 h-11 rounded-xl bg-zinc-100 text-zinc-700 flex items-center justify-center shrink-0"><Icon name="ImagePlus" size={20}/></div>
+          <div><p className="font-semibold text-zinc-800 text-sm">Upload a photo</p><p className="text-xs text-zinc-500">Use a clear, front-facing photo from your device</p></div>
+          <Icon name="ChevronRight" size={18} className="text-zinc-300 ml-auto"/>
+        </button>
+        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onUpload}/>
+      </div>
+      <div className="mt-5 p-3 bg-zinc-50 rounded-xl border border-zinc-200 text-[11px] text-zinc-500 flex items-start gap-2">
+        <Icon name="Info" size={13} className="shrink-0 mt-0.5 text-zinc-400"/>
+        Educational analysis only — not a medical diagnosis. Lighting affects results; even, natural front light works best.
+      </div>
+      {onClose && <button onClick={onClose} className="mt-4 w-full text-center text-sm text-zinc-400 hover:text-zinc-600">Skip for now</button>}
+    </div>
+  );
+
+  // ── CAPTURE (camera) ──
+  if (phase==='capture') return (
+    <div className="fade-up text-center">
+      <h2 className="text-xl font-serif font-semibold text-zinc-800 mb-1">Position your face</h2>
+      <p className="text-zinc-500 text-sm mb-4">Center your face in the ring, even lighting, neutral expression.</p>
+      <div className="relative w-full max-w-sm mx-auto aspect-[3/4] rounded-3xl overflow-hidden bg-zinc-900 mb-5">
+        <video ref={videoRef} playsInline muted className="w-full h-full object-cover" style={{transform:'scaleX(-1)'}}/>
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-3/5 h-3/4 rounded-[50%] border-2 border-white/70 shadow-[0_0_0_2000px_rgba(0,0,0,0.35)]"/>
+        </div>
+      </div>
+      <div className="flex gap-3 justify-center">
+        <button onClick={reset} className="px-5 py-3 border border-zinc-200 text-zinc-600 rounded-xl text-sm hover:bg-zinc-50">Back</button>
+        <button onClick={capturePhoto} className="px-8 py-3 bg-zinc-900 text-white font-medium rounded-xl text-sm hover:bg-zinc-800 flex items-center gap-2"><Icon name="Aperture" size={16}/> Capture & analyze</button>
+      </div>
+    </div>
+  );
+
+  // ── ANALYZING ──
+  if (phase==='analyzing') return (
+    <div className="fade-up text-center py-4">
+      <h2 className="text-xl font-serif font-semibold text-zinc-800 mb-4">Analyzing your skin…</h2>
+      <div className="relative w-full max-w-xs mx-auto aspect-[3/4] rounded-3xl overflow-hidden border border-zinc-200">
+        {image && <img src={image} className="w-full h-full object-cover" alt="scan"/>}
+        <div className="absolute inset-x-0 h-1/2 bg-gradient-to-b from-violet-400/40 to-transparent" style={{animation:'scanline 1.6s ease-in-out infinite'}}/>
+        <div className="absolute inset-0 bg-violet-600/10"/>
+      </div>
+      <p className="text-xs text-zinc-400 mt-4 flex items-center justify-center gap-2"><Icon name="Loader" size={13} className="animate-spin"/> Detecting landmarks · sampling skin zones</p>
+    </div>
+  );
+
+  // ── ERROR ──
+  if (phase==='error') return (
+    <div className="fade-up text-center py-6">
+      <div className="w-14 h-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center mx-auto mb-4"><Icon name="AlertTriangle" size={26} className="text-amber-500"/></div>
+      <h2 className="text-lg font-serif font-semibold text-zinc-800 mb-2">Couldn't complete the scan</h2>
+      <p className="text-zinc-500 text-sm max-w-sm mx-auto mb-5">{err}</p>
+      <div className="flex gap-3 justify-center">
+        <button onClick={reset} className="px-5 py-2.5 border border-zinc-200 text-zinc-600 rounded-xl text-sm hover:bg-zinc-50">Try again</button>
+        <button onClick={()=>fileRef.current?.click()} className="px-5 py-2.5 bg-zinc-900 text-white rounded-xl text-sm">Upload a photo</button>
+        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onUpload}/>
+      </div>
+    </div>
+  );
+
+  // ── RESULTS ──
+  return (
+    <div className="fade-up">
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h2 className="text-2xl font-serif font-semibold text-zinc-800">Your skin report</h2>
+          <p className="text-zinc-500 text-sm">Focus areas: {result.summary.join(' · ')}</p>
+        </div>
+        <div className="text-center shrink-0">
+          <div className="relative w-16 h-16">
+            <svg viewBox="0 0 36 36" className="w-16 h-16 -rotate-90">
+              <circle cx="18" cy="18" r="15.5" fill="none" stroke="#eee" strokeWidth="3"/>
+              <circle cx="18" cy="18" r="15.5" fill="none" stroke={scoreColor(result.scores.overall)} strokeWidth="3" strokeLinecap="round" strokeDasharray={`${result.scores.overall/100*97.4} 97.4`}/>
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center"><span className="text-lg font-bold text-zinc-800 leading-none">{result.scores.overall}</span><span className="text-[8px] text-zinc-400 uppercase tracking-wide">score</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-5">
+        <div>
+          <div className="relative">
+            <HeatmapCanvas image={image} result={result} concern={concern}/>
+            <div className="absolute top-3 left-3"><Badge color={concern?'violet':'zinc'}>{concern? SKIN_CONCERNS.find(c=>c.key===concern).label+' map' : 'Tap a concern →'}</Badge></div>
+          </div>
+          <div className="flex flex-wrap gap-1.5 mt-3">
+            <button onClick={()=>setConcern(null)} className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border ${!concern?'bg-zinc-900 text-white border-zinc-900':'border-zinc-200 text-zinc-500'}`}>Photo</button>
+            {SKIN_CONCERNS.map(c=>(
+              <button key={c.key} onClick={()=>setConcern(c.key)} className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition ${concern===c.key?'text-white border-transparent':'border-zinc-200 text-zinc-600 hover:border-zinc-400'}`} style={concern===c.key?{background:c.color}:{}}>{c.label}</button>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-2.5">
+          {SKIN_CONCERNS.map(c=>{
+            const s=result.scores[c.key];
+            return (
+              <button key={c.key} onClick={()=>setConcern(c.key)} className={`w-full flex items-center gap-3 p-2.5 rounded-xl border text-left transition ${concern===c.key?'border-zinc-400 bg-zinc-50':'border-zinc-100 hover:border-zinc-200'}`}>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{background:c.color+'22'}}><Icon name={c.icon} size={15} style={{color:c.color}}/></div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between"><span className="text-sm font-medium text-zinc-700">{c.label}</span><span className="text-xs font-bold" style={{color:scoreColor(s)}}>{s}</span></div>
+                  <div className="h-1.5 bg-zinc-100 rounded-full mt-1 overflow-hidden"><div className="h-full rounded-full" style={{width:`${s}%`, background:scoreColor(s)}}/></div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Simulated result on your photo</h3>
+        <RetouchSlider image={image} result={result}/>
+        <p className="text-[11px] text-zinc-400 mt-2">Drag to compare. Pins show where recommended treatments would target. Simulation is an approximate planning visual, not a guaranteed outcome.</p>
+      </div>
+
+      <div className="flex gap-3 mt-6">
+        <button onClick={reset} className="px-5 py-3 border border-zinc-200 text-zinc-600 rounded-xl text-sm hover:bg-zinc-50">Rescan</button>
+        <button onClick={()=>onComplete && onComplete({ scores:result.scores, summary:result.summary, image, markers:result.markers })} className="flex-1 px-6 py-3 bg-zinc-900 text-white font-medium rounded-xl text-sm hover:bg-zinc-800">{ctaLabel}</button>
+      </div>
+    </div>
+  );
+};
+
 const ClinicianApp = ({ db, onUpdateDb, settings }) => {
   const [view, setView] = useState('dashboard');
   const [selectedId, setSelectedId] = useState(null);
   const [reviewTab, setReviewTab] = useState('plan');
   const [draft, setDraft] = useState(null);
+  const [txCategory, setTxCategory] = useState('both');           // both | injectable | facial
+  const [addSel, setAddSel] = useState('');                        // dropdown selection
+  const [custom, setCustom] = useState({ tx:'', desc:'', benefits:'', category:'injectable', low:0, high:0, units:1, unit:'units' });
+  const [showCustom, setShowCustom] = useState(false);
 
   // Keep draft in sync whenever the selected client changes
   useEffect(() => {
     if (selectedId && db.plans?.[selectedId]) {
-      setDraft(JSON.parse(JSON.stringify(db.plans[selectedId])));
+      const p = JSON.parse(JSON.stringify(db.plans[selectedId]));
+      if (!p.products) p.products = [];
+      setDraft(p);
+      setTxCategory('both'); setAddSel(''); setShowCustom(false);
+      setCustom({ tx:'', desc:'', benefits:'', category:'injectable', low:0, high:0, units:1, unit:'units' });
     }
   }, [selectedId]);
 
   const toggleItem = id => setDraft(p=>p?{...p,items:p.items.map(i=>i.id===id?{...i,enabled:!i.enabled}:i)}:p);
   const updateItem = (id,field,val) => setDraft(p=>p?{...p,items:p.items.map(i=>i.id===id?{...i,[field]:val}:i)}:p);
+  const removeItem = id => setDraft(p=>p?{...p,items:p.items.filter(i=>i.id!==id)}:p);
+  const idSeq = useRef(0);
+  const nextId = () => { idSeq.current += 1; return 'tx_added_'+idSeq.current; };
+
+  const addFromLibrary = () => {
+    const lib = TREATMENT_LIBRARY.find(l=>l.tx===addSel); if(!lib) return;
+    setDraft(p=>({...p, items:[...p.items, { id:nextId(), tx:lib.tx, units:lib.units, low:lib.low, high:lib.high, rationale:lib.rationale, enabled:true, phase:1, roi:lib.roi, longevity:lib.longevity, category:lib.category }]}));
+    setAddSel('');
+  };
+  const addCustom = () => {
+    if(!custom.tx.trim() || !custom.desc.trim() || !custom.benefits.trim()) return;
+    setDraft(p=>({...p, items:[...p.items, { id:nextId(), tx:custom.tx.trim(), units:Number(custom.units)||1, low:Number(custom.low)||0, high:Number(custom.high)||0, rationale:custom.desc.trim(), benefits:custom.benefits.trim(), enabled:true, phase:1, roi:7, longevity:'—', category:custom.category, custom:true }]}));
+    setCustom({ tx:'', desc:'', benefits:'', category:'injectable', low:0, high:0, units:1, unit:'units' });
+    setShowCustom(false);
+  };
+  const toggleProduct = prod => setDraft(p=>{ const has=(p.products||[]).some(x=>x.id===prod.id); return {...p, products: has ? p.products.filter(x=>x.id!==prod.id) : [...(p.products||[]), prod]}; });
+  const customValid = custom.tx.trim() && custom.desc.trim() && custom.benefits.trim();
 
   const cols = {
     booked: db.clients.filter(c=>c.state==='booked'||c.state==='invited'),
@@ -1431,6 +1915,24 @@ const ClinicianApp = ({ db, onUpdateDb, settings }) => {
               <div className="bg-white rounded-2xl border border-zinc-200 overflow-hidden">
                 <div className="aspect-[4/3]"><ImageSlider src={client.photo}/></div>
               </div>
+              {client.skinScan && (
+                <div className="bg-white rounded-2xl border border-zinc-200 p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5"><Icon name="ScanFace" size={13}/> Client Skin Scan</h4>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{color:scoreColor(client.skinScan.scores.overall), background:scoreColor(client.skinScan.scores.overall)+'18'}}>{client.skinScan.scores.overall} overall</span>
+                  </div>
+                  {client.skinScan.image && <div className="rounded-xl overflow-hidden border border-zinc-100 mb-3"><HeatmapCanvas image={client.skinScan.image} result={client.skinScan} concern={null}/></div>}
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {SKIN_CONCERNS.map(c=>(
+                      <div key={c.key} className="flex items-center justify-between px-2 py-1 rounded-lg bg-zinc-50">
+                        <span className="text-[11px] text-zinc-600">{c.label}</span>
+                        <span className="text-xs font-bold" style={{color:scoreColor(client.skinScan.scores[c.key])}}>{client.skinScan.scores[c.key]}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-zinc-400 mt-2">Focus: {client.skinScan.summary.join(' · ')}</p>
+                </div>
+              )}
               {client.intake?.glp1 && (
                 <div className="bg-sage-50 border border-sage-200 rounded-2xl p-4 text-sm text-sage-800">
                   <p className="font-semibold flex items-center gap-2 mb-1"><Icon name="TrendingDown" size={15}/> GLP-1 Active</p>
@@ -1448,31 +1950,117 @@ const ClinicianApp = ({ db, onUpdateDb, settings }) => {
                       onChange={e=>{const na=[...draft.analysis];na[i]={...na[i],finding:e.target.value};setDraft({...draft,analysis:na});}}/>
                   </div>
                 ))}
-                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 border-b border-zinc-100 pb-2 pt-2">Treatment Plan</h3>
-                {draft.items.map(item=>(
+                <div className="flex items-center justify-between border-b border-zinc-100 pb-2 pt-2">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">Treatment Plan</h3>
+                  <div className="flex gap-1 bg-zinc-100 rounded-lg p-0.5">
+                    {[{k:'both',l:'Both'},{k:'injectable',l:'Injectables'},{k:'facial',l:'Facials'}].map(o=>(
+                      <button key={o.k} onClick={()=>setTxCategory(o.k)} className={`px-2.5 py-1 rounded-md text-[11px] font-semibold transition ${txCategory===o.k?'bg-white text-zinc-900 shadow-sm':'text-zinc-500 hover:text-zinc-700'}`}>{o.l}</button>
+                    ))}
+                  </div>
+                </div>
+                {draft.items.filter(item=> txCategory==='both' || classifyTx(item.tx)===txCategory).map(item=>(
                   <div key={item.id} className={`rounded-2xl border overflow-hidden transition-all ${item.enabled?'border-violet-300':'border-zinc-200 opacity-60'}`}>
                     <div className="flex items-center gap-3 p-4 bg-white">
                       <input type="checkbox" checked={item.enabled} onChange={()=>toggleItem(item.id)} className="w-5 h-5 accent-violet-600 cursor-pointer"/>
                       <div className="flex-1 min-w-0">
-                        <p className="font-serif text-zinc-800 font-medium text-sm">{item.tx}</p>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-serif text-zinc-800 font-medium text-sm">{item.tx}</p>
+                          <Badge color={classifyTx(item.tx)==='facial'?'sage':'violet'}>{classifyTx(item.tx)==='facial'?'Facial':classifyTx(item.tx)==='injectable'?'Injectable':'Other'}</Badge>
+                          {item.custom&&<Badge color="blue">Custom</Badge>}
+                        </div>
                         <ROIBar score={item.roi}/>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <input type="number" value={item.units} min={1} disabled={!item.enabled}
                           onChange={e=>updateItem(item.id,'units',Number(e.target.value))}
                           className="w-16 p-1.5 border border-zinc-200 rounded-lg text-sm text-center"/>
-                        <span className="text-xs text-zinc-500">units</span>
+                        <span className="text-xs text-zinc-500">{item.unit||'units'}</span>
+                        <button onClick={()=>removeItem(item.id)} title="Remove" className="p-1 text-zinc-300 hover:text-red-500 transition"><Icon name="Trash2" size={15}/></button>
                       </div>
                     </div>
                     {item.enabled&&(
-                      <div className="px-4 pb-4 bg-zinc-50">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1 block">Clinical Rationale</label>
-                        <textarea className="w-full bg-white border border-zinc-200 text-sm text-zinc-700 rounded-lg p-2 resize-none focus:outline-violet-400" rows={2} value={item.rationale}
-                          onChange={e=>updateItem(item.id,'rationale',e.target.value)}/>
+                      <div className="px-4 pb-4 bg-zinc-50 space-y-2">
+                        <div>
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1 block">Procedure / Clinical Rationale</label>
+                          <textarea className="w-full bg-white border border-zinc-200 text-sm text-zinc-700 rounded-lg p-2 resize-none focus:outline-violet-400" rows={2} value={item.rationale}
+                            onChange={e=>updateItem(item.id,'rationale',e.target.value)}/>
+                        </div>
+                        {('benefits' in item || item.custom) && (
+                          <div>
+                            <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1 block">Benefits to client</label>
+                            <textarea className="w-full bg-white border border-zinc-200 text-sm text-zinc-700 rounded-lg p-2 resize-none focus:outline-violet-400" rows={2} value={item.benefits||''}
+                              onChange={e=>updateItem(item.id,'benefits',e.target.value)}/>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
                 ))}
+                {draft.items.filter(item=> txCategory==='both' || classifyTx(item.tx)===txCategory).length===0 && (
+                  <p className="text-center text-zinc-400 text-sm py-6 border border-dashed border-zinc-200 rounded-2xl">No {txCategory} treatments yet — add one below.</p>
+                )}
+
+                {/* Add treatment */}
+                <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 space-y-3">
+                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5"><Icon name="Plus" size={13}/> Add a treatment</h4>
+                  <div className="flex gap-2">
+                    <select value={addSel} onChange={e=>setAddSel(e.target.value)} className="flex-1 bg-white border border-zinc-200 rounded-lg p-2 text-sm text-zinc-700 focus:outline-violet-400">
+                      <option value="">Choose from library…</option>
+                      <optgroup label="Injectables">{TREATMENT_LIBRARY.filter(l=>l.category==='injectable').map(l=><option key={l.tx} value={l.tx}>{l.tx} · ${l.low}–${l.high}</option>)}</optgroup>
+                      <optgroup label="Facials & Energy">{TREATMENT_LIBRARY.filter(l=>l.category==='facial').map(l=><option key={l.tx} value={l.tx}>{l.tx} · ${l.low}–${l.high}</option>)}</optgroup>
+                    </select>
+                    <button onClick={addFromLibrary} disabled={!addSel} className="px-4 py-2 bg-zinc-900 text-white text-sm font-medium rounded-lg disabled:opacity-30">Add</button>
+                  </div>
+                  {!showCustom ? (
+                    <button onClick={()=>setShowCustom(true)} className="text-xs font-medium text-violet-700 hover:text-violet-800 flex items-center gap-1"><Icon name="Pencil" size={12}/> Or add a custom treatment</button>
+                  ) : (
+                    <div className="bg-white border border-violet-200 rounded-xl p-3 space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-bold text-zinc-700">Custom treatment</p>
+                        <button onClick={()=>setShowCustom(false)} className="text-zinc-400 hover:text-zinc-600"><Icon name="X" size={14}/></button>
+                      </div>
+                      <input value={custom.tx} onChange={e=>setCustom({...custom,tx:e.target.value})} placeholder="Treatment name (e.g. Polynucleotides)" className="w-full border border-zinc-200 rounded-lg p-2 text-sm focus:outline-violet-400"/>
+                      <div className="flex gap-2">
+                        <select value={custom.category} onChange={e=>setCustom({...custom,category:e.target.value})} className="border border-zinc-200 rounded-lg p-2 text-sm text-zinc-700">
+                          <option value="injectable">Injectable</option><option value="facial">Facial</option>
+                        </select>
+                        <input type="number" value={custom.units} min={1} onChange={e=>setCustom({...custom,units:e.target.value})} className="w-16 border border-zinc-200 rounded-lg p-2 text-sm text-center" title="units"/>
+                        <input type="number" value={custom.low} onChange={e=>setCustom({...custom,low:e.target.value})} placeholder="$ low" className="w-20 border border-zinc-200 rounded-lg p-2 text-sm"/>
+                        <input type="number" value={custom.high} onChange={e=>setCustom({...custom,high:e.target.value})} placeholder="$ high" className="w-20 border border-zinc-200 rounded-lg p-2 text-sm"/>
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1 block">Description of procedure <span className="text-red-400">*</span></label>
+                        <textarea value={custom.desc} onChange={e=>setCustom({...custom,desc:e.target.value})} rows={2} placeholder="What the procedure involves…" className="w-full border border-zinc-200 rounded-lg p-2 text-sm resize-none focus:outline-violet-400"/>
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-1 block">Benefits to the client <span className="text-red-400">*</span></label>
+                        <textarea value={custom.benefits} onChange={e=>setCustom({...custom,benefits:e.target.value})} rows={2} placeholder="Why it's recommended and what it achieves…" className="w-full border border-zinc-200 rounded-lg p-2 text-sm resize-none focus:outline-violet-400"/>
+                      </div>
+                      <button onClick={addCustom} disabled={!customValid} className="w-full py-2 bg-violet-600 text-white text-sm font-medium rounded-lg disabled:opacity-30">{customValid?'Add custom treatment':'Description & benefits required'}</button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Recommended products */}
+                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 border-b border-zinc-100 pb-2 pt-2 flex items-center gap-2"><Icon name="ShoppingBag" size={13}/> Recommended Products</h3>
+                <div className="space-y-2">
+                  {PRODUCT_CATALOG.filter(p=> txCategory==='both' || p.category===txCategory).map(prod=>{
+                    const added=(draft.products||[]).some(x=>x.id===prod.id);
+                    return (
+                      <div key={prod.id} className={`flex items-center gap-3 p-3 rounded-xl border transition ${added?'border-violet-300 bg-violet-50/40':'border-zinc-200'}`}>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="text-sm font-medium text-zinc-800">{prod.name}</p>
+                            {prod.sponsored && <Badge color="blue">Partner · ${prod.payout} payout</Badge>}
+                          </div>
+                          <p className="text-xs text-zinc-500">{prod.brand} · ${prod.price} · {prod.benefit}</p>
+                        </div>
+                        <button onClick={()=>toggleProduct(prod)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 ${added?'bg-violet-600 text-white':'border border-zinc-300 text-zinc-700 hover:bg-zinc-50'}`}>{added?'✓ Added':'Add'}</button>
+                      </div>
+                    );
+                  })}
+                  <p className="text-[10px] text-zinc-400 flex items-center gap-1 pt-1"><Icon name="Info" size={11}/> Partner products pay the clinic a referral payout. Disclose per your local regulations.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -1504,6 +2092,7 @@ const ClientApp = ({ db, clientId, onUpdateDb, settings }) => {
   const client = db.clients.find(c=>c.id===clientId);
   const plan = db.plans?.[clientId];
   const isApproved = client?.state==='approved';
+  const saveScan = res => { onUpdateDb(p=>({...p, clients:p.clients.map(c=>c.id===clientId?{...c,skinScan:res}:c)})); setView('dashboard'); };
 
   if ((client?.state==='booked'||client?.state==='invited') && !showIntake) {
     const clinicName = settings?.branding?.clinicName||db.organization.name;
@@ -1614,11 +2203,42 @@ const ClientApp = ({ db, clientId, onUpdateDb, settings }) => {
                 <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-4">Quick Actions</h4>
                 <div className="space-y-2">
                   <button className="w-full flex items-center gap-2 text-sm text-zinc-700 hover:text-violet-700 py-1.5 transition font-medium"><Icon name="MessageSquare" size={16}/> Message my provider</button>
-                  <button className="w-full flex items-center gap-2 text-sm text-zinc-700 hover:text-violet-700 py-1.5 transition font-medium"><Icon name="Camera" size={16}/> Upload progress photos</button>
+                  <button onClick={()=>setView('scan')} className="w-full flex items-center gap-2 text-sm text-zinc-700 hover:text-violet-700 py-1.5 transition font-medium"><Icon name="ScanFace" size={16}/> {client.skinScan?'Re-run skin analysis':'Run skin analysis'}</button>
                   <button className="w-full flex items-center gap-2 text-sm text-zinc-700 hover:text-violet-700 py-1.5 transition font-medium"><Icon name="CalendarPlus" size={16}/> Book appointment</button>
                 </div>
               </div>
             </div>
+            <div className="bg-white p-6 rounded-3xl border border-zinc-200 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">Skin Analysis</h4>
+                <button onClick={()=>setView('scan')} className="text-xs font-semibold text-violet-700 hover:text-violet-800 flex items-center gap-1"><Icon name="ScanFace" size={13}/> {client.skinScan?'Re-scan':'Start scan'}</button>
+              </div>
+              {client.skinScan ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="text-center pr-3 mr-1 border-r border-zinc-100">
+                    <p className="text-2xl font-serif font-semibold" style={{color:scoreColor(client.skinScan.scores.overall)}}>{client.skinScan.scores.overall}</p>
+                    <p className="text-[10px] text-zinc-400 uppercase tracking-wide">Overall</p>
+                  </div>
+                  {SKIN_CONCERNS.map(c=>(
+                    <div key={c.key} className="px-2.5 py-1.5 rounded-lg bg-zinc-50 border border-zinc-100 text-center min-w-[68px]">
+                      <p className="text-sm font-bold" style={{color:scoreColor(client.skinScan.scores[c.key])}}>{client.skinScan.scores[c.key]}</p>
+                      <p className="text-[10px] text-zinc-400">{c.label}</p>
+                    </div>
+                  ))}
+                  <p className="w-full text-xs text-zinc-400 mt-1">Focus areas: {client.skinScan.summary.join(' · ')} — shared with your provider.</p>
+                </div>
+              ) : (
+                <div className="flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-xl bg-violet-50 flex items-center justify-center shrink-0"><Icon name="ScanFace" size={20} className="text-violet-600"/></div>
+                  <p className="text-sm text-zinc-500">Run a quick on-device skin scan — 7 metrics, a heat-analysis of your face, and a simulated result on your own photo.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        {view==='scan' && (
+          <div className="fade-up max-w-2xl mx-auto bg-white border border-zinc-200 rounded-3xl shadow-sm p-6 md:p-8">
+            <SkinScan onComplete={saveScan} onClose={()=>setView('dashboard')} ctaLabel="Save to my profile →"/>
           </div>
         )}
         {view==='board' && isApproved && plan && (
@@ -1705,6 +2325,10 @@ function App() {
                 <Icon name="UserCheck" size={16}/>
                 <div className="text-left"><div>New Client — Complete Intake</div><div className="text-white/50 text-xs">5-step intake wizard → AI analysis flow</div></div>
               </button>
+              <button onClick={()=>setPersona({role:'scan'})} className="w-full py-3 bg-violet-600 text-white rounded-xl text-sm font-medium flex items-center gap-3 px-4 hover:bg-violet-700 transition">
+                <Icon name="ScanFace" size={16}/>
+                <div className="text-left"><div>Skin Analysis — Live Scan</div><div className="text-white/60 text-xs">Real on-device heat-analysis · camera or upload</div></div>
+              </button>
               <div className="border-t border-zinc-100 pt-3">
                 <p className="text-xs text-zinc-500 mb-2 font-medium">Provider / Clinician</p>
                 <button onClick={()=>setPersona({role:'clinician'})} className="w-full py-3 border border-zinc-200 text-zinc-700 rounded-xl text-sm font-medium flex items-center gap-3 px-4 hover:bg-zinc-50 transition">
@@ -1743,6 +2367,13 @@ function App() {
           {persona.role==='clinician' && <ClinicianApp db={db} onUpdateDb={setDb} settings={settings}/>}
           {persona.role==='client' && <ClientApp db={db} clientId={persona.id} onUpdateDb={setDb} settings={settings}/>}
           {persona.role==='admin' && <AdminPanel settings={settings} onSave={setSettings} onBack={()=>setPersona(null)}/>}
+          {persona.role==='scan' && (
+            <div className="min-h-screen font-sans flex items-center justify-center p-6">
+              <div className="max-w-2xl w-full bg-white border border-zinc-200 rounded-3xl shadow-lg p-6 md:p-8 my-8">
+                <SkinScan onClose={()=>setPersona(null)} ctaLabel="Done" onComplete={()=>setPersona(null)}/>
+              </div>
+            </div>
+          )}
         </>
       )}
       <div className="fixed bottom-5 left-5 z-50 flex flex-col items-start gap-2">
