@@ -1975,8 +1975,19 @@ const SkinScan = ({ onComplete, onClose, ctaLabel='Use these results →', enabl
 
   const capturePhoto = () => {
     const v = videoRef.current; if(!v) return;
-    const cv = document.createElement('canvas'); cv.width=v.videoWidth; cv.height=v.videoHeight;
-    cv.getContext('2d').drawImage(v,0,0);
+    const vw=v.videoWidth, vh=v.videoHeight;
+    // Real camera sensors rarely return the square feed we requested — they're usually wider
+    // (landscape). The live preview crops that to a 3:4 portrait box so center-cropping the
+    // capture the same way keeps the photo WYSIWYG with what was actually framed; otherwise the
+    // analyzed/displayed photo ends up wider than what the user saw while positioning their face.
+    const targetRatio = 3/4;
+    let cropW=vw, cropH=vh;
+    if (vw/vh > targetRatio) { cropW = vh*targetRatio; } else { cropH = vw/targetRatio; }
+    const sx=(vw-cropW)/2, sy=(vh-cropH)/2;
+    const cv = document.createElement('canvas'); cv.width=cropW; cv.height=cropH;
+    const ctx = cv.getContext('2d');
+    ctx.translate(cropW,0); ctx.scale(-1,1); // mirror to match the live preview's scaleX(-1)
+    ctx.drawImage(v, sx, sy, cropW, cropH, 0, 0, cropW, cropH);
     const url = cv.toDataURL('image/jpeg', 0.92);
     stopCamera();
     const img = new Image(); img.onload=()=>analyzeEl(img,url); img.src=url;
@@ -2043,8 +2054,8 @@ const SkinScan = ({ onComplete, onClose, ctaLabel='Use these results →', enabl
   if (phase==='analyzing') return (
     <div className="fade-up text-center py-4">
       <h2 className="text-xl font-serif font-semibold text-zinc-800 mb-4">Analyzing your skin…</h2>
-      <div className="relative w-full max-w-xs mx-auto aspect-[3/4] rounded-3xl overflow-hidden border border-zinc-200">
-        {image && <img src={image} className="w-full h-full object-cover" alt="scan"/>}
+      <div className="relative w-full max-w-xs mx-auto rounded-3xl overflow-hidden border border-zinc-200 bg-zinc-900">
+        {image && <img src={image} className="w-full h-auto block" alt="scan"/>}
         <div className="absolute inset-x-0 h-1/2 bg-gradient-to-b from-violet-400/40 to-transparent" style={{animation:'scanline 1.6s ease-in-out infinite'}}/>
         <div className="absolute inset-0 bg-violet-600/10"/>
       </div>
