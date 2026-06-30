@@ -1557,6 +1557,154 @@ const RetouchSlider = ({ image, result, showMarkers=true }) => {
   );
 };
 
+// ─── FACIAL BALANCING SIMULATOR (landmark-driven liquify warp) ──────────────────
+const SIM_TREATMENTS = [
+  { key:'cheeks',   label:'Cheek volume',    icon:'Sparkles', tx:'HA Filler / Biostimulator (midface)' },
+  { key:'lips',     label:'Lip enhancement', icon:'Heart',    tx:'HA Filler (lips)' },
+  { key:'undereye', label:'Under-eye',       icon:'Eye',      tx:'PRF / EZ Gel' },
+  { key:'chin',     label:'Chin balance',    icon:'Triangle', tx:'HA Filler (chin)' },
+  { key:'jaw',      label:'Jawline',         icon:'Gem',      tx:'Filler / biostimulator (jaw)' },
+  { key:'brow',     label:'Brow lift',       icon:'ChevronUp',tx:'Neuromodulator (brow)' },
+  { key:'glow',     label:'Skin glow',       icon:'Droplets', tx:'Microneedling / skincare' },
+];
+const SIM_INTENSITY = [{k:0.6,l:'Subtle'},{k:1,l:'Natural'},{k:1.6,l:'Bold'}];
+
+// build liquify control points (canvas-pixel space) from normalized landmarks
+function buildSimControls(lms, w, h, active, strength) {
+  const P = i => ({ x:lms[i].x*w, y:lms[i].y*h });
+  const R = Math.min(w,h); const c=[];
+  if (active.cheeks){ c.push({t:'bloat',p:P(50), r:R*0.17,s:0.42*strength}); c.push({t:'bloat',p:P(280),r:R*0.17,s:0.42*strength}); }
+  if (active.lips){ c.push({t:'bloat',p:P(0),r:R*0.06,s:0.4*strength}); c.push({t:'bloat',p:P(17),r:R*0.065,s:0.5*strength}); }
+  if (active.undereye){ c.push({t:'push',p:P(230),r:R*0.10,v:{x:0,y:-R*0.011*strength}}); c.push({t:'push',p:P(450),r:R*0.10,v:{x:0,y:-R*0.011*strength}}); }
+  if (active.chin){ c.push({t:'push',p:P(152),r:R*0.14,v:{x:0,y:R*0.02*strength}}); }
+  if (active.jaw){ c.push({t:'push',p:P(172),r:R*0.11,v:{x:-R*0.013*strength,y:R*0.006*strength}}); c.push({t:'push',p:P(397),r:R*0.11,v:{x:R*0.013*strength,y:R*0.006*strength}}); }
+  if (active.brow){ c.push({t:'push',p:P(105),r:R*0.09,v:{x:0,y:-R*0.013*strength}}); c.push({t:'push',p:P(334),r:R*0.09,v:{x:0,y:-R*0.013*strength}}); }
+  return c;
+}
+// inverse-mapped bilinear warp of an ImageData given control points
+function warpImageData(src, w, h, ctrls) {
+  const sd=src.data, out=new ImageData(w,h), od=out.data;
+  for(let y=0;y<h;y++){ for(let x=0;x<w;x++){
+    let dx=0,dy=0;
+    for(let k=0;k<ctrls.length;k++){ const cc=ctrls[k]; const ex=x-cc.p.x, ey=y-cc.p.y; const dist=Math.sqrt(ex*ex+ey*ey); if(dist>=cc.r) continue;
+      const fall=(1-dist/cc.r)*(1-dist/cc.r);
+      if(cc.t==='bloat'){ dx+=-ex*fall*cc.s; dy+=-ey*fall*cc.s; } else { dx+=-cc.v.x*fall; dy+=-cc.v.y*fall; }
+    }
+    let sx=x+dx, sy=y+dy; if(sx<0)sx=0; if(sy<0)sy=0; if(sx>w-1)sx=w-1; if(sy>h-1)sy=h-1;
+    const x0=sx|0, y0=sy|0, x1=x0+1<w?x0+1:x0, y1=y0+1<h?y0+1:y0, fx=sx-x0, fy=sy-y0;
+    const i00=(y0*w+x0)*4, i10=(y0*w+x1)*4, i01=(y1*w+x0)*4, i11=(y1*w+x1)*4, o=(y*w+x)*4;
+    for(let kk=0;kk<3;kk++){ od[o+kk]=sd[i00+kk]*(1-fx)*(1-fy)+sd[i10+kk]*fx*(1-fy)+sd[i01+kk]*(1-fx)*fy+sd[i11+kk]*fx*fy; }
+    od[o+3]=255;
+  }}
+  return out;
+}
+
+const BalancingSimulator = ({ image, landmarks, markers, defaultActive }) => {
+  const [active, setActive] = useState(defaultActive || { cheeks:true, lips:false, undereye:true, chin:false, jaw:false, brow:true, glow:true });
+  const [intensity, setIntensity] = useState(1);
+  const [pos, setPos] = useState(50);
+  const [busy, setBusy] = useState(true);
+  const [showPins, setShowPins] = useState(true);
+  const beforeRef=useRef(null), afterRef=useRef(null), wrapRef=useRef(null);
+  const srcData=useRef(null), dims=useRef({w:0,h:0});
+  const hasLandmarks = Array.isArray(landmarks) && landmarks.length>200;
+
+  // load image once → before canvas + cached source pixels (if same-origin/dataURL)
+  useEffect(()=>{
+    let cancelled=false;
+    const img=new Image(); img.crossOrigin='anonymous';
+    img.onload=()=>{ if(cancelled) return;
+      const maxW=380, scale=Math.min(1,maxW/img.naturalWidth);
+      const w=Math.round(img.naturalWidth*scale), h=Math.round(img.naturalHeight*scale);
+      dims.current={w,h};
+      [beforeRef.current, afterRef.current].forEach(cv=>{ if(cv){cv.width=w; cv.height=h;} });
+      const bctx=beforeRef.current.getContext('2d',{willReadFrequently:true}); bctx.drawImage(img,0,0,w,h);
+      try { srcData.current = bctx.getImageData(0,0,w,h); } catch(e){ srcData.current=null; }
+      renderAfter();
+    };
+    img.src=image;
+    return ()=>{ cancelled=true; };
+  }, [image]);
+
+  const renderAfter = () => {
+    const cv=afterRef.current, src=srcData.current; if(!cv) return;
+    const {w,h}=dims.current; if(!w||!h) return;
+    const actx=cv.getContext('2d');
+    setBusy(true);
+    // warp (only if we have pixels + landmarks)
+    if (src && hasLandmarks) {
+      const ctrls=buildSimControls(landmarks,w,h,active,intensity);
+      const warped = ctrls.length ? warpImageData(src,w,h,ctrls) : src;
+      actx.putImageData(warped,0,0);
+    } else {
+      // fallback: just draw original (glow applied below)
+      const img=new Image(); img.crossOrigin='anonymous'; img.onload=()=>{ actx.drawImage(img,0,0,w,h); applyGlow(actx,w,h); }; img.src=image; return;
+    }
+    applyGlow(actx,w,h);
+    setBusy(false);
+  };
+  const applyGlow = (actx,w,h) => {
+    if(!active.glow) return;
+    const snap=actx.getImageData(0,0,w,h);
+    const tmp=document.createElement('canvas'); tmp.width=w; tmp.height=h; const tctx=tmp.getContext('2d');
+    tctx.putImageData(snap,0,0);
+    actx.save();
+    actx.filter='brightness(1.05) saturate(1.06) contrast(0.98)'; actx.drawImage(tmp,0,0);
+    actx.globalAlpha=0.3; actx.filter='blur(2px) brightness(1.04)'; actx.drawImage(tmp,0,0);
+    actx.restore(); actx.globalAlpha=1; actx.filter='none';
+  };
+  useEffect(()=>{ if(srcData.current!==undefined) renderAfter(); }, [active, intensity]);
+
+  const move = x => { const r=wrapRef.current?.getBoundingClientRect(); if(!r) return; setPos(Math.max(4,Math.min(96,((x-r.left)/r.width)*100))); };
+  const toggle = k => setActive(a=>({...a,[k]:!a[k]}));
+  const anyShape = SIM_TREATMENTS.some(t=>t.key!=='glow' && active[t.key]);
+
+  return (
+    <div>
+      <div ref={wrapRef} className="relative w-full overflow-hidden rounded-2xl border border-zinc-200 cursor-ew-resize select-none bg-zinc-100"
+        onMouseMove={e=>move(e.clientX)} onTouchMove={e=>move(e.touches[0].clientX)}>
+        <canvas ref={afterRef} className="w-full h-auto block"/>
+        <div className="absolute bottom-3 right-3"><Badge color="sage">Simulated</Badge></div>
+        {busy && <div className="absolute top-3 right-3 bg-white/85 rounded-full px-2 py-0.5 text-[10px] font-semibold text-zinc-500 flex items-center gap-1"><Icon name="Loader" size={11} className="animate-spin"/>rendering</div>}
+        {showPins && markers?.map((m,i)=>(
+          <div key={i} className="absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none z-10" style={{ left:`${m.at.x*100}%`, top:`${m.at.y*100}%` }}>
+            <span className="w-2.5 h-2.5 rounded-full bg-violet-500 ring-2 ring-white shadow"/>
+            <span className="text-[9px] font-bold text-white bg-violet-600/90 px-1.5 py-0.5 rounded-full whitespace-nowrap shadow">{m.label}</span>
+          </div>
+        ))}
+        <div className="absolute inset-0 overflow-hidden" style={{clipPath:`polygon(0 0,${pos}% 0,${pos}% 100%,0 100%)`}}>
+          <canvas ref={beforeRef} className="w-full h-auto block"/>
+          <div className="absolute bottom-3 left-3"><Badge color="zinc">Your photo</Badge></div>
+        </div>
+        <div className="absolute top-0 bottom-0 flex items-center pointer-events-none" style={{left:`calc(${pos}% - 18px)`}}>
+          <div className="w-9 h-9 bg-white rounded-full shadow-xl flex items-center justify-center border border-zinc-200"><Icon name="ChevronsLeftRight" size={15} className="text-zinc-600"/></div>
+        </div>
+      </div>
+      {!hasLandmarks && <p className="text-[11px] text-amber-600 mt-2 flex items-center gap-1"><Icon name="Info" size={12}/> Shape simulation needs a fresh on-device scan (landmarks). Showing skin-glow preview only.</p>}
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {SIM_TREATMENTS.map(t=>{
+          const on=active[t.key]; const disabled = t.key!=='glow' && !hasLandmarks;
+          return (
+            <button key={t.key} disabled={disabled} onClick={()=>toggle(t.key)}
+              className={`px-2.5 py-1.5 rounded-full text-[11px] font-semibold border flex items-center gap-1 transition ${disabled?'opacity-40 cursor-not-allowed border-zinc-200 text-zinc-400':on?'bg-violet-600 text-white border-violet-600':'border-zinc-200 text-zinc-600 hover:border-zinc-400'}`}>
+              <Icon name={t.icon} size={12}/>{t.label}
+            </button>
+          );
+        })}
+      </div>
+      <div className="mt-3 flex items-center gap-2">
+        <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wide">Intensity</span>
+        <div className="flex gap-1 bg-zinc-100 rounded-lg p-0.5">
+          {SIM_INTENSITY.map(o=>(
+            <button key={o.l} disabled={!hasLandmarks||!anyShape} onClick={()=>setIntensity(o.k)} className={`px-3 py-1 rounded-md text-[11px] font-semibold transition ${intensity===o.k?'bg-white text-zinc-900 shadow-sm':'text-zinc-500'} ${(!hasLandmarks||!anyShape)?'opacity-40':''}`}>{o.l}</button>
+          ))}
+        </div>
+        <button onClick={()=>setShowPins(s=>!s)} className="ml-auto text-[11px] font-medium text-zinc-500 hover:text-zinc-700 flex items-center gap-1"><Icon name={showPins?'EyeOff':'Eye'} size={12}/>{showPins?'Hide pins':'Show pins'}</button>
+      </div>
+    </div>
+  );
+};
+
 // Full scan flow: choose camera or upload → analyze → results (Lovi-style)
 const SkinScan = ({ onComplete, onClose, ctaLabel='Use these results →' }) => {
   const [mode, setMode] = useState(null);       // null | 'camera' | 'upload'
@@ -1737,14 +1885,14 @@ const SkinScan = ({ onComplete, onClose, ctaLabel='Use these results →' }) => 
       </div>
 
       <div className="mt-6">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Simulated result on your photo</h3>
-        <RetouchSlider image={image} result={result}/>
-        <p className="text-[11px] text-zinc-400 mt-2">Drag to compare. Pins show where recommended treatments would target. Simulation is an approximate planning visual, not a guaranteed outcome.</p>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2">Facial balancing simulation — see your result</h3>
+        <BalancingSimulator image={image} landmarks={result.landmarks} markers={result.markers}/>
+        <p className="text-[11px] text-zinc-400 mt-3">Toggle treatments to preview the shape change on your own face, then drag to compare. This is an approximate planning visual driven by your facial landmarks — not a guaranteed outcome.</p>
       </div>
 
       <div className="flex gap-3 mt-6">
         <button onClick={reset} className="px-5 py-3 border border-zinc-200 text-zinc-600 rounded-xl text-sm hover:bg-zinc-50">Rescan</button>
-        <button onClick={()=>onComplete && onComplete({ scores:result.scores, summary:result.summary, image, markers:result.markers })} className="flex-1 px-6 py-3 bg-zinc-900 text-white font-medium rounded-xl text-sm hover:bg-zinc-800">{ctaLabel}</button>
+        <button onClick={()=>onComplete && onComplete({ scores:result.scores, summary:result.summary, image, markers:result.markers, landmarks:result.landmarks })} className="flex-1 px-6 py-3 bg-zinc-900 text-white font-medium rounded-xl text-sm hover:bg-zinc-800">{ctaLabel}</button>
       </div>
     </div>
   );

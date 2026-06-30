@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How I built AestheticSim — Tamara Richards</title>
+<meta name="description" content="Build log for AestheticSim: the AI-assisted facial aesthetics consultation prototype. How I built a two-sided workflow for medspas with React and Gemini." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  :root{--bg:#F4EEE2;--ink:#1A1613;--paper:#FFFDF8;--red:#ED3A24;--pink:#FF4D9D;--blue:#2F6BFF;
+    --green:#11B981;--muted:#6E665B;--shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink);--lime:#C2F23D;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;line-height:1.0;letter-spacing:-0.025em}
+  .serif{font-family:"Fraunces",serif;font-style:italic;font-weight:500}
+  a{color:var(--red)}
+  .accentbar{height:12px;display:flex}.accentbar span{flex:1}
+  .accentbar span:nth-child(1){background:var(--red)}.accentbar span:nth-child(2){background:var(--blue)}
+  .accentbar span:nth-child(3){background:var(--green)}.accentbar span:nth-child(4){background:var(--pink)}
+  nav{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:2px solid var(--ink)}
+  nav .in{max-width:820px;margin:0 auto;padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between}
+  nav .back{font-weight:700;text-decoration:none;color:var(--ink)}
+  nav .name{font-family:"Bricolage Grotesque";font-weight:800}
+  .article{max-width:760px;margin:0 auto;padding:0 24px}
+  header.post{padding:54px 0 30px}
+  .crumb{font-weight:700;font-size:0.74rem;text-transform:uppercase;letter-spacing:0.14em;color:var(--blue)}
+  h1.h{font-size:clamp(2.2rem,6vw,3.6rem);margin:14px 0 16px}
+  .meta{color:var(--muted);font-weight:600;font-size:0.92rem;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .tagrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+  .pill{font-size:0.74rem;font-weight:600;border:2px solid var(--ink);border-radius:999px;padding:4px 11px;background:var(--paper)}
+  .pill.served{background:var(--lime)}
+  .lead{font-size:1.22rem;margin:26px 0 6px;font-weight:500}
+  .hero-img{width:100%;border:2px solid var(--ink);border-radius:20px;box-shadow:var(--shadow);margin:28px 0;display:block}
+  .hero-video{width:100%;border:2px solid var(--ink);border-radius:20px;box-shadow:var(--shadow);margin:28px 0;display:block;aspect-ratio:16/9;object-fit:cover;background:#000}
+  .article h2{font-size:1.7rem;margin:42px 0 12px}
+  .article h3{font-size:1.2rem;margin:26px 0 8px}
+  .article p{margin:14px 0;font-size:1.06rem}
+  .article ul,.article ol{margin:14px 0 14px 22px}.article li{margin:7px 0;font-size:1.05rem}
+  .callout{background:var(--lime);border:2px solid var(--ink);border-radius:16px;box-shadow:var(--shadow-sm);padding:20px 22px;margin:26px 0;font-weight:600}
+  .wip{background:#fff8dc;border:2px solid var(--ink);border-radius:16px;box-shadow:var(--shadow-sm);padding:20px 22px;margin:26px 0}
+  .wip .wip-label{font-weight:800;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;color:#9a7000;margin-bottom:8px}
+  .wip p{margin:0;font-size:1rem;color:var(--muted)}
+  .endcard{background:var(--paper);border:2px solid var(--ink);border-radius:20px;box-shadow:var(--shadow);padding:28px;margin:46px 0 20px;text-align:center}
+  .endcard .serif{color:var(--red);font-size:1.3rem}
+  .endcard .btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+  .endcard a.btn{display:inline-block;background:var(--ink);color:var(--bg);font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:12px;padding:12px 22px;box-shadow:var(--shadow-sm)}
+  .endcard a.btn.sec{background:var(--paper);color:var(--ink)}
+  footer{border-top:2px solid var(--ink);margin-top:40px;padding:30px 0;text-align:center;color:var(--muted);font-size:0.9rem}
+</style>
+</head>
+<body>
+<div class="accentbar"><span></span><span></span><span></span><span></span></div>
+<nav><div class="in"><a class="back" href="../blog.html">← Build logs</a><span class="name">Tamara Richards · Build Log</span></div></nav>
+
+<article>
+<header class="post"><div class="article">
+  <div class="crumb">Build Log · AestheticSim</div>
+  <h1 class="h">How I built the <span class="serif">medspa OS.</span></h1>
+  <div class="meta">
+    <span>By Tamara Richards</span><span>·</span><span class="pill served">Served</span>
+  </div>
+  <div class="tagrow">
+    <span class="pill">React</span>
+    <span class="pill">Gemini</span>
+    <span class="pill">Prompt design</span>
+    <span class="pill">Two-sided workflow</span>
+  </div>
+</div></header>
+
+<div class="article">
+  <p class="lead">AestheticSim turns a subjective medspa consultation into a structured visual plan — with facial mapping, AI-assisted analysis, and a downloadable PDF board a client actually wants to keep.</p>
+
+  <video class="hero-video" autoplay muted loop playsinline poster="../assets/aesthetic-sim-thumb.jpg">
+    <source src="../assets/aesthetic-sim-devices.mp4" type="video/mp4" />
+    <source src="../assets/aesthetic-sim-demo.mp4" type="video/mp4" />
+    <img src="../assets/aesthetic-sim-thumb.jpg" alt="AestheticSim consultation board" />
+  </video>
+
+  <div class="wip">
+    <div class="wip-label">Build log · In progress</div>
+    <p>The full write-up — the spark, the workflow design, the prompt scaffolding, and what changed from first prototype to pitch-ready demo — is being written now. Check back soon, or read the product spec in the meantime.</p>
+  </div>
+
+  <h2>The problem</h2>
+  <p>Medspa consultations are expensive for the client and high-pressure for the clinician. Most of the time, the client leaves with a verbal explanation they can barely remember and no visual proof of what was discussed. The clinician has to rebuild the same conversation from scratch every time. That gap was the spark.</p>
+
+  <p>AestheticSim is a two-sided workflow: the client fills out an intake form, the clinician reviews a structured analysis board, and the session ends with a downloadable PDF consultation board the client takes home.</p>
+
+  <h2>Key flows built</h2>
+  <ul>
+    <li><b>Role selection landing:</b> clinic, client, or admin — each enters the same system differently</li>
+    <li><b>Client intake wizard:</b> structured questions, privacy-safe mock data</li>
+    <li><b>Booked client gate:</b> confirmation screen before intake unlocks</li>
+    <li><b>Clinician review board:</b> client list, analysis states, facial mapping</li>
+    <li><b>Admin panel:</b> branding, booking, disclaimer, integrations</li>
+    <li><b>Downloadable consultation board:</b> executive summary, aging analysis, skin quality, treatment phases, cost forecast</li>
+  </ul>
+
+  <div class="callout"><b>The strongest demo path:</b> open Marcus Webb → run through the clinician board → click "Generate board" → download the PDF. That is the one sequence that shows the full value in under two minutes.</div>
+
+  <h2>What comes next</h2>
+  <p>The full build log will cover: the exact prompts used for facial analysis, how I structured the two-sided role system, the design decisions that keep AestheticSim visually distinct from the warm portfolio brand, and what a real medspa integration would need to make this production-ready.</p>
+
+  <div class="endcard">
+    <p class="serif">The strongest demo on the portfolio, right now.</p>
+    <div class="btns">
+      <a class="btn" href="../specs/aesthetic-sim.html">Read the full spec →</a>
+      <a class="btn sec" href="https://aestheticsim.tiiny.site/" target="_blank" rel="noopener noreferrer">Open live demo ↗</a>
+    </div>
+  </div>
+</div>
+</article>
+
+<footer>Tamara Richards, The (almost) CEO · Ideas, shipped with AI.</footer>
+</body>
+</html>
