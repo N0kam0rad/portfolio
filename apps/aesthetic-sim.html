@@ -123,6 +123,25 @@ const classifyTx = tx => { const t=(tx||'').toLowerCase();
   return /tox|neuromod|filler|sculptra|biostim|prf|ez gel|\blip|inject/.test(t) ? 'injectable'
        : /microneed|sofwave|peel|hydrafacial|skincare|facial|laser|energy/.test(t) ? 'facial' : 'other'; };
 
+// Build an AI-style starter plan from a client's scan + goals so the provider has something to review
+function generateStarterPlan(client){
+  const focus = client?.skinScan?.summary || [];
+  const has = k => focus.includes(k);
+  const analysis = [
+    { region:'Upper Face', severity:2, finding:'Dynamic expression lines — good candidate for preventative neuromodulator while preserving movement.' },
+    { region:'Midface', severity: has('Firmness')?3:2, finding: has('Firmness')?'Early volume loss with reduced malar support. Biostimulator or HA filler would restore the youthful triangle.':'Mild midface flattening; conservative support recommended.' },
+    { region:'Under-eye', severity: has('Under-Eye')?2:1, finding: has('Under-Eye')?'Tear-trough hollowing with shadowing — PRF preferred at this depth over filler.':'Mild under-eye hollowing; monitor.' },
+    { region:'Skin Quality', severity: (has('Texture')||has('Redness'))?2:1, finding: (has('Texture')||has('Redness'))?'Texture/tone irregularity and redness — RF microneedling plus a medical skincare protocol indicated.':'Generally healthy skin; maintenance focus.' },
+  ];
+  const items = [
+    { id:'g1', tx:'Neuromodulator (Tox)', units:40, low:12, high:16, rationale:"Soften forehead, glabella and crow's feet while preserving full expression.", enabled:true, phase:1, roi:9, longevity:'3–4 mos', category:'injectable' },
+    { id:'g2', tx:'HA Filler (Midface)', units:2, low:700, high:900, rationale:'Restore malar support bilaterally for a naturally lifted midface.', enabled: has('Firmness'), phase:1, roi:8, longevity:'12–18 mos', category:'injectable' },
+    { id:'g3', tx:'PRF / EZ Gel', units:1, low:600, high:900, rationale:'Under-eye rejuvenation — autologous, low vascular risk at this depth.', enabled: has('Under-Eye'), phase:2, roi:8, longevity:'6–12 mos', category:'injectable' },
+    { id:'g4', tx:'RF Microneedling', units:3, low:500, high:700, rationale:'Texture, pore refinement and collagen stimulation. Series of 3 spaced 4–6 weeks.', enabled: true, phase:2, roi:7, longevity:'12 mos', category:'facial' },
+  ];
+  return { analysis, items, products:[] };
+}
+
 const SKINCARE_AM = [
   { step:'Cleanser', product:'Gentle sulfate-free cleanser', reason:'Preserve barrier function' },
   { step:'Vitamin C', product:'15% L-Ascorbic Acid serum', reason:'Antioxidant + pigment support' },
@@ -418,6 +437,9 @@ const IntakeWizard = ({ clientName, onComplete }) => {
     const [previews, setPreviews]   = useState({});
     const [uploading, setUploading] = useState(false);
     const [uploadIdx, setUploadIdx] = useState(-1);
+    const [analyzing, setAnalyzing] = useState(false);
+    const [scanResult, setScanResult] = useState(null);
+    const [scanFailed, setScanFailed] = useState(false);
     const [done, setDone]           = useState(false);
     const inputRefs = PHOTO_SLOTS.map(() => React.useRef());
 
@@ -429,16 +451,33 @@ const IntakeWizard = ({ clientName, onComplete }) => {
       reader.readAsDataURL(file);
     };
 
+    // run real analysis on the front-neutral photo (fall back to first available)
+    const runAnalysis = () => new Promise(resolve => {
+      const url = previews[0] || previews[Object.keys(previews)[0]];
+      if (!url) return resolve(null);
+      const img = new Image();
+      img.onload = async () => {
+        try { const r = await analyzeFace(img); resolve({ scores:r.scores, summary:r.summary, image:url, markers:r.markers, landmarks:r.landmarks }); }
+        catch(e){ resolve(null); }
+      };
+      img.onerror = () => resolve(null);
+      img.src = url;
+    });
+
     const handleUpload = () => {
       if (!Object.keys(previews).length) return;
-      setUploading(true);
-      // Animate each filled slot sequentially then complete
+      setUploading(true); setScanFailed(false);
       let idx = 0;
       const filled = Object.keys(previews).map(Number);
-      const tick = () => {
-        if (idx >= filled.length) { setTimeout(() => { setUploading(false); setDone(true); }, 400); return; }
-        setUploadIdx(filled[idx]);
-        idx++;
+      const tick = async () => {
+        if (idx >= filled.length) {
+          setUploadIdx(-1); setAnalyzing(true);
+          const r = await runAnalysis();
+          setScanResult(r); setScanFailed(!r);
+          setAnalyzing(false); setUploading(false); setDone(true);
+          return;
+        }
+        setUploadIdx(filled[idx]); idx++;
         setTimeout(tick, 600);
       };
       setTimeout(tick, 300);
@@ -510,20 +549,36 @@ const IntakeWizard = ({ clientName, onComplete }) => {
               disabled={uploading || !hasAny}
               className="w-full py-3.5 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition flex items-center justify-center gap-2 disabled:opacity-30"
             >
-              {uploading
+              {analyzing
+                ? <><Icon name="ScanFace" size={16} className="animate-pulse"/><span>Analyzing your photos…</span></>
+                : uploading
                 ? <><Icon name="Loader" size={16} className="animate-spin"/><span>Uploading & checking quality…</span></>
-                : <><Icon name="Upload" size={16}/><span>Upload {Object.keys(previews).length > 0 ? `${Object.keys(previews).length} photo${Object.keys(previews).length>1?'s':''}` : '& Submit'}</span></>
+                : <><Icon name="Upload" size={16}/><span>Upload & analyze {Object.keys(previews).length > 0 ? `${Object.keys(previews).length} photo${Object.keys(previews).length>1?'s':''}` : ''}</span></>
               }
             </button>
+            <p className="text-center text-[11px] text-zinc-400 mt-2">We run an on-device skin analysis on your front photo so your provider arrives prepared.</p>
           </>
         ) : (
-          <div className="text-center py-10 fade-up">
+          <div className="text-center py-8 fade-up">
             <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-100">
               <Icon name="CheckCircle2" size={32} className="text-green-500"/>
             </div>
             <h3 className="text-xl font-serif font-semibold text-zinc-800 mb-2">You're all set.</h3>
-            <p className="text-zinc-500 text-sm mb-6">Your provider is reviewing your intake and will have a personalized plan ready before your appointment.</p>
-            <button onClick={()=>onComplete(data)} className="px-8 py-3.5 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition">
+            {scanResult ? (
+              <>
+                <p className="text-zinc-500 text-sm mb-4">We analyzed your photos and built your skin report. Your provider will review everything and finalize your plan.</p>
+                <div className="flex items-center justify-center gap-2 mb-6 flex-wrap">
+                  <div className="text-center px-3 py-2 rounded-xl bg-zinc-50 border border-zinc-100">
+                    <p className="text-xl font-serif font-semibold" style={{color:scoreColor(scanResult.scores.overall)}}>{scanResult.scores.overall}</p>
+                    <p className="text-[10px] text-zinc-400 uppercase">Overall</p>
+                  </div>
+                  <p className="text-xs text-zinc-500 max-w-[14rem] text-left">Focus areas: <strong className="text-zinc-700">{scanResult.summary.join(' · ')}</strong>. Full report & simulation are on your dashboard.</p>
+                </div>
+              </>
+            ) : (
+              <p className="text-zinc-500 text-sm mb-6">{scanFailed ? "Your photos are saved for your provider. We couldn't auto-analyze the front photo (try even, front-facing light) — you can run a scan anytime from your dashboard." : 'Your provider is reviewing your intake and will have a personalized plan ready before your appointment.'}</p>
+            )}
+            <button onClick={()=>onComplete({ ...data, photos:Object.values(previews), skinScan:scanResult })} className="px-8 py-3.5 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition">
               View my dashboard →
             </button>
           </div>
@@ -2215,16 +2270,25 @@ const ClinicianApp = ({ db, onUpdateDb, settings }) => {
         )}
         {reviewTab==='sim' && (
           <div className="h-full overflow-y-auto scrollbar-thin p-8">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-6">Aesthetic Simulations</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl">
-              {['Full Facial Balancing','Neuromodulator Only','Biostimulator / Collagen', client.intake?.glp1?'Weight-Loss + Support':'Skin Rejuvenation'].map(t=>(
-                <div key={t}>
-                  <ImageSlider src={client.photo}/>
-                  <p className="font-serif text-zinc-800 mt-3 text-sm">{t}</p>
-                  <p className="text-xs text-zinc-400 mt-0.5 flex items-center gap-1"><Icon name="ShieldCheck" size={11} className="text-green-500"/> Identity validated</p>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-1">Facial Balancing Simulation</h3>
+            <p className="text-sm text-zinc-500 mb-6 flex items-center gap-1"><Icon name="ShieldCheck" size={13} className="text-green-500"/> Driven by the client's facial landmarks · identity preserved · approximate planning visual</p>
+            {client.skinScan?.image ? (
+              <div className="max-w-xl">
+                <BalancingSimulator image={client.skinScan.image} landmarks={client.skinScan.landmarks} markers={client.skinScan.markers}/>
+              </div>
+            ) : (
+              <div className="max-w-xl">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {['Full Facial Balancing','Skin Rejuvenation'].map(t=>(
+                    <div key={t}>
+                      <ImageSlider src={client.photo}/>
+                      <p className="font-serif text-zinc-800 mt-3 text-sm">{t}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+                <p className="text-xs text-amber-600 mt-4 flex items-center gap-1"><Icon name="Info" size={12}/> This client hasn't completed an on-device scan yet, so the shape simulator is unavailable — showing a generic tone preview. Ask them to run a scan from their dashboard.</p>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -2281,8 +2345,15 @@ const ClientApp = ({ db, clientId, onUpdateDb, settings }) => {
   }
 
   if ((client?.state==='booked'||client?.state==='invited') && showIntake) {
-    return <IntakeWizard clientName={client.name} onComplete={intake=>{
-      onUpdateDb(p=>({...p, clients:p.clients.map(c=>c.id===clientId?{...c,intake,state:'analyzing'}:c)}));
+    return <IntakeWizard clientName={client.name} onComplete={payload=>{
+      const { photos, skinScan, ...intake } = payload;
+      onUpdateDb(p=>{
+        const clients = p.clients.map(c=>c.id===clientId?{...c, intake, photos:photos||c.photos, skinScan:skinScan||c.skinScan, state:'needs_review'}:c);
+        const updated = clients.find(c=>c.id===clientId);
+        const plans = {...p.plans};
+        if(!plans[clientId]) plans[clientId] = generateStarterPlan(updated);
+        return {...p, clients, plans};
+      });
     }}/>;
   }
 
@@ -2382,6 +2453,16 @@ const ClientApp = ({ db, clientId, onUpdateDb, settings }) => {
                 </div>
               )}
             </div>
+            {client.skinScan?.landmarks && (
+              <div className="bg-white p-6 rounded-3xl border border-zinc-200 shadow-sm">
+                <div className="flex items-center justify-between mb-1">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">Your Facial Balancing Simulation</h4>
+                  {isApproved && <Badge color="green">Provider approved</Badge>}
+                </div>
+                <p className="text-sm text-zinc-500 mb-4">{isApproved ? 'Your provider has reviewed and approved your plan. Toggle treatments to preview your result.' : 'A preview from your scan. Your provider will confirm the final recommendations after review.'}</p>
+                <BalancingSimulator image={client.skinScan.image} landmarks={client.skinScan.landmarks} markers={client.skinScan.markers}/>
+              </div>
+            )}
           </div>
         )}
         {view==='scan' && (
