@@ -1740,14 +1740,14 @@ function buildSimControls(lms, w, h, active, strength) {
   const ctrls=[], smooth=[], points=[];
   const bloat=(i,r,s,meta)=>{ ctrls.push({t:'bloat',p:P(i),r:R*r,s:s*strength*dw(i)}); if(meta&&!meta._added){points.push({...meta,at:{x:lms[i].x,y:lms[i].y}});} };
   const push=(i,r,vx,vy,meta)=>{ ctrls.push({t:'push',p:P(i),r:R*r,v:{x:vx*dw(i),y:vy*dw(i)}}); if(meta){points.push({...meta,at:{x:lms[i].x,y:lms[i].y}});} };
-  if (active.cheeks){ const m={zone:'Cheek',kind:'filler',dose:'~1–2 mL'}; bloat(50,0.17,0.40,m); bloat(280,0.17,0.40,{...m}); }
-  if (active.lips){ const m={zone:'Lips',kind:'filler',dose:'~1 mL'}; bloat(0,0.06,0.38,m); bloat(17,0.065,0.48,{...m}); }
-  if (active.undereye){ const m={zone:'Tear-trough',kind:'regenerative',dose:'PRF'}; push(230,0.10,0,-R*0.010*strength,m); push(450,0.10,0,-R*0.010*strength,{...m}); }
-  if (active.chin){ const m={zone:'Chin',kind:'filler',dose:'~1–2 mL'}; push(152,0.14,0,R*0.018*strength,m); }
-  if (active.jaw){ const m={zone:'Jawline',kind:'filler',dose:'~2–4 mL'}; push(172,0.11,-R*0.012*strength,R*0.005*strength,m); push(397,0.11,R*0.012*strength,R*0.005*strength,{...m}); }
-  if (active.masseter){ const m={zone:'Masseter (Tox)',kind:'neuromodulator',dose:'40–60 U'}; push(58,0.12,R*0.011*strength,0,m); push(288,0.12,-R*0.011*strength,0,{...m}); }
-  if (active.brow){ const m={zone:'Brow (Tox)',kind:'neuromodulator',dose:'~6–10 U'}; push(105,0.09,0,-R*0.012*strength,m); push(334,0.09,0,-R*0.012*strength,{...m});
-    smooth.push({p:P(9),r:R*0.17}); smooth.push({p:P(8),r:R*0.10}); }
+  if (active.cheeks){ const m={zone:'Cheek',kind:'filler',dose:'~1–2 mL'}; bloat(50,0.19,0.58,m); bloat(280,0.19,0.58,{...m}); }
+  if (active.lips){ const m={zone:'Lips',kind:'filler',dose:'~1 mL'}; bloat(0,0.06,0.50,m); bloat(17,0.065,0.62,{...m}); }
+  if (active.undereye){ const m={zone:'Tear-trough',kind:'regenerative',dose:'PRF'}; push(230,0.10,0,-R*0.014*strength,m); push(450,0.10,0,-R*0.014*strength,{...m}); }
+  if (active.chin){ const m={zone:'Chin',kind:'filler',dose:'~1–2 mL'}; push(152,0.14,0,R*0.024*strength,m); }
+  if (active.jaw){ const m={zone:'Jawline',kind:'filler',dose:'~2–4 mL'}; push(172,0.11,-R*0.016*strength,R*0.006*strength,m); push(397,0.11,R*0.016*strength,R*0.006*strength,{...m}); }
+  if (active.masseter){ const m={zone:'Masseter (Tox)',kind:'neuromodulator',dose:'40–60 U'}; push(58,0.12,R*0.015*strength,0,m); push(288,0.12,-R*0.015*strength,0,{...m}); }
+  if (active.brow){ const m={zone:'Brow (Tox)',kind:'neuromodulator',dose:'~6–10 U'}; push(105,0.09,0,-R*0.016*strength,m); push(334,0.09,0,-R*0.016*strength,{...m});
+    smooth.push({p:P(9),r:R*0.19}); smooth.push({p:P(8),r:R*0.11}); }
   return { ctrls, smooth, points };
 }
 // inverse-mapped bilinear warp of an ImageData given control points
@@ -1787,7 +1787,7 @@ const BalancingSimulator = ({ image, landmarks, markers, scores, defaultActive, 
     let cancelled=false;
     const img=new Image(); img.crossOrigin='anonymous';
     img.onload=()=>{ if(cancelled) return;
-      const maxW=380, scale=Math.min(1,maxW/img.naturalWidth);
+      const maxW=640*Math.min(window.devicePixelRatio||1,2), scale=Math.min(1,maxW/img.naturalWidth);
       const w=Math.round(img.naturalWidth*scale), h=Math.round(img.naturalHeight*scale);
       dims.current={w,h};
       [beforeRef.current, afterRef.current, overlayRef.current].forEach(cv=>{ if(cv){cv.width=w; cv.height=h;} });
@@ -1904,7 +1904,11 @@ const BalancingSimulator = ({ image, landmarks, markers, scores, defaultActive, 
           <div className="w-9 h-9 bg-white rounded-full shadow-xl flex items-center justify-center border border-zinc-200"><Icon name="ChevronsLeftRight" size={15} className="text-zinc-600"/></div>
         </div>
       </div>
-      {!hasLandmarks && <p className="text-[11px] text-amber-600 mt-2 flex items-center gap-1"><Icon name="Info" size={12}/> Shape simulation needs a fresh on-device scan (landmarks). Showing skin-glow preview only.</p>}
+      {!hasLandmarks ? (
+        <p className="text-[11px] text-amber-600 mt-2 flex items-center gap-1"><Icon name="Info" size={12}/> Shape simulation needs a fresh on-device scan (landmarks). Showing skin-glow preview only.</p>
+      ) : (
+        <p className="text-[11px] text-zinc-400 mt-2 flex items-center gap-1"><Icon name="Info" size={12}/> Drag the slider to compare. Simulated change reads most clearly on a neutral, relaxed expression — it can look subtle on a smiling photo.</p>
+      )}
       <div className="mt-3 flex flex-wrap gap-1.5">
         {SIM_TREATMENTS.map(t=>{
           const on=active[t.key]; const disabled = t.key!=='glow' && !hasLandmarks;
@@ -2004,7 +2008,7 @@ const SkinScan = ({ onComplete, onClose, ctaLabel='Use these results →', enabl
         </button>
         <button onClick={()=>fileRef.current?.click()} className="w-full p-4 rounded-2xl border-2 border-zinc-200 hover:border-violet-400 hover:bg-violet-50/40 transition flex items-center gap-4 text-left">
           <div className="w-11 h-11 rounded-xl bg-zinc-100 text-zinc-700 flex items-center justify-center shrink-0"><Icon name="ImagePlus" size={20}/></div>
-          <div><p className="font-semibold text-zinc-800 text-sm">Upload a photo</p><p className="text-xs text-zinc-500">Use a clear, front-facing photo from your device</p></div>
+          <div><p className="font-semibold text-zinc-800 text-sm">Upload a photo</p><p className="text-xs text-zinc-500">Clear, front-facing, neutral expression works best</p></div>
           <Icon name="ChevronRight" size={18} className="text-zinc-300 ml-auto"/>
         </button>
         <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onUpload}/>
