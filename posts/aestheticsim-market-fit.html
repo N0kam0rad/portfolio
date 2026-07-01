@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AestheticSim — Strategic Market-Fit Analysis · Tamara Richards</title>
+<meta name="description" content="An honest, researched market-fit analysis for AestheticSim: the problem, the competitive gap, market sizing with assumptions shown, and what's not yet validated." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --site-bg:#F4EEE2; --site-ink:#1A1613; --site-red:#ED3A24; --site-blue:#2F6BFF; --site-green:#11B981; --site-pink:#FF4D9D; --site-lime:#C2F23D;
+    --bg:#F1F1F5; --paper:#FFFFFF; --ink:#18181B; --ink-soft:#52525B; --ink-faint:#A1A1AA;
+    --line:#E4E4E7; --violet:#7C3AED; --violet-deep:#5B21B6; --violet-soft:#EDE9FE;
+    --sage:#3F7A53; --sage-soft:#E2EDE5; --amber:#B45309; --amber-soft:#FEF3C7;
+    --zinc-900:#18181B; --zinc-950:#09090B;
+    --maxw:980px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  /* site chrome — matches the rest of the portfolio's nav/accent-bar convention */
+  .accentbar{height:12px; display:flex;}
+  .accentbar span{flex:1;}
+  .accentbar span:nth-child(1){background:var(--site-red);}
+  .accentbar span:nth-child(2){background:var(--site-blue);}
+  .accentbar span:nth-child(3){background:var(--site-green);}
+  .accentbar span:nth-child(4){background:var(--site-pink);}
+  .sitenav{position:sticky; top:0; z-index:60; background:var(--site-bg); border-bottom:2px solid var(--site-ink); font-family:'Inter',system-ui,sans-serif;}
+  .sitenav .in{max-width:980px; margin:0 auto; padding:0 24px; height:56px; display:flex; align-items:center; justify-content:space-between;}
+  .sitenav .back{font-weight:700; text-decoration:none; color:var(--site-ink); font-size:.92rem;}
+  .sitenav .pill{font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; background:var(--site-lime); border:2px solid var(--site-ink); border-radius:999px; padding:4px 11px;}
+
+  .deck{position:relative;}
+  .slide{
+    min-height:100vh; width:100%; display:flex; align-items:center; justify-content:center;
+    padding:90px 32px; position:relative; border-bottom:1px solid var(--line);
+  }
+  .slide.dark{background:linear-gradient(160deg,var(--zinc-950),var(--zinc-900)); color:#F4F4F5; border-bottom:none;}
+  .slide.tint-violet{background:linear-gradient(180deg,#FFFFFF, #FAF8FF);}
+  .slide.tint-sage{background:linear-gradient(180deg,#FFFFFF, #F6FAF7);}
+  .slide.tint-amber{background:linear-gradient(180deg,#FFFFFF, #FFFBF0);}
+  .in{max-width:var(--maxw); width:100%; margin:0 auto;}
+
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace; font-size:.72rem; font-weight:500; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--violet); display:flex; align-items:center; gap:10px; margin-bottom:18px;
+  }
+  .dark .eyebrow{color:#C4B5FD;}
+  .eyebrow .n{color:var(--ink-faint); font-weight:500;}
+  .dark .eyebrow .n{color:#71717A;}
+
+  h2.slidehead{font-size:clamp(1.9rem,4.2vw,3rem); font-weight:600; line-height:1.08; letter-spacing:-0.01em; margin-bottom:18px; max-width:760px;}
+  .lead{font-size:1.12rem; color:var(--ink-soft); max-width:620px; margin-bottom:8px;}
+  .dark .lead{color:#D4D4D8;}
+  .dark p, .dark li{color:#D4D4D8;}
+
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:32px;}
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:32px;}
+  @media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+  .card{background:var(--paper); border:1px solid var(--line); border-radius:20px; padding:26px; box-shadow:0 1px 2px rgba(0,0,0,.03);}
+  .dark .card{background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.12);}
+  .card h3{font-size:1.05rem; font-weight:600; margin-bottom:8px;}
+  .card p{font-size:.92rem; color:var(--ink-soft); margin:0;}
+  .card .tag{display:inline-block; font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:3px 10px; border-radius:999px; margin-bottom:10px;}
+  .tag.violet{background:var(--violet-soft); color:var(--violet-deep);}
+  .tag.sage{background:var(--sage-soft); color:var(--sage);}
+  .tag.amber{background:var(--amber-soft); color:var(--amber);}
+  .tag.zinc{background:#F4F4F5; color:var(--ink-soft);}
+
+  .stat{text-align:left;}
+  .stat .num{font-family:'Fraunces',serif; font-size:2.6rem; font-weight:600; line-height:1; color:var(--violet-deep);}
+  .dark .stat .num{color:#C4B5FD;}
+  .stat .lbl{font-size:.85rem; color:var(--ink-soft); margin-top:6px;}
+  .dark .stat .lbl{color:#A1A1AA;}
+
+  .callout{border-radius:20px; padding:24px 28px; margin-top:28px; font-size:.96rem;}
+  .callout.amber{background:var(--amber-soft); border:1px solid #FDE68A; color:#78350F;}
+  .callout.sage{background:var(--sage-soft); border:1px solid #BBD9C4; color:#1E4029;}
+  .callout.violet{background:var(--violet-soft); border:1px solid #DDD6FE; color:#4C1D95;}
+  .callout b{font-weight:700;}
+
+  ul.clean{list-style:none; margin-top:18px;}
+  ul.clean li{position:relative; padding-left:24px; margin-bottom:10px; font-size:.97rem; color:var(--ink-soft);}
+  .dark ul.clean li{color:#D4D4D8;}
+  ul.clean li::before{content:'→'; position:absolute; left:0; color:var(--violet); font-weight:700;}
+  .dark ul.clean li::before{color:#C4B5FD;}
+  .tint-amber ul.clean li::before{color:var(--amber);}
+
+  .source{font-size:.74rem; color:var(--ink-faint); margin-top:4px;}
+  .dark .source{color:#71717A;}
+
+  .matrix{width:100%; border-collapse:collapse; margin-top:28px; font-size:.88rem;}
+  .matrix th, .matrix td{padding:12px 14px; text-align:left; border-bottom:1px solid var(--line);}
+  .matrix th{font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-faint); font-weight:600;}
+  .matrix td.lbl{font-weight:600;}
+  .pill-ok{color:var(--sage); font-weight:700;}
+  .pill-no{color:#B91C1C; font-weight:700;}
+  .pill-mid{color:var(--amber); font-weight:700;}
+
+  .progress{position:fixed; right:18px; top:calc(50% + 28px); transform:translateY(-50%); display:flex; flex-direction:column; gap:9px; z-index:50;}
+  .progress .dot{width:6px; height:6px; border-radius:50%; background:var(--line); transition:all .25s; cursor:pointer;}
+  .progress .dot.active{background:var(--violet); height:20px; border-radius:4px;}
+  @media(max-width:760px){.progress{display:none;}}
+
+  .endcard{text-align:center;}
+  .endcard .serif{font-style:italic; font-size:1.3rem; color:#C4B5FD;}
+  .badge-row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:22px;}
+  .badge{font-size:.78rem; font-weight:600; border:1px solid rgba(255,255,255,.2); border-radius:999px; padding:7px 16px; color:#D4D4D8;}
+  .endcard a.badge{text-decoration:none; transition:background .15s;}
+  .endcard a.badge:hover{background:rgba(255,255,255,.1);}
+
+  .num-big{font-family:'Fraunces',serif; font-weight:700; font-size:5rem; line-height:1; opacity:.15; position:absolute; top:40px; right:48px;}
+  @media(max-width:760px){.num-big{display:none;}}
+</style>
+</head>
+<body>
+<div class="accentbar"><span></span><span></span><span></span><span></span></div>
+<nav class="sitenav"><div class="in"><a class="back" href="../specs/aesthetic-sim.html">← Back to AestheticSim</a><span class="pill">Strategic analysis</span></div></nav>
+
+<div class="deck">
+
+  <!-- 00 COVER -->
+  <section class="slide dark" id="s0">
+    <div class="in" style="text-align:center;">
+      <p class="eyebrow" style="justify-content:center;">AestheticSim · Strategic Analysis</p>
+      <h1 class="serif" style="font-size:clamp(2.6rem,7vw,4.8rem); font-weight:700; letter-spacing:-0.02em;">Is this a real company,<br/><span style="font-style:italic; color:#C4B5FD;">or just a good demo?</span></h1>
+      <p class="lead" style="margin:24px auto 0; color:#D4D4D8; max-width:560px; text-align:center;">An honest market-fit analysis of AestheticSim — researched, not hyped. Written to make a decision, not to pitch anyone.</p>
+      <div class="badge-row">
+        <span class="badge">Medspa SaaS</span>
+        <span class="badge">AI consultation + simulation</span>
+        <span class="badge">Pre-validation stage</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 THE PROBLEM -->
+  <section class="slide" id="s1">
+    <div class="in">
+      <p class="eyebrow"><span class="n">01</span> · The Problem</p>
+      <h2 class="slidehead">Medspa consultations leave nothing behind.</h2>
+      <p class="lead">A client sits through a verbal explanation and maybe a static photo. They leave with no durable record of what was discussed. The provider rebuilds the same explanation, from scratch, for every single consultation.</p>
+      <div class="grid2">
+        <div class="card"><span class="tag violet">For the client</span><h3>No visual proof</h3><p>They can barely remember what was actually recommended by the time they get to checkout, let alone home.</p></div>
+        <div class="card"><span class="tag violet">For the provider</span><h3>No repeatable system</h3><p>Every consultation starts at zero — there's no structured intake, no AI-assisted analysis, no plan template to build from.</p></div>
+      </div>
+      <div class="callout violet"><b>The actual gap:</b> nobody sells a no-hardware, affordably-priced AI consultation + simulation + treatment-planning tool to the independent medspa that can't justify a $20–40K imaging system.</div>
+    </div>
+  </section>
+
+  <!-- 02 WHY NOW -->
+  <section class="slide tint-violet" id="s2">
+    <div class="in">
+      <p class="eyebrow"><span class="n">02</span> · Why Now</p>
+      <h2 class="slidehead">The market is huge, fragmented, and getting squeezed.</h2>
+      <div class="grid3">
+        <div class="stat"><div class="num">$24–28B</div><div class="lbl">US medspa market, 2026</div></div>
+        <div class="stat"><div class="num">~16%</div><div class="lbl">CAGR toward $78–105B by 2033–35</div></div>
+        <div class="stat"><div class="num">42,473</div><div class="lbl">active US medspa operators</div></div>
+      </div>
+      <div class="grid3">
+        <div class="stat"><div class="num">97%</div><div class="lbl">are single-location / independent</div></div>
+        <div class="stat"><div class="num">0.2%</div><div class="lbl">max market share held by any one chain</div></div>
+        <div class="stat"><div class="num">$3.1B</div><div class="lbl">in PE roll-up deals, last 5 years</div></div>
+      </div>
+      <p class="source">Sources: Precedence Research, Grand View Research, Orbital med-spa operator data (2026).</p>
+      <div class="callout violet"><b>Why this matters:</b> private-equity-backed chains are consolidating and rolling up the most profitable independents. The other 97% face that competitive pressure without access to the same tooling — that's the urgency, not just the size.</div>
+    </div>
+  </section>
+
+  <!-- 03 THE GAP -->
+  <section class="slide" id="s3">
+    <div class="in">
+      <p class="eyebrow"><span class="n">03</span> · The Competitive Gap</p>
+      <h2 class="slidehead">Nobody serves the 97% with simulation.</h2>
+      <table class="matrix">
+        <tr><th>Player</th><th>Category</th><th>Simulation / AI planning</th><th>Hardware needed</th><th>Priced for solo/independent</th></tr>
+        <tr><td class="lbl">Canfield VECTRA</td><td>3D imaging system</td><td class="pill-ok">Yes — best in class</td><td class="pill-no">Dedicated capture rig</td><td class="pill-no">No — capital outlay</td></tr>
+        <tr><td class="lbl">Crisalix</td><td>Cloud 3D simulator</td><td class="pill-ok">Yes</td><td class="pill-mid">Camera/photos</td><td class="pill-no">No — enterprise quote sales</td></tr>
+        <tr><td class="lbl">Aesthetic Record</td><td>EMR / charting</td><td class="pill-no">None</td><td class="pill-ok">None</td><td class="pill-ok">Yes — solo-friendly</td></tr>
+        <tr><td class="lbl">PatientNow / Vagaro</td><td>Practice mgmt / CRM</td><td class="pill-no">None</td><td class="pill-ok">None</td><td class="pill-ok">Yes</td></tr>
+        <tr><td class="lbl">GlossGenius / Mangomint / Boulevard</td><td>Booking + EMR</td><td class="pill-no">None</td><td class="pill-ok">None</td><td class="pill-ok">Yes</td></tr>
+        <tr><td class="lbl" style="color:var(--violet-deep)">AestheticSim (this)</td><td>AI consult + sim</td><td class="pill-ok">Yes — on-device</td><td class="pill-ok">None</td><td class="pill-ok">Designed for it</td></tr>
+      </table>
+      <p class="source">Pricing/feature claims per public sites and aggregated 2026 medspa-software comparisons (Optimantra, PatientNow, GlossGenius); Crisalix/VECTRA pricing not public — inferred from enterprise sales motion.</p>
+    </div>
+  </section>
+
+  <!-- 04 WHAT'S BUILT -->
+  <section class="slide tint-sage" id="s4">
+    <div class="in">
+      <p class="eyebrow"><span class="n">04</span> · What's Already Built</p>
+      <h2 class="slidehead">This isn't a sketch. It's a working prototype.</h2>
+      <ul class="clean">
+        <li>Real on-device facial analysis (MediaPipe Face Landmarker — 478 3D landmarks, no server, nothing leaves the device by default)</li>
+        <li>Skin scoring across 7 dimensions with a tappable heat-map overlay</li>
+        <li>Identity-preserving on-photo treatment simulation, calibrated to <b>real clinical units</b> — Botox in U per zone, filler in mL per region, Sculptra in vials, all cited to published dosing research</li>
+        <li>Full workflow: client intake → photo capture → provider review queue → auto-generated starter plan → provider customization (treatment library, custom treatments, product recommendations) → approval → client-facing report</li>
+        <li>Provider-side governance: a dose-visibility toggle and a full simulation kill-switch (for jurisdictions that regulate digital before/afters)</li>
+      </ul>
+      <div class="callout sage"><b>Cost today: effectively $0.</b> 100% client-side, hosted free on GitHub Pages. No infrastructure bill is forcing a decision yet.</div>
+    </div>
+  </section>
+
+  <!-- 05 PRICING REALITY -->
+  <section class="slide" id="s5">
+    <div class="in">
+      <p class="eyebrow"><span class="n">05</span> · Pricing Reality Check</p>
+      <h2 class="slidehead">The market already pays for adjacent features.</h2>
+      <div class="grid3">
+        <div class="card"><h3>GlossGenius</h3><p>$24/mo — general, light medspa features</p></div>
+        <div class="card"><h3>AestheticsPro</h3><p>$160/mo — advanced medspa EMR</p></div>
+        <div class="card"><h3>Boulevard</h3><p>$158–369/mo — tiered, per location</p></div>
+      </div>
+      <div class="callout violet" style="margin-top:24px;"><b>The tell:</b> before/after photo storage is already sold as a $50–150/mo add-on inside existing EMRs. That's direct proof the market pays for visual-consultation tooling — simulation + treatment planning is a natural step up from "storage," not a new category to invent demand for.</div>
+      <p class="lead" style="margin-top:22px;">Plausible price point for AestheticSim: <b style="color:var(--ink)">$99–199/mo</b>, standalone or as an EMR add-on.</p>
+      <p class="source">Sources: Optimantra, Vagaro EMR pricing guides, FindEMR (2026).</p>
+    </div>
+  </section>
+
+  <!-- 06 TAM SAM SOM -->
+  <section class="slide tint-violet" id="s6">
+    <div class="in">
+      <p class="eyebrow"><span class="n">06</span> · Sizing The Opportunity</p>
+      <h2 class="slidehead">Shown with the math, not just the conclusion.</h2>
+      <div class="grid3">
+        <div class="card"><span class="tag zinc">TAM</span><div class="stat"><div class="num" style="font-size:1.8rem;">$few-hundred M</div></div><p style="margin-top:8px;">Broad US medspa software/tech spend — directional, not precisely measured anywhere.</p></div>
+        <div class="card"><span class="tag violet">SAM</span><div class="stat"><div class="num" style="font-size:1.8rem;">~$74M/yr</div></div><p style="margin-top:8px;">41,200 independent US medspas (97% of 42,473) × ~$150/mo plausible price.</p></div>
+        <div class="card"><span class="tag sage">SOM (yr 2–3)</span><div class="stat"><div class="num" style="font-size:1.8rem;">~$720K ARR</div></div><p style="margin-top:8px;">A hypothesis: ~1% penetration of SAM ≈ 400 customers. Not a forecast.</p></div>
+      </div>
+      <div class="callout amber"><b>Be skeptical of this math.</b> It assumes independents will pay EMR-tier prices for a non-EMR tool, that 1% penetration is achievable solo, and ignores customer acquisition cost entirely. Treat it as a sanity-check floor, not a business case.</div>
+    </div>
+  </section>
+
+  <!-- 07 NOT YET VALIDATED -->
+  <section class="slide tint-amber" id="s7">
+    <div class="num-big" style="color:var(--amber); opacity:.18;">!</div>
+    <div class="in">
+      <p class="eyebrow" style="color:var(--amber);"><span class="n" style="color:var(--amber);">07</span> · What's NOT Yet Validated</p>
+      <h2 class="slidehead">The honest part.</h2>
+      <ul class="clean" style="margin-top:24px;">
+        <li><b>Zero paying customers.</b> Zero confirmed willingness-to-pay. Every number on the last two slides is a model, not a measurement.</li>
+        <li><b>No real-world clinical/legal review.</b> "Approximate planning visual" disclaimers exist in-app, but no actual liability review has happened for real patient use.</li>
+        <li><b>State-by-state regulation is unresearched.</b> Several states regulate digitally-simulated before/afters in medical advertising — which states, and how, isn't mapped yet.</li>
+        <li><b>Solo go-to-market capacity is unproven.</b> A 41,200-operator fragmented market usually needs a sales motion — can one person actually reach and convert independents without a team?</li>
+        <li><b>Incumbents can move down-market.</b> Crisalix or a well-funded EMR (Aesthetic Record, Boulevard) adding simulation would erase the wedge fast.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 08 GTM -->
+  <section class="slide" id="s8">
+    <div class="in">
+      <p class="eyebrow"><span class="n">08</span> · Go-To-Market Path</p>
+      <h2 class="slidehead">Where to actually find the first 10 conversations.</h2>
+      <div class="grid2">
+        <div class="card"><span class="tag sage">Free, fast</span><h3>Facebook groups</h3><p>MedSpa & Clinic Owners Group, Med Spa Owners Community, Medical Spa Connect, and others — 5+ identified, active communities.</p></div>
+        <div class="card"><span class="tag violet">Sustained access</span><h3>AmSpa membership</h3><p>$395–845/yr, 3,000+ members — the actual trade association for exactly this audience.</p></div>
+        <div class="card"><span class="tag violet">Injector-specific</span><h3>AAFE forum</h3><p>$597/yr — discussion forum for nurses/NPs/PAs who run independent injection practices.</p></div>
+        <div class="card"><span class="tag zinc">In-person</span><h3>Aesthetic Next</h3><p>Sept 10–13, 2026, Dallas — explicitly serves owners, injectors, directors, managers.</p></div>
+      </div>
+      <div class="callout violet"><b>The lean validation script is already written:</b> ask about current spend/tools first, their actual pain point second, show the live demo third, and ask for a real price reaction last — Mom Test style, not a pitch.</div>
+    </div>
+  </section>
+
+  <!-- 09 ROADMAP -->
+  <section class="slide tint-sage" id="s9">
+    <div class="in">
+      <p class="eyebrow"><span class="n">09</span> · Roadmap &amp; Decision Gates</p>
+      <h2 class="slidehead">Each phase only happens if the last one earns it.</h2>
+      <div class="grid2">
+        <div class="card"><span class="tag sage">Phase 0 — now</span><h3>Validate demand</h3><p>10+ real conversations with independent medspa owners/injectors. No more engineering until there's signal.</p></div>
+        <div class="card"><span class="tag violet">Phase 1 — if validated</span><h3>Pilot</h3><p>3–5 real independent medspas use it live; refine the workflow against real feedback, not assumptions.</p></div>
+        <div class="card"><span class="tag violet">Phase 2 — if pilots convert</span><h3>Real backend</h3><p>Auth, billing, persistence (Supabase already scoped). Formal compliance/legal review before any real patient use.</p></div>
+        <div class="card"><span class="tag zinc">Phase 3 — optional, expensive</span><h3>True 3D (FLAME/DECA)</h3><p>A premium tier, gated on actual recurring revenue existing to justify GPU hosting cost — not before.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 DECISION FRAMEWORK / CLOSE -->
+  <section class="slide dark endcard" id="s10">
+    <div class="in">
+      <p class="eyebrow" style="justify-content:center;"><span class="n">10</span> · The Decision Framework</p>
+      <h2 class="serif" style="font-size:clamp(1.8rem,4.5vw,2.8rem); font-weight:600; max-width:680px; margin:0 auto 22px;">This isn't an ask for money. It's a rule for when to keep going.</h2>
+      <p class="lead serif" style="font-style:italic; max-width:600px; margin:0 auto 28px;">"If 3 of the next 10 medspa conversations show real budget, a real pain point, and a real willingness to switch — proceed to Phase 1. If not, this stays a portfolio piece, and that's a fine outcome too."</p>
+      <div class="badge-row">
+        <span class="badge">No money raised</span>
+        <span class="badge">No customers yet</span>
+        <span class="badge">Next step: talk to 10 people</span>
+      </div>
+      <div class="badge-row">
+        <a class="badge" href="../specs/aesthetic-sim.html">← Back to the AestheticSim spec</a>
+        <a class="badge" href="../portfolio.html">← Back to the portfolio</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="progress" id="progress"></div>
+
+<script>
+  const sections = [...document.querySelectorAll('.slide')];
+  const progress = document.getElementById('progress');
+  sections.forEach((s,i) => {
+    const dot = document.createElement('div');
+    dot.className = 'dot';
+    dot.dataset.i = i;
+    dot.onclick = () => s.scrollIntoView({behavior:'smooth'});
+    progress.appendChild(dot);
+  });
+  const dots = [...progress.children];
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const i = sections.indexOf(e.target);
+        dots.forEach(d => d.classList.remove('active'));
+        if (dots[i]) dots[i].classList.add('active');
+      }
+    });
+  }, { threshold: 0.5 });
+  sections.forEach(s => io.observe(s));
+</script>
+<footer style="border-top:2px solid #1A1613;margin-top:40px;padding:24px;text-align:center;color:#6E665B;font-size:0.9rem">Tamara Richards, The (almost) CEO · Ideas, shipped with AI.</footer>
+</body>
+</html>

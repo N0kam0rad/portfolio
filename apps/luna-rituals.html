@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Luna's Rituals ✨</title>
+<title>Luna's Rituals — App · Tamara Richards</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--sky:#E8F4FF;--sun:#FFD166;--coral:#FF6B6B;--mint:#06D6A0;--lavender:#9B5DE5;--pink:#F72585;--navy:#1A1A2E;--bg:#F0F7FF;}
@@ -906,7 +906,7 @@ function renderRewards(){
       <div class="wish-hero" style="background:${item.bg||'#F0D6FF'}">
         ${heroInner}
         <button class="wish-edit-btn" onclick="openEditItem(event,${item.origIdx})">✏️</button>
-        ${item.amz ? `<a class="wish-amz-btn" href="${item.amz}" target="_blank" onclick="event.stopPropagation()">🛒 Shop</a>` : ''}
+        ${item.amz ? `<a class="wish-amz-btn" href="${item.amz}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🛒 Shop</a>` : ''}
       </div>
       <div class="wish-body">
         <div class="wish-name">${item.name}</div>

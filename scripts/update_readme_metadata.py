@@ -77,11 +77,11 @@ PROJECTS = [
         "path": "specs/interior-render.html",
     },
     {
-        "name": "Kids’ Habit + Reward App",
-        "href": "specs/aurelias-rituals.html",
+        "name": "Luna’s Rituals",
+        "href": "specs/luna-rituals.html",
         "description": "Routine, reward, and puzzle system for kids",
         "status": "Done",
-        "path": "specs/aurelias-rituals.html",
+        "path": "specs/luna-rituals.html",
     },
     {
         "name": "Helix7",

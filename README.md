@@ -132,7 +132,7 @@ Version and last-updated values are maintained by GitHub Actions. Version is gen
       <td>2026-06-30</td>
     </tr>
     <tr>
-      <td><a href="specs/aurelias-rituals.html"><strong>Kids’ Habit + Reward App</strong></a></td>
+      <td><a href="specs/luna-rituals.html"><strong>Luna’s Rituals</strong></a></td>
       <td>Routine, reward, and puzzle system for kids</td>
       <td>Done</td>
       <td><code>rev-4f8a141</code></td>
