@@ -117,6 +117,13 @@
 
   .num-big{font-family:'Fraunces',serif; font-weight:700; font-size:5rem; line-height:1; opacity:.15; position:absolute; top:40px; right:48px;}
   @media(max-width:760px){.num-big{display:none;}}
+
+  .cites{list-style:none; counter-reset:cite; margin-top:6px;}
+  .cites li{counter-increment:cite; position:relative; padding-left:34px; margin-bottom:20px; font-size:.94rem; color:var(--ink-soft);}
+  .cites li::before{content:counter(cite); position:absolute; left:0; top:1px; width:22px; height:22px; border-radius:50%; background:var(--violet-soft); color:var(--violet-deep); font-size:.72rem; font-weight:700; display:flex; align-items:center; justify-content:center;}
+  .cites li b{color:var(--ink); font-weight:600;}
+  .cat{font-family:'JetBrains Mono',monospace; font-size:.68rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--violet-deep); margin:28px 0 4px;}
+  .cat:first-child{margin-top:0;}
 </style>
 </head>
 <body>
@@ -159,17 +166,17 @@
       <p class="eyebrow"><span class="n">02</span> · Why Now</p>
       <h2 class="slidehead">The market is huge, fragmented, and getting squeezed.</h2>
       <div class="grid3">
-        <div class="stat"><div class="num">$24–28B</div><div class="lbl">US medspa market, 2026</div></div>
-        <div class="stat"><div class="num">~16%</div><div class="lbl">CAGR toward $78–105B by 2033–35</div></div>
-        <div class="stat"><div class="num">42,473</div><div class="lbl">active US medspa operators</div></div>
+        <div class="stat"><div class="num">$17–28B</div><div class="lbl">US medspa market, 2026 — range across sources<sup>1</sup></div></div>
+        <div class="stat"><div class="num">~14–16%</div><div class="lbl">CAGR cited across major forecasts<sup>1</sup></div></div>
+        <div class="stat"><div class="num">42,473</div><div class="lbl">active US medspa operators<sup>2</sup></div></div>
       </div>
       <div class="grid3">
-        <div class="stat"><div class="num">97%</div><div class="lbl">are single-location / independent</div></div>
-        <div class="stat"><div class="num">0.2%</div><div class="lbl">max market share held by any one chain</div></div>
-        <div class="stat"><div class="num">$3.1B</div><div class="lbl">in PE roll-up deals, last 5 years</div></div>
+        <div class="stat"><div class="num">97%</div><div class="lbl">single-location, per one operator dataset<sup>2</sup></div></div>
+        <div class="stat"><div class="num">~3%</div><div class="lbl">of medspas are currently PE-owned<sup>3</sup></div></div>
+        <div class="stat"><div class="num">2026</div><div class="lbl">AmSpa predicts record med-spa M&amp;A activity this year<sup>3</sup></div></div>
       </div>
-      <p class="source">Sources: Precedence Research, Grand View Research, Orbital med-spa operator data (2026).</p>
-      <div class="callout violet"><b>Why this matters:</b> private-equity-backed chains are consolidating and rolling up the most profitable independents. The other 97% face that competitive pressure without access to the same tooling — that's the urgency, not just the size.</div>
+      <p class="source">Figures genuinely disagree by scope and methodology — see <a href="#sources">Sources &amp; Methodology</a> for the exact numbers behind each claim, not just a blended average.</p>
+      <div class="callout violet"><b>Why this matters:</b> PE-backed platforms are actively rolling up medspas, but 97%+ of the market is still independent and un-tooled. That gap — not just the market's size — is the actual opportunity.</div>
     </div>
   </section>
 
@@ -187,7 +194,7 @@
         <tr><td class="lbl">GlossGenius / Mangomint / Boulevard</td><td>Booking + EMR</td><td class="pill-no">None</td><td class="pill-ok">None</td><td class="pill-ok">Yes</td></tr>
         <tr><td class="lbl" style="color:var(--violet-deep)">AestheticSim (this)</td><td>AI consult + sim</td><td class="pill-ok">Yes — on-device</td><td class="pill-ok">None</td><td class="pill-ok">Designed for it</td></tr>
       </table>
-      <p class="source">Pricing/feature claims per public sites and aggregated 2026 medspa-software comparisons (Optimantra, PatientNow, GlossGenius); Crisalix/VECTRA pricing not public — inferred from enterprise sales motion.</p>
+      <p class="source">Pricing/feature claims per public sites and aggregated 2026 medspa-software comparisons (<a href="https://www.optimantra.com/blog/top-9-emrs-for-medical-spas-med-spas-or-medspas-in-2025" target="_blank" rel="noopener noreferrer">Optimantra</a>, <a href="https://glossgenius.com/blog/medical-spa-software" target="_blank" rel="noopener noreferrer">GlossGenius</a>); Crisalix/VECTRA pricing not public — inferred from their enterprise/quote-based sales motion. Full write-up on the 3D-simulation precedent in the <a href="aestheticsim-build-log.html#clinical">build log → Clinical grounding</a>.</p>
     </div>
   </section>
 
@@ -219,7 +226,7 @@
       </div>
       <div class="callout violet" style="margin-top:24px;"><b>The tell:</b> before/after photo storage is already sold as a $50–150/mo add-on inside existing EMRs. That's direct proof the market pays for visual-consultation tooling — simulation + treatment planning is a natural step up from "storage," not a new category to invent demand for.</div>
       <p class="lead" style="margin-top:22px;">Plausible price point for AestheticSim: <b style="color:var(--ink)">$99–199/mo</b>, standalone or as an EMR add-on.</p>
-      <p class="source">Sources: Optimantra, Vagaro EMR pricing guides, FindEMR (2026).</p>
+      <p class="source">Sources: <a href="https://www.optimantra.com/blog/how-much-should-you-pay-for-a-medspa-emr-your-2025-pricing-guide" target="_blank" rel="noopener noreferrer">Optimantra pricing guide</a>, <a href="https://www.vagaro.com/learn/best-emr-software" target="_blank" rel="noopener noreferrer">Vagaro EMR guide</a>, <a href="https://www.findemr.com/resources/emr-pricing-guide/" target="_blank" rel="noopener noreferrer">FindEMR</a> (2026).</p>
     </div>
   </section>
 
@@ -259,10 +266,10 @@
       <p class="eyebrow"><span class="n">08</span> · Go-To-Market Path</p>
       <h2 class="slidehead">Where to actually find the first 10 conversations.</h2>
       <div class="grid2">
-        <div class="card"><span class="tag sage">Free, fast</span><h3>Facebook groups</h3><p>MedSpa & Clinic Owners Group, Med Spa Owners Community, Medical Spa Connect, and others — 5+ identified, active communities.</p></div>
-        <div class="card"><span class="tag violet">Sustained access</span><h3>AmSpa membership</h3><p>$395–845/yr, 3,000+ members — the actual trade association for exactly this audience.</p></div>
-        <div class="card"><span class="tag violet">Injector-specific</span><h3>AAFE forum</h3><p>$597/yr — discussion forum for nurses/NPs/PAs who run independent injection practices.</p></div>
-        <div class="card"><span class="tag zinc">In-person</span><h3>Aesthetic Next</h3><p>Sept 10–13, 2026, Dallas — explicitly serves owners, injectors, directors, managers.</p></div>
+        <div class="card"><span class="tag sage">Free, fast</span><h3>Facebook groups</h3><p><a href="https://www.facebook.com/groups/medspaownersgroup/" target="_blank" rel="noopener noreferrer">MedSpa &amp; Clinic Owners Group</a>, <a href="https://www.facebook.com/groups/medspaownerscommunity/" target="_blank" rel="noopener noreferrer">Med Spa Owners Community</a>, <a href="https://www.facebook.com/groups/medicalspaowner/" target="_blank" rel="noopener noreferrer">Medical Spa Owners</a>, and others — active communities, real access, no cost.</p></div>
+        <div class="card"><span class="tag violet">Sustained access</span><h3>AmSpa membership</h3><p><a href="https://www.americanmedspa.org/mss-2026-membership/" target="_blank" rel="noopener noreferrer">Basic $395/yr, Plus $845/yr</a> — the actual trade association for exactly this audience.</p></div>
+        <div class="card"><span class="tag violet">Injector-specific</span><h3>AAFE forum</h3><p><a href="https://community.facialesthetics.org/product/membership-access1/" target="_blank" rel="noopener noreferrer">$597/yr, 8,000+ members</a> — nurses/NPs/PAs who run independent injection practices.</p></div>
+        <div class="card"><span class="tag zinc">In-person</span><h3>Aesthetic Next</h3><p><a href="https://withorbital.com/blog/top-10-us-medspa-conferences-2026" target="_blank" rel="noopener noreferrer">Sept 10–13, 2026, Dallas</a> — explicitly serves owners, injectors, directors, managers.</p></div>
       </div>
       <div class="callout violet"><b>The lean validation script is already written:</b> ask about current spend/tools first, their actual pain point second, show the live demo third, and ask for a real price reaction last — Mom Test style, not a pitch.</div>
     </div>
@@ -297,6 +304,51 @@
         <a class="badge" href="../specs/aesthetic-sim.html">← Back to the AestheticSim spec</a>
         <a class="badge" href="../portfolio.html">← Back to the portfolio</a>
       </div>
+    </div>
+  </section>
+
+  <!-- 11 SOURCES & METHODOLOGY -->
+  <section class="slide" id="s11" style="align-items:flex-start;">
+    <div class="in" id="sources">
+      <p class="eyebrow"><span class="n">11</span> · Sources &amp; Methodology</p>
+      <h2 class="slidehead">Every claim above, traced to where it came from.</h2>
+      <p class="lead" style="margin-bottom:28px;">Market research disagrees with itself constantly — different firms scope "the market" differently (global vs. US, revenue vs. spend, this year vs. a decade out). Rather than blend those into one clean-sounding number, here's the actual range and the actual source behind every figure used in this analysis.</p>
+
+      <p class="cat">Market size (footnote 1)</p>
+      <ul class="cites">
+        <li><b>Grand View Research</b> — <i>global</i> medspa market: $24.2B (2025) → $27.8B (2026) → $78.2B (2033), 15.9% CAGR. The U.S. holds the largest share of this global figure, but it is not a US-only number. <a href="https://www.grandviewresearch.com/industry-analysis/medical-spa-market" target="_blank" rel="noopener noreferrer">grandviewresearch.com →</a></li>
+        <li><b>Precedence Research</b> — <i>US-specific</i>: $7.43B (2025) → $28.80B (2035), 14.51% CAGR. Global figure separately: $25.28B (2025) → $97.91B (2035), 14.5% CAGR. <a href="https://www.precedenceresearch.com/medical-spa-market" target="_blank" rel="noopener noreferrer">precedenceresearch.com →</a></li>
+        <li><b>AmSpa</b> (the trade association, not a research firm) — states current US industry revenue at "$17B+", growing "$1B+/yr." No forward CAGR published on the public page; the detailed ownership/PE breakdown sits behind a $995 report or Plus-membership paywall. <a href="https://www.americanmedspa.org/med-spa-statistics/" target="_blank" rel="noopener noreferrer">americanmedspa.org →</a></li>
+      </ul>
+
+      <p class="cat">Operator count &amp; fragmentation (footnote 2)</p>
+      <ul class="cites">
+        <li><b>Orbital</b> med-spa operator dataset — 42,473 active US operators (2026); ~97% single-location per this dataset. This is the number the SAM calculation on slide 6 is built from. <a href="https://withorbital.com/data/med-spa/" target="_blank" rel="noopener noreferrer">withorbital.com →</a></li>
+        <li>Other datasets define "independent" differently and land lower — one puts single-owner practices at 60.37% (vs. 39.63% part of a larger brand). Treat 97% as one credible estimate, not a settled fact.</li>
+      </ul>
+
+      <p class="cat">Private-equity consolidation (footnote 3)</p>
+      <ul class="cites">
+        <li>Aggregated 2026 M&amp;A coverage puts PE-backed ownership at roughly <b>3%</b> of the total market today, with AmSpa forecasting record roll-up activity this year as PE-backed platforms enter recapitalization cycles. <a href="https://www.americanmedspa.org/news/med-spa-ma-and-private-sales-a-look-back-at-2025-and-what-lies-ahead/" target="_blank" rel="noopener noreferrer">AmSpa M&amp;A outlook →</a> · <a href="https://nero-drbeauty.com/en/news/med-spa-ma-record-2026-private-equity/" target="_blank" rel="noopener noreferrer">NERO →</a></li>
+        <li>An earlier draft of this analysis cited "$3.1B across 400 PE deals" and "0.2% max chain market share" — neither figure could be traced to a public, citable source on re-check, so both were removed rather than left unverified.</li>
+      </ul>
+
+      <p class="cat">Medspa software pricing</p>
+      <ul class="cites">
+        <li>GlossGenius $24/mo, Vagaro $30/mo, AestheticsPro $160/mo, Mangomint $165/mo, Boulevard $158–369/mo (tiered/per location); before/after photo storage sold separately as a $50–150/mo EMR add-on. <a href="https://www.optimantra.com/blog/top-9-emrs-for-medical-spas-med-spas-or-medspas-in-2025" target="_blank" rel="noopener noreferrer">Optimantra →</a> · <a href="https://glossgenius.com/blog/medical-spa-software" target="_blank" rel="noopener noreferrer">GlossGenius →</a> · <a href="https://www.vagaro.com/learn/best-emr-software" target="_blank" rel="noopener noreferrer">Vagaro →</a> · <a href="https://www.findemr.com/resources/emr-pricing-guide/" target="_blank" rel="noopener noreferrer">FindEMR →</a></li>
+      </ul>
+
+      <p class="cat">Go-to-market channels</p>
+      <ul class="cites">
+        <li>AmSpa membership pricing ($395 Basic / $845 Plus) and AAFE forum pricing ($597/yr, 8,000+ members) confirmed directly from each organization's own membership page — see links on the Go-To-Market slide above.</li>
+      </ul>
+
+      <p class="cat">Clinical grounding &amp; the 3D-simulation precedent</p>
+      <ul class="cites">
+        <li>Dosing units, treatment longevity, the Crisalix/VECTRA precedent, the simulation-accuracy-correlates-with-satisfaction research, vascular safety zones, and why FLAME/KeenTools were evaluated but not integrated — all fully cited in the <a href="aestheticsim-build-log.html#clinical">build log's Clinical grounding &amp; research section</a>, not repeated here.</li>
+      </ul>
+
+      <div class="callout amber" style="margin-top:24px;"><b>The honest summary:</b> the qualitative story here is solid — big, fast-growing, overwhelmingly fragmented, and getting more competitive. The precise dollar figures are not — different sources disagree by 3–4x depending on scope. Build decisions on the fragmentation and the competitive gap, which hold up across every source checked; treat the exact market-size number as directional.</div>
     </div>
   </section>
 
