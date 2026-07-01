@@ -118,6 +118,14 @@
   .num-big{font-family:'Fraunces',serif; font-weight:700; font-size:5rem; line-height:1; opacity:.15; position:absolute; top:40px; right:48px;}
   @media(max-width:760px){.num-big{display:none;}}
 
+  .feature-row{display:flex; align-items:center; gap:56px; margin-top:20px;}
+  .feature-row.reverse{flex-direction:row-reverse;}
+  .feature-text{flex:0 0 34%;}
+  .feature-text ul.clean{margin-top:16px;}
+  .feature-img-wrap{flex:1; border-radius:22px; overflow:hidden; border:1px solid var(--line); box-shadow:0 12px 32px rgba(24,24,27,.08); background:var(--paper); max-height:520px;}
+  .feature-img-wrap img{width:100%; height:100%; max-height:520px; object-fit:cover; object-position:top; display:block;}
+  @media(max-width:900px){.feature-row, .feature-row.reverse{flex-direction:column; gap:28px;} .feature-text{flex:none;}}
+
   .cites{list-style:none; counter-reset:cite; margin-top:6px;}
   .cites li{counter-increment:cite; position:relative; padding-left:34px; margin-bottom:20px; font-size:.94rem; color:var(--ink-soft);}
   .cites li::before{content:counter(cite); position:absolute; left:0; top:1px; width:22px; height:22px; border-radius:50%; background:var(--violet-soft); color:var(--violet-deep); font-size:.72rem; font-weight:700; display:flex; align-items:center; justify-content:center;}
@@ -198,26 +206,68 @@
     </div>
   </section>
 
-  <!-- 04 WHAT'S BUILT -->
-  <section class="slide tint-sage" id="s4">
-    <div class="in">
-      <p class="eyebrow"><span class="n">04</span> · What's Already Built</p>
-      <h2 class="slidehead">This isn't a sketch. It's a working prototype.</h2>
-      <ul class="clean">
-        <li>Real on-device facial analysis (MediaPipe Face Landmarker — 478 3D landmarks, no server, nothing leaves the device by default)</li>
-        <li>Skin scoring across 7 dimensions with a tappable heat-map overlay</li>
-        <li>Identity-preserving on-photo treatment simulation, calibrated to <b>real clinical units</b> — Botox in U per zone, filler in mL per region, Sculptra in vials, all cited to published dosing research</li>
-        <li>Full workflow: client intake → photo capture → provider review queue → auto-generated starter plan → provider customization (treatment library, custom treatments, product recommendations) → approval → client-facing report</li>
-        <li>Provider-side governance: a dose-visibility toggle and a full simulation kill-switch (for jurisdictions that regulate digital before/afters)</li>
-      </ul>
-      <div class="callout sage"><b>Cost today: effectively $0.</b> 100% client-side, hosted free on GitHub Pages. No infrastructure bill is forcing a decision yet.</div>
+  <!-- 04 FEATURE: SCAN -->
+  <section class="slide tint-sage" id="s4" style="max-width:1180px; margin:0 auto;">
+    <div class="in" style="max-width:1100px;">
+      <p class="eyebrow"><span class="n">04</span> · What's Already Built — Skin Scan</p>
+      <h2 class="slidehead" style="max-width:none;">This isn't a sketch. It's a working prototype.</h2>
+      <div class="feature-row">
+        <div class="feature-text">
+          <p class="lead" style="max-width:none;">Camera or upload, analyzed entirely on-device via MediaPipe Face Landmarker — 478 3D facial landmarks, no server round-trip. Nothing leaves the device by default.</p>
+          <ul class="clean">
+            <li>7-dimension skin scoring (hydration, tone, redness, texture, pores, under-eye, firmness)</li>
+            <li>A tappable heat-map overlay per concern, anchored to real facial landmarks</li>
+            <li>Feeds directly into the provider's starter plan — not a separate, disconnected step</li>
+          </ul>
+        </div>
+        <div class="feature-img-wrap"><img src="../assets/aesthetic-sim-scan.png" alt="AestheticSim skin scan report with redness heatmap overlay and 7-dimension scoring" loading="lazy"/></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 FEATURE: SIMULATION -->
+  <section class="slide tint-sage" id="s5" style="max-width:1180px; margin:0 auto;">
+    <div class="in" style="max-width:1100px;">
+      <p class="eyebrow"><span class="n">05</span> · What's Already Built — Simulation</p>
+      <h2 class="slidehead" style="max-width:none;">Identity-preserving, and calibrated to real clinical units.</h2>
+      <div class="feature-row reverse">
+        <div class="feature-text">
+          <p class="lead" style="max-width:none;">A landmark-driven, depth-aware warp of the client's own photo — not a generated face. Every treatment is labeled in the unit a provider actually prescribes: Botox in U per zone, filler in mL per region, Sculptra in vials.</p>
+          <ul class="clean">
+            <li>Personalized from the client's own scan scores, not a generic default</li>
+            <li>Toggleable per treatment, with Subtle / Natural / Bold intensity</li>
+            <li>A 3D-mesh and VECTRA-style contour mode for reading shape change independent of skin tone/lighting</li>
+          </ul>
+        </div>
+        <div class="feature-img-wrap"><img src="../assets/aesthetic-sim-simulator.png" alt="AestheticSim facial-balancing simulator with before/after slider and clinically-dosed treatment pins" loading="lazy"/></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 FEATURE: PROVIDER PLAN -->
+  <section class="slide tint-sage" id="s6" style="max-width:1180px; margin:0 auto;">
+    <div class="in" style="max-width:1100px;">
+      <p class="eyebrow"><span class="n">06</span> · What's Already Built — Provider Workflow</p>
+      <h2 class="slidehead" style="max-width:none;">The full loop: intake → review → approval → client output.</h2>
+      <div class="feature-row">
+        <div class="feature-text">
+          <p class="lead" style="max-width:none;">The client's scan lands in a provider review queue with an auto-generated starter plan already attached — not a blank slate.</p>
+          <ul class="clean">
+            <li>Injectables / Facials / Both filter, a treatment-library dropdown, and a custom-treatment form (requires a procedure description + benefits)</li>
+            <li>Recommended products with sponsored/partner badges</li>
+            <li>A dose-visibility toggle and a clinic-level simulation kill-switch for jurisdictions that regulate digital before/afters</li>
+          </ul>
+        </div>
+        <div class="feature-img-wrap"><img src="../assets/aesthetic-sim-provider-plan.png" alt="AestheticSim provider review screen with facial analysis notes and an editable treatment plan showing real clinical units" loading="lazy"/></div>
+      </div>
+      <div class="callout sage" style="margin-top:28px;"><b>Cost today: effectively $0.</b> 100% client-side, hosted free on GitHub Pages. No infrastructure bill is forcing a decision yet.</div>
     </div>
   </section>
 
   <!-- 05 PRICING REALITY -->
-  <section class="slide" id="s5">
+  <section class="slide" id="s7">
     <div class="in">
-      <p class="eyebrow"><span class="n">05</span> · Pricing Reality Check</p>
+      <p class="eyebrow"><span class="n">07</span> · Pricing Reality Check</p>
       <h2 class="slidehead">The market already pays for adjacent features.</h2>
       <div class="grid3">
         <div class="card"><h3>GlossGenius</h3><p>$24/mo — general, light medspa features</p></div>
@@ -231,9 +281,9 @@
   </section>
 
   <!-- 06 TAM SAM SOM -->
-  <section class="slide tint-violet" id="s6">
+  <section class="slide tint-violet" id="s8">
     <div class="in">
-      <p class="eyebrow"><span class="n">06</span> · Sizing The Opportunity</p>
+      <p class="eyebrow"><span class="n">08</span> · Sizing The Opportunity</p>
       <h2 class="slidehead">Shown with the math, not just the conclusion.</h2>
       <div class="grid3">
         <div class="card"><span class="tag zinc">TAM</span><div class="stat"><div class="num" style="font-size:1.8rem;">$few-hundred M</div></div><p style="margin-top:8px;">Broad US medspa software/tech spend — directional, not precisely measured anywhere.</p></div>
@@ -245,10 +295,10 @@
   </section>
 
   <!-- 07 NOT YET VALIDATED -->
-  <section class="slide tint-amber" id="s7">
+  <section class="slide tint-amber" id="s9">
     <div class="num-big" style="color:var(--amber); opacity:.18;">!</div>
     <div class="in">
-      <p class="eyebrow" style="color:var(--amber);"><span class="n" style="color:var(--amber);">07</span> · What's NOT Yet Validated</p>
+      <p class="eyebrow" style="color:var(--amber);"><span class="n" style="color:var(--amber);">09</span> · What's NOT Yet Validated</p>
       <h2 class="slidehead">The honest part.</h2>
       <ul class="clean" style="margin-top:24px;">
         <li><b>Zero paying customers.</b> Zero confirmed willingness-to-pay. Every number on the last two slides is a model, not a measurement.</li>
@@ -261,9 +311,9 @@
   </section>
 
   <!-- 08 GTM -->
-  <section class="slide" id="s8">
+  <section class="slide" id="s10">
     <div class="in">
-      <p class="eyebrow"><span class="n">08</span> · Go-To-Market Path</p>
+      <p class="eyebrow"><span class="n">10</span> · Go-To-Market Path</p>
       <h2 class="slidehead">Where to actually find the first 10 conversations.</h2>
       <div class="grid2">
         <div class="card"><span class="tag sage">Free, fast</span><h3>Facebook groups</h3><p><a href="https://www.facebook.com/groups/medspaownersgroup/" target="_blank" rel="noopener noreferrer">MedSpa &amp; Clinic Owners Group</a>, <a href="https://www.facebook.com/groups/medspaownerscommunity/" target="_blank" rel="noopener noreferrer">Med Spa Owners Community</a>, <a href="https://www.facebook.com/groups/medicalspaowner/" target="_blank" rel="noopener noreferrer">Medical Spa Owners</a>, and others — active communities, real access, no cost.</p></div>
@@ -276,9 +326,9 @@
   </section>
 
   <!-- 09 ROADMAP -->
-  <section class="slide tint-sage" id="s9">
+  <section class="slide tint-sage" id="s11">
     <div class="in">
-      <p class="eyebrow"><span class="n">09</span> · Roadmap &amp; Decision Gates</p>
+      <p class="eyebrow"><span class="n">11</span> · Roadmap &amp; Decision Gates</p>
       <h2 class="slidehead">Each phase only happens if the last one earns it.</h2>
       <div class="grid2">
         <div class="card"><span class="tag sage">Phase 0 — now</span><h3>Validate demand</h3><p>10+ real conversations with independent medspa owners/injectors. No more engineering until there's signal.</p></div>
@@ -290,9 +340,9 @@
   </section>
 
   <!-- 10 DECISION FRAMEWORK / CLOSE -->
-  <section class="slide dark endcard" id="s10">
+  <section class="slide dark endcard" id="s12">
     <div class="in">
-      <p class="eyebrow" style="justify-content:center;"><span class="n">10</span> · The Decision Framework</p>
+      <p class="eyebrow" style="justify-content:center;"><span class="n">12</span> · The Decision Framework</p>
       <h2 class="serif" style="font-size:clamp(1.8rem,4.5vw,2.8rem); font-weight:600; max-width:680px; margin:0 auto 22px;">This isn't an ask for money. It's a rule for when to keep going.</h2>
       <p class="lead serif" style="font-style:italic; max-width:600px; margin:0 auto 28px;">"If 3 of the next 10 medspa conversations show real budget, a real pain point, and a real willingness to switch — proceed to Phase 1. If not, this stays a portfolio piece, and that's a fine outcome too."</p>
       <div class="badge-row">
@@ -308,9 +358,9 @@
   </section>
 
   <!-- 11 SOURCES & METHODOLOGY -->
-  <section class="slide" id="s11" style="align-items:flex-start;">
+  <section class="slide" id="s13" style="align-items:flex-start;">
     <div class="in" id="sources">
-      <p class="eyebrow"><span class="n">11</span> · Sources &amp; Methodology</p>
+      <p class="eyebrow"><span class="n">13</span> · Sources &amp; Methodology</p>
       <h2 class="slidehead">Every claim above, traced to where it came from.</h2>
       <p class="lead" style="margin-bottom:28px;">Market research disagrees with itself constantly — different firms scope "the market" differently (global vs. US, revenue vs. spend, this year vs. a decade out). Rather than blend those into one clean-sounding number, here's the actual range and the actual source behind every figure used in this analysis.</p>
 
@@ -323,7 +373,7 @@
 
       <p class="cat">Operator count &amp; fragmentation (footnote 2)</p>
       <ul class="cites">
-        <li><b>Orbital</b> med-spa operator dataset — 42,473 active US operators (2026); ~97% single-location per this dataset. This is the number the SAM calculation on slide 6 is built from. <a href="https://withorbital.com/data/med-spa/" target="_blank" rel="noopener noreferrer">withorbital.com →</a></li>
+        <li><b>Orbital</b> med-spa operator dataset — 42,473 active US operators (2026); ~97% single-location per this dataset. This is the number the SAM calculation on slide 8 is built from. <a href="https://withorbital.com/data/med-spa/" target="_blank" rel="noopener noreferrer">withorbital.com →</a></li>
         <li>Other datasets define "independent" differently and land lower — one puts single-owner practices at 60.37% (vs. 39.63% part of a larger brand). Treat 97% as one credible estimate, not a settled fact.</li>
       </ul>
 
