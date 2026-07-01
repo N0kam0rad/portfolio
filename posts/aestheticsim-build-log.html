@@ -71,7 +71,7 @@
 </div></header>
 
 <div class="article">
-  <p class="lead">AestheticSim turns a subjective medspa consultation into a structured visual plan — with facial mapping, AI-assisted analysis, and a downloadable PDF board a client actually wants to keep.</p>
+  <p class="lead">AestheticSim turns a subjective medspa consultation into a structured, clinically-grounded plan — a real on-device skin scan, an identity-preserving treatment simulation, and a downloadable board a client actually wants to keep.</p>
 
   <video class="hero-video" autoplay muted loop playsinline poster="../assets/aesthetic-sim-thumb.jpg">
     <source src="../assets/aesthetic-sim-devices.mp4" type="video/mp4" />
@@ -79,27 +79,22 @@
     <img src="../assets/aesthetic-sim-thumb.jpg" alt="AestheticSim consultation board" />
   </video>
 
-  <div class="wip">
-    <div class="wip-label">Build log · In progress</div>
-    <p>The full write-up — the spark, the workflow design, the prompt scaffolding, and what changed from first prototype to pitch-ready demo — is being written now. Check back soon, or read the product spec in the meantime.</p>
-  </div>
-
   <h2>The problem</h2>
   <p>Medspa consultations are expensive for the client and high-pressure for the clinician. Most of the time, the client leaves with a verbal explanation they can barely remember and no visual proof of what was discussed. The clinician has to rebuild the same conversation from scratch every time. That gap was the spark.</p>
 
-  <p>AestheticSim is a two-sided workflow: the client fills out an intake form, the clinician reviews a structured analysis board, and the session ends with a downloadable PDF consultation board the client takes home.</p>
+  <p>AestheticSim is a two-sided workflow: the client completes an intake with real on-device photo analysis, the clinician reviews an auto-generated starter plan against that scan, and the approved result lands back on the client's dashboard — plus a downloadable board they take home.</p>
 
   <h2>Key flows built</h2>
   <ul>
-    <li><b>Role selection landing:</b> clinic, client, or admin — each enters the same system differently</li>
-    <li><b>Client intake wizard:</b> structured questions, privacy-safe mock data</li>
-    <li><b>Booked client gate:</b> confirmation screen before intake unlocks</li>
-    <li><b>Clinician review board:</b> client list, analysis states, facial mapping</li>
-    <li><b>Admin panel:</b> branding, booking, disclaimer, integrations</li>
-    <li><b>Downloadable consultation board:</b> executive summary, aging analysis, skin quality, treatment phases, cost forecast</li>
+    <li><b>Real on-device skin scan:</b> camera or upload, 478-point facial landmarking (MediaPipe), 7 skin-concern scores, a tappable heatmap — nothing leaves the device</li>
+    <li><b>Identity-preserving facial-balancing simulation:</b> a landmark-driven, depth-aware warp calibrated to real clinical units, with a VECTRA-style contour/volume-difference mode</li>
+    <li><b>Unified intake → review → approval loop:</b> the 4-photo intake runs the real scan and routes straight into the provider's review queue with an auto-generated starter plan — no more separate mocked "analyzing" state</li>
+    <li><b>Provider plan customization:</b> an Injectables/Facials/Both filter, a treatment-library dropdown, a custom-treatment form (requires a procedure description + benefits), and recommended products with sponsored/partner badges</li>
+    <li><b>Provider governance:</b> a dose-visibility toggle and a clinic-level kill switch that can disable the entire simulation for jurisdictions that regulate simulated before/afters</li>
+    <li><b>Downloadable consultation board:</b> executive summary, facial analysis, skin quality, treatment phases, cost forecast</li>
   </ul>
 
-  <div class="callout"><b>The strongest demo path:</b> open Marcus Webb → run through the clinician board → click "Generate board" → download the PDF. That is the one sequence that shows the full value in under two minutes.</div>
+  <div class="callout"><b>The strongest demo path:</b> from the landing screen, run "Skin Analysis — Live Scan" with your own photo, then toggle a treatment on the simulator to see the before/after shift. That's the one sequence that shows the full value in under two minutes.</div>
 
   <h2 id="clinical">Clinical grounding &amp; research</h2>
   <p>A simulation that invents numbers is worse than no simulation — it sets wrong expectations. So the dosing, the treatment longevity, and the simulation physics are all grounded in published ranges, encoded in a single <code>CLINICAL_REFERENCE</code> constant in the app so the figures can't drift between the plan, the units, and the on-photo simulation. The idea was sparked by a study using <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11334672/" target="_blank" rel="noopener noreferrer">3D-printed facial models to train injectors</a> — anatomy-first, not vibes-first.</p>
@@ -134,7 +129,18 @@
   <div class="callout">Every number in AestheticSim traces to a citation above. A provider toggle controls whether clients see exact doses or just treatment names — and a separate clinic-level switch can turn the entire simulation off (some jurisdictions regulate digitally-simulated before/afters in medical advertising), leaving the skin-analysis and treatment plan untouched.</div>
 
   <h2>What comes next</h2>
-  <p>The full build log will cover: the exact prompts used for facial analysis, how I structured the two-sided role system, the design decisions that keep AestheticSim visually distinct from the warm portfolio brand, and what a real medspa integration would need to make this production-ready.</p>
+  <p>No paying customers or confirmed demand yet — that's the honest current state, and the actual next step: real conversations with independent medspa owners and injectors before any more engineering. If that validates, Phase 2 is a real backend (auth, billing, persistence via Supabase) and a formal compliance/legal review before any real patient use.</p>
+
+  <h2>Update log</h2>
+  <table style="width:100%;border-collapse:collapse;margin:16px 0 8px;font-size:0.94rem">
+    <tr style="border-bottom:2px solid var(--ink)"><th style="text-align:left;padding:8px 10px 8px 0;font-family:'Bricolage Grotesque';font-size:0.78rem;text-transform:uppercase;letter-spacing:.06em">Date</th><th style="text-align:left;padding:8px 10px;font-family:'Bricolage Grotesque';font-size:0.78rem;text-transform:uppercase;letter-spacing:.06em">Update</th><th style="text-align:left;padding:8px 0 8px 10px;font-family:'Bricolage Grotesque';font-size:0.78rem;text-transform:uppercase;letter-spacing:.06em">Why it changed</th></tr>
+    <tr style="border-bottom:1px solid #ddd6c8"><td style="padding:10px 10px 10px 0;white-space:nowrap;color:var(--muted)">2026-06-30</td><td style="padding:10px">Fixed the camera capture/framing mismatch and the simulator's blur + barely-visible warp magnitude.</td><td style="padding:10px 0 10px 10px;color:var(--muted)">Testing on a real selfie surfaced both — what you framed wasn't what got analyzed, and the change was too subtle to see.</td></tr>
+    <tr style="border-bottom:1px solid #ddd6c8"><td style="padding:10px 10px 10px 0;white-space:nowrap;color:var(--muted)">2026-06-30</td><td style="padding:10px">Added the provider simulation kill switch and a VECTRA-style contour/volume-difference mode.</td><td style="padding:10px 0 10px 10px;color:var(--muted)">Real clinics need a compliance lever; contour mode makes shape change legible independent of skin tone/lighting.</td></tr>
+    <tr style="border-bottom:1px solid #ddd6c8"><td style="padding:10px 10px 10px 0;white-space:nowrap;color:var(--muted)">2026-06-30</td><td style="padding:10px">Rebuilt dosing on real clinical units (U / mL / vials) and made the simulation depth-aware and treatment-correct.</td><td style="padding:10px 0 10px 10px;color:var(--muted)">A simulation that invents numbers sets the wrong expectations — see Clinical grounding below.</td></tr>
+    <tr style="border-bottom:1px solid #ddd6c8"><td style="padding:10px 10px 10px 0;white-space:nowrap;color:var(--muted)">2026-06-29</td><td style="padding:10px">Replaced the mocked "analyzing" state with a real on-device scan, and unified intake → provider review → client output into one loop.</td><td style="padding:10px 0 10px 10px;color:var(--muted)">The 4 intake photos went nowhere before; now they drive the actual analysis and plan.</td></tr>
+    <tr style="border-bottom:1px solid #ddd6c8"><td style="padding:10px 10px 10px 0;white-space:nowrap;color:var(--muted)">2026-06-29</td><td style="padding:10px">Added provider treatment/product customization: category filter, treatment-library dropdown, custom-treatment form, sponsored products.</td><td style="padding:10px 0 10px 10px;color:var(--muted)">Providers needed to customize the plan beyond the AI-drafted default.</td></tr>
+    <tr><td style="padding:10px 10px 10px 0;white-space:nowrap;color:var(--muted)">See also</td><td colspan="2" style="padding:10px 0 10px 10px;color:var(--muted)">Full dated history across the whole portfolio: <a href="../CHANGELOG.md">CHANGELOG.md</a></td></tr>
+  </table>
 
   <div class="endcard">
     <p class="serif">The strongest demo on the portfolio, right now.</p>

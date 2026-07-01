@@ -110,10 +110,10 @@ footer{text-align:center;color:var(--muted);padding:30px;border-top:2px solid va
     <div class="card">
       <h3>What the prototype does</h3>
       <ul>
-        <li>Client intake and goal-setting</li>
-        <li>AI-drafted facial assessment</li>
-        <li>Side-by-side treatment comparison</li>
-        <li>Clinic review board</li>
+        <li>Real on-device skin scan (camera or upload) with a 7-concern heatmap</li>
+        <li>Identity-preserving facial-balancing simulation, calibrated to real clinical units</li>
+        <li>Unified loop: intake → scan → provider review queue → auto-drafted plan → approval → client output</li>
+        <li>Provider plan customization, dose-visibility control, and a simulation kill switch</li>
         <li>Plan output with cost ranges and timelines</li>
       </ul>
     </div>
@@ -162,10 +162,10 @@ footer{text-align:center;color:var(--muted);padding:30px;border-top:2px solid va
   <h2>Stack</h2>
   <div class="stack-row">
     <div class="stack-item"><b>React</b>Frontend prototype</div>
-    <div class="stack-item"><b>Gemini</b>AI-assisted analysis layer</div>
-    <div class="stack-item"><b>Mock data</b>No live backend yet — all demo-safe</div>
+    <div class="stack-item"><b>MediaPipe Face Landmarker</b>Real on-device facial analysis — no server, nothing leaves the device</div>
+    <div class="stack-item"><b>Mock data</b>No live backend yet — plans/clients are demo-safe</div>
     <div class="stack-item"><b>Claude Code</b>Build assist and iteration</div>
-    <div class="stack-item"><b>Prompt design</b>Structured output for plan generation</div>
+    <div class="stack-item"><b>Clinical reference constants</b>Real dosing units, cited to published research</div>
     <div class="stack-item"><b>Supabase (planned)</b>Phase 2 backend</div>
   </div>
 
@@ -196,10 +196,10 @@ footer{text-align:center;color:var(--muted);padding:30px;border-top:2px solid va
 
   <!-- CTA -->
   <div class="cta">
-    <h2>Interested in the beta?</h2>
-    <p>AestheticSim is currently in private beta. A small group of medspas and aesthetic providers are reviewing the concept and giving feedback.</p>
+    <h2>Are you a medspa owner or injector?</h2>
+    <p>AestheticSim doesn't have real customers yet — it's a working prototype, not a validated product. I'm actively looking for a few independent medspas or injectors willing to try it and tell me honestly whether it's worth building further.</p>
     <div class="cta-row">
-      <a class="cta-btn" href="https://aestheticsim.tiiny.site" target="_blank" rel="noopener">Request beta access →</a>
+      <a class="cta-btn" href="https://aestheticsim.tiiny.site" target="_blank" rel="noopener">Try the live demo →</a>
       <a class="cta-btn" href="../portfolio.html">Back to the portfolio →</a>
     </div>
   </div>

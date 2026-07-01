@@ -15,6 +15,10 @@ All notable changes to this portfolio site are documented here, grouped by date 
 - **Heatmap restored** on the client dashboard skin-analysis card, with tappable concern chips.
 - Cited research write-up ("Clinical grounding & research") added to the AestheticSim build log — units per area, why simulation physics differ by treatment, the 3D-imaging precedent (Crisalix, Canfield VECTRA), vascular safety zones, and an honest "evaluated but not integrated" section on FLAME and KeenTools (license/multi-photo constraints ruled them out for a single-photo, client-side app).
 
+### Fixed
+- The on-photo simulator rendered at a fixed 380px internal resolution regardless of display size, so it looked blurry at any real container width — raised to a device-pixel-ratio-aware resolution. Also recalibrated the warp magnitudes (cheek/lip/jaw/chin/brow), which were tuned so conservatively the simulated change was barely visible even at "Natural" intensity.
+- The live camera capture requested a square feed, but real camera sensors return landscape video; the live preview cropped that to a 3:4 portrait box while the actual captured photo kept the full, uncropped (and unmirrored) landscape frame — so what you saw while framing your face wasn't what got analyzed or displayed. Capture now center-crops and mirrors to match the preview exactly. Also removed a second, separate forced-crop on the "analyzing" loading screen that could cut off non-portrait photos regardless of source.
+
 ## 2026-06-29 — AestheticSim: real on-device scan + unified workflow
 
 ### Added
