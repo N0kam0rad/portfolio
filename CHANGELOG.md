@@ -2,6 +2,15 @@
 
 All notable changes to this portfolio site are documented here, grouped by date (newest first). This is a personal portfolio of multiple small apps and case studies rather than a single versioned product, so entries are dated rather than semver-tagged. Routine automated commits (README metadata refreshes) are omitted.
 
+## 2026-07-03 — Accord: acid-wardrobe design pass + data enrichment
+
+### Added
+- **Accord build log rewritten** with the July design pass: single-frame Home (choose-first flow, symbol actions, collapsible intelligence), SNAGGED IT wishlist→wardrobe action, A–Z Houses index, portal tooltips, real-bottle pairing recommendations, floating bottle-cutout wardrobe map, new orbit-O logomark, and a three-acid color-role system (yellow = action, blue = intelligence, magenta = desire).
+- Before/after comparison of the Home and Galaxy redesign, design-influence citations (GOAT, Whering, acid-grunge editorial, open type stack), and a note on building with Claude Fable 5.
+
+### Changed
+- Accord card status on the build log index: Cooking → Building, with an updated fragrance-intelligence blurb.
+
 ## 2026-06-30 — AestheticSim: clinical grounding + 3D simulation
 
 ### Added
