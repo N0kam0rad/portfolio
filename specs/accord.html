@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ACCORD — Product Spec · Tamara Richards</title>
-<meta name="description" content="Mini product spec for ACCORD: a morning-ritual automation that ends in a weather-based scent recommendation — what it is, why, who it helps, monetization, and build lessons." />
+<meta name="description" content="Product spec for ACCORD: a fragrance-intelligence and scent-wardrobe app — the wardrobe you own, the intelligence that learns how you wear it, and a daily scent pulled from real weather and wear history." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -33,6 +33,8 @@
   .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
   .pill{font-size:0.74rem;font-weight:600;border:2px solid var(--ink);border-radius:999px;padding:4px 11px;background:var(--paper)}
   .status{background:var(--coral);color:#fff}
+  a.pill{text-decoration:none;color:var(--ink);transition:transform 120ms ease,box-shadow 120ms ease}
+  a.pill:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink);background:var(--lime)}
   .spec{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:30px 0}
   @media(max-width:720px){.spec{grid-template-columns:1fr}}
   .card{background:var(--paper);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--shadow-sm);padding:24px;position:relative;overflow:hidden}
@@ -45,6 +47,11 @@
   .card p{font-size:0.98rem;padding-left:8px}
   .card.wide{grid-column:1 / -1}
   .tools{display:flex;flex-wrap:wrap;gap:8px;padding-left:8px;margin-top:6px}
+  .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:26px 0 8px}
+  @media(max-width:720px){.shots{grid-template-columns:1fr}}
+  .shots figure{margin:0;border:2px solid var(--ink);border-radius:18px;overflow:hidden;background:#0A0A0C;box-shadow:var(--shadow-sm)}
+  .shots img{width:100%;height:auto;display:block}
+  .shots figcaption{font-size:0.78rem;font-weight:700;padding:9px 12px;background:var(--paper);border-top:2px solid var(--ink)}
   .money{background:var(--ink);color:var(--bg);border:2px solid var(--ink);border-radius:18px;box-shadow:var(--shadow);padding:28px;margin:8px 0 0}
   .money .lab{color:var(--yellow)}
   .money h3{color:var(--bg)}.money p,.money li{color:#d8d1c6}
@@ -65,85 +72,105 @@
 
 <article>
 <header class="post"><div class="article">
-  <div class="crumb">Product Spec · Companion to Aurë</div>
+  <div class="crumb">Product Spec · Fragrance Intelligence</div>
   <h1 class="h">ACCORD</h1>
-  <p class="sub">A morning-ritual automation that ends in a scent recommendation — dismiss your alarm, run your ritual, and get the perfume of the day, chosen for the weather.</p>
-  <div class="meta"><span class="pill status">In the lab</span><span class="pill">iOS Shortcuts</span><span class="pill">Automation</span><span class="pill">Companion app</span></div>
+  <p class="sub">A fragrance-intelligence and scent-wardrobe app. The wardrobe you own, the intelligence that learns how you actually wear it, and a daily pull chosen from real weather and wear history.</p>
+  <div class="meta">
+    <span class="pill status">Building · July 2026</span>
+    <a class="pill" href="#what">What it is</a>
+    <a class="pill" href="#screens">Screens</a>
+    <a class="pill" href="#how">How it works</a>
+    <a class="pill" href="#money">Business model</a>
+    <a class="pill" href="#lessons">Lessons</a>
+    <a class="pill" href="../posts/accord-build-log.html">Build log →</a>
+  </div>
 </div></header>
 
 <div class="article">
-  <div class="spec">
+  <div class="spec" id="what">
     <div class="card c-coral">
       <div class="lab">What it is</div>
       <h3>The 10-second version</h3>
-      <p>An on-phone automation: dismissing your morning alarm kicks off your ritual (wake → workout → shower → layer perfume) and delivers the day's scent pick — based on the weather — as a notification with the "why," a daily message, and eventually a home-screen widget. It's the daily ritual layer to <a href="aure.html">Aurë</a>'s scent wardrobe.</p>
+      <p>Your fragrance collection becomes a <b>Galaxy</b> — every bottle photographed, note-mapped, and wear-counted. Each morning Accord pulls <b>Today's Vibe</b>: three scents from your own shelf, chosen against live weather, season, and how you've been wearing things. You commit to one, log the wear, and the intelligence gets sharper. Think Whering's wardrobe discipline with GOAT's collector energy — for perfume.</p>
     </div>
     <div class="card c-purple">
       <div class="lab">Why I built it</div>
       <h3>The spark</h3>
-      <p>A wardrobe tells you what you <em>own</em>; it doesn't help you <em>choose</em> at 7 a.m. I wanted the decision made for me, woven into a routine I already do, so fragrance becomes a ritual instead of a guess.</p>
+      <p>A collection tells you what you <em>own</em>; it doesn't help you <em>choose</em>. Scent is deeply personal and completely untracked — nobody knows their own cost-per-wear, which bottles are gathering dust, or what actually suits a humid Thursday. I wanted my nose organized.</p>
     </div>
     <div class="card c-red">
-      <div class="lab">The problem it solved for me</div>
-      <h3>A frictionless morning ritual</h3>
-      <p>One trigger that strings my whole morning together and ends with "wear this today" — no app to open, no decision fatigue.</p>
+      <div class="lab">The problem it solves</div>
+      <h3>Decision fatigue, ended</h3>
+      <p>“What should I wear today?” answered in one glance — with the <em>why</em> spelled out (weather, season, how long since its last orbit), not a generic quiz result.</p>
     </div>
     <div class="card c-green">
-      <div class="lab">The problem it solves for a user</div>
-      <h3>Habit + delight, on autopilot</h3>
-      <p>Anyone building a morning routine (and any fragrance lover) gets a gentle, context-aware nudge that makes the routine feel intentional and rewarding — without another app to babysit.</p>
+      <div class="lab">The differentiator</div>
+      <h3>Intelligence, not inventory</h3>
+      <p>Plenty of apps list perfume. Accord <b>learns</b>: it reads your wear patterns, spots gaps in the wardrobe, surfaces what's under-loved, computes cost-per-wear as a sustainability signal, and turns your wishlist into an actionable pipeline (“Snagged it” moves a wish straight onto the shelf).</p>
     </div>
+  </div>
+
+  <h2 class="learn" id="screens">The screens</h2>
+  <div class="shots">
+    <figure><img src="../assets/accord/accord-home.png" alt="Accord home: Today's Vibe — a floating bottle over its aura graphic with a two-tone vibe pill and Make It Today's Scent button" loading="lazy"/><figcaption>Today's Vibe — commit to the day's scent before the app suggests more.</figcaption></figure>
+    <figure><img src="../assets/accord/accord-galaxy.png" alt="Accord Galaxy: dark collector grid of real bottle cutouts with wear counts and scent-family color keylines" loading="lazy"/><figcaption>The Galaxy — the wardrobe as a collector's grid.</figcaption></figure>
+    <figure><img src="../assets/accord/accord-map.png" alt="Accord Map: composite fingerprint radar and a warm-by-intimate scatter of floating bottle images" loading="lazy"/><figcaption>The Map — every bottle plotted warm × intimate, sized by wears.</figcaption></figure>
+  </div>
+  <p style="color:var(--muted);font-size:0.85rem">Captured from the live build with a demo wardrobe. The visual language — “acid wardrobe” — is neon acids on near-black, floating background-removed bottles, and poster type. <a href="../posts/accord-build-log.html">The build log</a> covers the influences.</p>
+
+  <div class="spec" id="how">
     <div class="card c-blue wide">
       <div class="lab">How it works</div>
       <h3>Under the hood</h3>
-      <p>Built natively with iOS Shortcuts: an alarm-dismissal trigger fires the ritual sequence, pulls the local weather, maps conditions to a scent recommendation, and surfaces it as a notification (with reasoning), a daily text, and a widget. No app store, no backend — it runs entirely on the phone.</p>
+      <p>A React + Vite web app on Supabase (auth, Postgres with row-level security, storage). The fragrance atlas is internal-first: fuzzy search (typo-tolerant trigram matching) over our own database, with the Fragella API filling gaps one fragrance at a time as users add bottles — fetched once, owned forever, images mirrored into our own storage. Live weather comes from Open-Meteo with an honesty gate: the app only claims current conditions when it actually has them, otherwise it says it's reading the season. Every aura graphic and backdrop is generated CSS/SVG — nothing licensed, nothing scraped.</p>
       <div class="tools">
-        <span class="pill">iOS Shortcuts</span><span class="pill">Weather data</span><span class="pill">On-device automation</span><span class="pill">Claude (logic)</span>
+        <span class="pill">React + Vite</span><span class="pill">Supabase + RLS</span><span class="pill">Internal atlas + Fragella</span><span class="pill">Open-Meteo</span><span class="pill">Claude Code · Fable 5</span>
       </div>
     </div>
   </div>
 
-  <div class="money">
+  <div class="money" id="money">
     <div class="lab">Where it's going · how it monetizes</div>
     <h3>The business model</h3>
     <ul>
-      <li><b>Hook for Aurë</b> — the free daily ritual that drives people into the paid scent-wardrobe app.</li>
-      <li><b>Premium recs</b> — smarter, personalized scent matching as a subscription feature.</li>
-      <li><b>Brand partnerships</b> — sponsored "scent of the day" placements with fragrance houses.</li>
+      <li><b>Premium intelligence</b> — deeper personalization, forecasting, and wardrobe-gap analysis as the subscription layer.</li>
+      <li><b>Shoppable wishlist</b> — wishlist bottles link to retail pages today; affiliate is the natural next step.</li>
+      <li><b>Community pages</b> — free templates for your scent page, paid tier for custom ones.</li>
+      <li><b>The Exchange</b> — longer term: local meetup gifting of bottles (no shipping, no payments — community and compliance friendly).</li>
     </ul>
-    <p style="margin-top:12px">Next: fold the recommendation engine into Aurë so the ritual and the wardrobe share one brain.</p>
+    <p style="margin-top:12px">Roadmap: comeback mechanics (streaks, weekly recap) → community feed → native app with barcode scanning → the stores.</p>
   </div>
 
-  <h2 class="learn">What I learned building it</h2>
+  <h2 class="learn" id="lessons">What I learned building it</h2>
   <div class="spec">
     <div class="card c-blue">
-      <div class="lab">How I directed the AI</div>
-      <h3>Design the trigger and the payoff</h3>
-      <p>I led with the two ends — what fires it (alarm dismissal) and what you get (a scent pick with a reason) — and let the steps in between fall out of that. Anchoring on the trigger and the delivery kept the automation from sprawling.</p>
+      <div class="lab">Data economics</div>
+      <h3>Cache on touch, own the assets</h3>
+      <p>Instead of bulk-importing a fragrance database (expensive, and usually against someone's terms), each fragrance is fetched from the licensed API once — the first time a real user adds it — then it lives in our atlas forever, image included. Pay per fragrance once, not per call forever.</p>
     </div>
     <div class="card c-red">
       <div class="lab">What broke &amp; how I fixed it</div>
-      <h3>The platform fought the widget</h3>
-      <p>iOS Shortcuts can't do everything a real app can — the home-screen widget was the hard part. Instead of forcing it, I shipped the notification + daily message first (which Shortcuts handles cleanly) and treated the widget as "take what we can get for v1." Ship the 90% that works.</p>
+      <h3>Fix the cause, not the symptom</h3>
+      <p>Tooltips kept clipping off-screen. The lazy fix is nudging pixels; the real cause was the swipeable rail's scroll container clipping everything inside it. The component now renders through a portal at the page root — it can't be clipped by anything, anywhere in the app.</p>
     </div>
     <div class="card c-green">
-      <div class="lab">The automation win</div>
-      <h3>A real product with no code</h3>
-      <p>Alarm → ritual → weather → scent rec is a genuinely useful daily automation built entirely from native Shortcuts — no app, no server, no cost. Proof that "automation" doesn't always mean "build an app."</p>
+      <div class="lab">Design systems</div>
+      <h3>Give every color a job</h3>
+      <p>One neon accent doing every job reads as noise. Accord's rule: acid yellow = action &amp; identity, acid blue = intelligence, acid magenta = desire (wishlist) — and the six scent-family hues stay reserved for data. Feedback like “I keep thinking Vibe is a Note” gets solved by the system, not a one-off tweak.</p>
     </div>
     <div class="card c-yellow">
-      <div class="lab">Tools that did the work</div>
-      <h3>Use the OS you already have</h3>
-      <p>The phone's own automation layer was the platform. Lesson: before building software, check what the device can already do — sometimes the fastest path to a shipped idea is the tool in your pocket.</p>
+      <div class="lab">Working with AI</div>
+      <h3>Feedback in batches, fixes in systems</h3>
+      <p>Built in Claude Code on Claude Fable 5. Eight pieces of screen feedback went in as one message and came back as one coherent redesign across five files — verified in a live browser before I looked at it. The unlock is treating the AI like a senior pair: give it the <em>why</em> behind the feedback and let it propose the system.</p>
     </div>
   </div>
 
   <div class="cta">
     <h3>This is the work I do on consult.</h3>
-    <p>Spotting where an idea can ship as an <em>automation</em> instead of an app — and scoping it down to the part that actually works today. <span class="serif">Got an idea sitting in your head? Let's get it out.</span></p>
+    <p>Taking a fuzzy idea (“my nose, organized”) to a designed, data-backed product — and scoping each milestone to the part that actually ships. <span class="serif">Got an idea sitting in your head? Let's get it out.</span></p>
     <a href="../contact.html">Work with me →</a>
   </div>
-  <p style="text-align:center;color:var(--muted);font-size:0.85rem;margin-bottom:10px">Back to the <a href="../portfolio.html">work page</a>.</p>
+  <p style="text-align:center;color:var(--muted);font-size:0.85rem;margin-bottom:10px">Back to the <a href="../portfolio.html">work page</a> · or read the <a href="../posts/accord-build-log.html">build log</a>.</p>
 </div>
 </article>
 <footer>Tamara Richards, The (almost) CEO · Ideas, shipped with AI.</footer>
