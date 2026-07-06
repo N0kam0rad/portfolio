@@ -12,7 +12,7 @@ Privacy is non-negotiable. This is a public portfolio, so every project must use
 ## Public aliases
 
 - BonnetNoona child cast member: `Mira`
-- Kids' Habit + Reward App child user: `Luna`
+- Luna's Rituals child user: `Luna`
 
 ## Blocked-string check before push
 
@@ -51,7 +51,7 @@ Use dummy names, dummy balances, dummy payment history, and fake rent numbers.
 
 Use generic diet constraints and dummy pantry data. Do not publish medication details, private health context, real grocery history, or real family data.
 
-### Kids' Habit + Reward App
+### Luna's Rituals
 
 Use public alias `Luna`. Do not publish real name, school, real routines, real rewards, real photos, or identifiable details.
 

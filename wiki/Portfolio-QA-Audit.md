@@ -68,7 +68,7 @@ All other checked routes resolve cleanly:
 
 ### Luna's Rituals
 - Has a working app (`apps/luna-rituals.html`) with title "Luna's Rituals ✨".
-- Has a product spec (`specs/luna-rituals.html`) titled "Kids' Habit + Reward App".
+- Has a product spec (`specs/luna-rituals.html`) titled "Luna's Rituals".
 - **Completely absent from both `portfolio.html` and `index.html`.**
 - By the site's own rule ("Finished or more complete products appear first"), this product should be in the Served section alongside AestheticSim.
 - Privacy is maintained — "Luna" is the approved public alias; the child's real name does not appear in any portfolio file.

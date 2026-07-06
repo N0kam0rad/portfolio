@@ -200,7 +200,7 @@ Include:
 - Episode structure
 - Visual style guide
 
-### Kids' Habit + Reward App
+### Luna's Rituals
 
 - Public alias only
 - Routine dashboard mockups

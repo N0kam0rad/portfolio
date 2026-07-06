@@ -34,7 +34,7 @@ Placeholder cards should move below screenshot-backed projects until they receiv
 | My Plate Planner | Meal planning app | In progress | `specs/plate-planner.html` | Build a privacy-safe dummy meal-plan UI |
 | Helix7 | Voice-note fiction workflow | Draft | `specs/helix7.html` | Build a readable chapter/process UI |
 | The Helix Class | Webtoon / story world | Draft | portfolio card assets | Build a chapter/sample-reader UI |
-| Kids' Habit + Reward App | Kids routine app | In progress | alias-safe app/spec paths | Build public-alias UI only, no real minor details |
+| Luna's Rituals | Kids routine app | In progress | alias-safe app/spec paths | Build public-alias UI only, no real minor details |
 
 ## UI build priority queue
 
@@ -43,7 +43,7 @@ Placeholder cards should move below screenshot-backed projects until they receiv
 3. Roommate Tracker — sanitized rent dashboard with fake data.
 4. My Plate Planner — dummy protein/meal planner UI with no private health context.
 5. Helix7 — voice-note-to-chapter process UI.
-6. Kids' Habit + Reward App — public alias only.
+6. Luna's Rituals — public alias only.
 
 ## App-card standard
 

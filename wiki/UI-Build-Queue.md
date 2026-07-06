@@ -17,7 +17,7 @@ Nothing should be marked as shipped until it is truly usable and public-ready.
 4. **My Plate Planner** — build privacy-safe dummy meal planner UI.
 5. **Helix7** — build readable chapter/process UI.
 6. **The Helix Class** — build sample webtoon/reader UI.
-7. **Kids' Habit + Reward App** — build alias-safe routine/reward UI only.
+7. **Luna's Rituals** — build alias-safe routine/reward UI only.
 
 ## Public portfolio rule
 

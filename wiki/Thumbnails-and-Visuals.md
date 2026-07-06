@@ -45,7 +45,7 @@ Each thumbnail should:
 | My Plate Planner | Placeholder | Create dummy-data meal plan screenshot |
 | Helix7 | Placeholder | Create workflow/manuscript screenshot |
 | Interior Render Studio | Placeholder | Capture render studio UI or output |
-| Kids' Habit + Reward App | Placeholder / alias-sensitive | Capture public-alias screen only |
+| Luna's Rituals | Placeholder / alias-sensitive | Capture public-alias screen only |
 
 ## File naming convention
 
