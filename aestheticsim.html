@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" >
+<meta name="viewport" content="width=device-width, initial-scale=1.0" >
+<title>AestheticSim · AI-Assisted Facial Aesthetics Consultation Reports</title>
+<meta name="description" content="AI-assisted facial aesthetics consultation reports for medspas, injectors, and aesthetic providers. Private beta now open.">
+<link rel="preconnect" href="https://fonts.googleapis.com" >
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin >
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" >
+<style>
+  :root{
+    --bg:#F4EEE2;--ink:#1A1613;--paper:#FFFDF8;--red:#ED3A24;
+    --pink:#FF4D9D;--blue:#2F6BFF;--green:#11B981;--coral:#FF7A3D;
+    --purple:#7C4DFF;--yellow:#FFC835;--lime:#C2F23D;--muted:#6E665B;
+    --shadow:6px 6px 0 var(--ink);--shadow-sm:4px 4px 0 var(--ink);--maxw:820px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  h1,h2,h3,h4{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:800;line-height:0.95;letter-spacing:-0.025em}
+  .serif{font-family:"Fraunces",Georgia,serif;font-style:italic;font-weight:500}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px}
+
+  /* accentbar */
+  .accentbar{height:10px;display:flex}
+  .accentbar span{flex:1}
+  .accentbar span:nth-child(1){background:var(--red)}
+  .accentbar span:nth-child(2){background:var(--blue)}
+  .accentbar span:nth-child(3){background:var(--purple)}
+  .accentbar span:nth-child(4){background:var(--coral)}
+  .accentbar span:nth-child(5){background:var(--lime)}
+  .accentbar span:nth-child(6){background:var(--yellow)}
+
+  /* nav */
+  nav{background:var(--bg);border-bottom:2px solid var(--ink);position:sticky;top:0;z-index:80}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .logo{font-family:"Bricolage Grotesque";font-weight:800;font-size:1.1rem;display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+  .logo .dot{width:12px;height:12px;border-radius:50%;background:var(--purple);border:2px solid var(--ink)}
+  .chip{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;background:var(--yellow);border:2px solid var(--ink);border-radius:999px;padding:3px 10px;box-shadow:var(--shadow-sm)}
+  .nav-cta{background:var(--ink);color:var(--bg);font-weight:700;font-size:0.88rem;padding:9px 18px;border-radius:10px;border:2px solid var(--ink);text-decoration:none;transition:background .15s}
+  .nav-cta:hover{background:var(--purple)}
+
+  /* marquee */
+  .marquee{background:var(--purple);color:#fff;border-bottom:2px solid var(--ink);overflow:hidden;white-space:nowrap;padding:9px 0}
+  .marquee .track{display:inline-block;animation:scroll 28s linear infinite}
+  .marquee b{font-family:"Bricolage Grotesque";font-weight:800;font-size:0.88rem;margin:0 6px}
+  .marquee .star{color:var(--yellow);margin:0 16px}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* hero */
+  header.hero{padding:70px 0 50px;border-bottom:2px solid var(--ink)}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;border:2px solid var(--ink);background:var(--paper);border-radius:999px;padding:6px 14px;box-shadow:var(--shadow-sm);margin-bottom:28px}
+  .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--purple)}
+  h1.title{font-size:clamp(2.8rem,7vw,5.2rem);letter-spacing:-0.04em;margin-bottom:24px;line-height:0.92}
+  h1.title .mark{background:var(--lime);border:2px solid var(--ink);border-radius:8px;padding:0 .12em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  .lede{font-size:1.15rem;max-width:52ch;color:#3a342e;margin-bottom:36px}
+  .hero-badges{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+  .badge{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;border:2px solid var(--ink);border-radius:999px;padding:5px 12px;background:var(--paper)}
+  .badge.blue{background:var(--blue);color:#fff}
+  .badge.purple{background:var(--purple);color:#fff}
+
+  /* sections */
+  section{padding:60px 0;border-bottom:2px solid var(--ink)}
+  section:last-of-type{border-bottom:none}
+  .sec-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:14px}
+  h2.sec-head{font-size:clamp(2rem,4.5vw,3rem);margin-bottom:22px}
+  .body-text{font-size:1.05rem;color:#3a342e;line-height:1.7;max-width:60ch}
+  .body-text + .body-text{margin-top:16px}
+
+  /* problem/solution boxes */
+  .box-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:30px}
+  @media(max-width:640px){.box-grid{grid-template-columns:1fr}}
+  .box{border:2px solid var(--ink);border-radius:14px;padding:26px;background:var(--paper);box-shadow:var(--shadow-sm)}
+  .box h3{font-size:1.1rem;margin-bottom:12px}
+  .box ul{padding-left:18px;font-size:0.95rem;color:#3a342e;line-height:1.8}
+
+  /* features */
+  .features{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:30px}
+  .feat{border:2px solid var(--ink);border-radius:12px;padding:20px;background:var(--paper);box-shadow:var(--shadow-sm)}
+  .feat .icon{font-size:1.5rem;margin-bottom:10px}
+  .feat h4{font-size:0.95rem;margin-bottom:6px}
+  .feat p{font-size:0.85rem;color:var(--muted)}
+
+  /* founder */
+  .founder-card{border:2px solid var(--ink);border-radius:16px;padding:40px;background:var(--ink);color:var(--bg);box-shadow:var(--shadow);margin-top:30px;position:relative;overflow:hidden}
+  .founder-card::before{content:"";position:absolute;top:0;right:0;width:220px;height:220px;background:var(--purple);opacity:.15;border-radius:50%;transform:translate(60px,-60px)}
+  .founder-card blockquote{font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:clamp(1.2rem,2.5vw,1.55rem);line-height:1.5;font-weight:500;margin-bottom:24px;position:relative}
+  .founder-card .attr{font-size:0.88rem;font-weight:600;opacity:.7}
+
+  /* who */
+  .who-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .who-pill{border:2px solid var(--ink);border-radius:999px;padding:8px 16px;font-size:0.88rem;font-weight:600;background:var(--paper);box-shadow:var(--shadow-sm)}
+
+  /* confidentiality */
+  .conf-box{border:2px solid var(--ink);border-radius:12px;padding:22px 26px;background:var(--yellow);box-shadow:var(--shadow-sm);margin-top:30px;font-size:0.88rem;line-height:1.6}
+  .conf-box strong{display:block;margin-bottom:6px;font-family:"Bricolage Grotesque";font-size:1rem}
+
+  /* form */
+  .form-wrap{background:var(--paper);border:2px solid var(--ink);border-radius:18px;padding:42px;box-shadow:var(--shadow);margin-top:36px}
+  .form-wrap h2{font-size:1.9rem;margin-bottom:6px}
+  .form-sub{font-size:1rem;color:var(--muted);margin-bottom:32px}
+  .form-section{margin-bottom:32px}
+  .form-section-head{font-family:"Bricolage Grotesque";font-weight:800;font-size:1rem;text-transform:uppercase;letter-spacing:0.05em;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:20px}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  @media(max-width:580px){.field-row{grid-template-columns:1fr}}
+  .field{display:flex;flex-direction:column;gap:5px;margin-bottom:16px}
+  .field label{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em}
+  .field input,.field textarea,.field select{border:2px solid var(--ink);border-radius:8px;padding:10px 14px;font-family:"Inter",sans-serif;font-size:0.95rem;background:var(--bg);color:var(--ink);width:100%;outline:none;transition:border-color .15s,box-shadow .15s}
+  .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--purple);box-shadow:0 0 0 3px #7C4DFF22}
+  .field textarea{resize:vertical;min-height:90px}
+  .check-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px}
+  .check-item{display:flex;align-items:center;gap:9px;font-size:0.9rem;cursor:pointer;padding:4px 0}
+  .check-item input[type=checkbox],.radio-item input[type=radio]{width:16px;height:16px;accent-color:var(--purple);cursor:pointer;flex-shrink:0}
+  .radio-row{display:flex;flex-wrap:wrap;gap:6px 20px}
+  .radio-item{display:flex;align-items:center;gap:8px;font-size:0.9rem;cursor:pointer}
+  .submit-btn{width:100%;background:var(--ink);color:var(--bg);font-family:"Bricolage Grotesque";font-weight:800;font-size:1.1rem;border:2px solid var(--ink);border-radius:12px;padding:16px;cursor:pointer;box-shadow:var(--shadow);transition:background .15s,transform .1s}
+  .submit-btn:hover{background:var(--purple);transform:translateY(-2px)}
+  .submit-btn:active{transform:translateY(1px);box-shadow:2px 2px 0 var(--ink)}
+  .form-note{font-size:0.78rem;color:var(--muted);text-align:center;margin-top:14px;line-height:1.6}
+
+  /* success */
+  #form-success{display:none;text-align:center;padding:40px 20px}
+  #form-success .big{font-family:"Bricolage Grotesque";font-size:2.2rem;font-weight:800;margin-bottom:12px}
+  #form-success p{color:var(--muted);font-size:1rem}
+
+  /* footer */
+  footer{background:var(--ink);color:var(--bg);padding:40px 0 28px;border-top:2px solid var(--ink)}
+  .f-logo{font-family:"Bricolage Grotesque";font-weight:800;font-size:1.3rem;margin-bottom:8px}
+  .f-tagline{font-size:0.88rem;opacity:.6;margin-bottom:22px}
+  .f-conf{font-size:0.75rem;opacity:.5;line-height:1.6;max-width:62ch;border-top:1px solid #ffffff22;padding-top:18px;margin-top:18px}
+  .f-back{font-size:0.8rem;opacity:.5;margin-top:14px}
+  .f-back a{color:inherit;text-decoration:underline}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}
+  .reveal.in{opacity:1;transform:none}
+</style>
+<meta property="og:title" content="AestheticSim · AI-Assisted Facial Aesthetics Consultation Reports">
+<meta property="og:description" content="AI-assisted facial aesthetics consultation reports for medspas, injectors, and aesthetic providers. Private beta now open.">
+<meta property="og:image" content="https://n0kam0rad.github.io/portfolio/assets/aesthetic-sim-thumb.jpg">
+<meta property="og:url" content="https://n0kam0rad.github.io/portfolio/aestheticsim.html">
+<meta property="og:type" content="website">
+</head>
+<body>
+
+<div class="accentbar"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#">
+      <span class="dot"></span>
+      AestheticSim
+    </a>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="chip">Private Beta</span>
+      <a class="nav-cta" href="#beta-form">Request access</a>
+    </div>
+  </div>
+</nav>
+
+<div class="marquee">
+  <div class="track">
+    <b>Natural results</b><span class="star">✦</span>
+    <b>AI-assisted consultation reports</b><span class="star">✦</span>
+    <b>Built for medspas</b><span class="star">✦</span>
+    <b>Realistic treatment previews</b><span class="star">✦</span>
+    <b>Client education</b><span class="star">✦</span>
+    <b>Facial balancing</b><span class="star">✦</span>
+    <b>Private beta</b><span class="star">✦</span>
+    <b>Natural results</b><span class="star">✦</span>
+    <b>AI-assisted consultation reports</b><span class="star">✦</span>
+    <b>Built for medspas</b><span class="star">✦</span>
+    <b>Realistic treatment previews</b><span class="star">✦</span>
+    <b>Client education</b><span class="star">✦</span>
+    <b>Facial balancing</b><span class="star">✦</span>
+    <b>Private beta</b><span class="star">✦</span>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="dot"></span> AI-Assisted · Aesthetics · Private Beta</div>
+    <h1 class="title reveal">Help clients <span class="mark">understand</span><br>before they commit.</h1>
+    <p class="lede reveal">An AI-assisted facial aesthetics consultation platform for medspas, injectors, and aesthetic providers. We help create visual, educational reports for realistic treatment planning.</p>
+    <div class="hero-badges reveal">
+      <span class="badge blue">Natural facial balancing</span>
+      <span class="badge purple">Realistic previews</span>
+      <span class="badge">Injectables education</span>
+      <span class="badge">Cost planning</span>
+      <span class="badge">Maintenance timelines</span>
+    </div>
+  </div>
+</header>
+
+<section id="problem">
+  <div class="wrap">
+    <div class="sec-label reveal">The problem</div>
+    <h2 class="sec-head reveal">Clients arrive informed<br>about everything except <span class="serif">their options.</span></h2>
+    <p class="body-text reveal">Clients are researching treatments before they ever book — watching videos, comparing before-and-afters, reading about Botox, filler, Sculptra, PRF, RF microneedling, and skin tightening. But many still arrive at consultations unsure of what treatment is right for them, what results are realistic, and what questions to ask.</p>
+    <p class="body-text reveal">Providers are left trying to educate, correct expectations, explain anatomy, discuss cost, and build trust in a limited consultation window.</p>
+    <div class="box-grid">
+      <div class="box reveal">
+        <h3>Clients come in asking&nbsp;for</h3>
+        <ul>
+          <li>realistic result previews</li>
+          <li>treatment comparisons</li>
+          <li>cost transparency</li>
+          <li>maintenance planning</li>
+          <li>help knowing what to prioritize first</li>
+        </ul>
+      </div>
+      <div class="box reveal">
+        <h3>Providers spend time on</h3>
+        <ul>
+          <li>correcting unrealistic expectations</li>
+          <li>explaining anatomy from scratch</li>
+          <li>justifying pricing</li>
+          <li>building trust in a short window</li>
+          <li>re-explaining the same basics</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="solution">
+  <div class="wrap">
+    <div class="sec-label reveal">The solution</div>
+    <h2 class="sec-head reveal">A structured consultation<br>report — <span class="serif">before</span> treatment.</h2>
+    <p class="body-text reveal">AestheticSim helps generate a visual, educational facial aesthetics consultation report that helps clients understand their options and helps providers structure more informed conversations.</p>
+    <div class="features">
+      <div class="feat reveal"><div class="icon">🗺</div><h4>Facial mapping</h4><p>Visual breakdown of facial zones and treatment areas</p></div>
+      <div class="feat reveal"><div class="icon">💉</div><h4>Treatment education</h4><p>Clear explanations of Botox, filler, PRF, Sculptra, and more</p></div>
+      <div class="feat reveal"><div class="icon">🪞</div><h4>Visual previews</h4><p>Realistic side-by-side previews focused on natural results</p></div>
+      <div class="feat reveal"><div class="icon">💰</div><h4>Cost planning</h4><p>Estimated cost ranges, annual maintenance, and 3-year outlooks</p></div>
+      <div class="feat reveal"><div class="icon">📅</div><h4>Maintenance timelines</h4><p>What upkeep looks like monthly, quarterly, and annually</p></div>
+      <div class="feat reveal"><div class="icon">❓</div><h4>Consultation questions</h4><p>What to ask your provider before committing to a plan</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="natural">
+  <div class="wrap">
+    <div class="sec-label reveal">Our approach</div>
+    <h2 class="sec-head reveal">Built for <span class="serif">natural</span> results.</h2>
+    <p class="body-text reveal">This tool is not designed to create beauty-filter transformations, exaggerated lips, overfilled cheeks, or unrealistic jawlines. The goal is to support natural facial balancing, prevention-focused aging management, and transparent cost conversations — so clients feel informed, not pressured.</p>
+    <p class="body-text reveal" style="margin-top:16px">Not a diagnostic tool. Does not replace an in-person evaluation by a qualified provider. Designed to support better conversations between clients and professionals.</p>
+  </div>
+</section>
+
+<section id="story">
+  <div class="wrap">
+    <div class="sec-label reveal">Founder story</div>
+    <h2 class="sec-head reveal">I built the tool<br><span class="serif">I needed to find.</span></h2>
+    <div class="founder-card reveal">
+      <blockquote>"Black don't crack — but I still reached a point where I felt like I was cracking. Not dramatically. In that quiet, personal way where you start noticing small shifts. Before trying any treatment, I wanted to understand what was realistic. I wanted to compare outcomes before walking into a medspa and trying to explain my goals from scratch."</blockquote>
+      <p style="margin-bottom:20px;font-size:0.98rem;opacity:.85;line-height:1.7">What I found were beauty filters. Tools that changed the face too much. Results that looked too perfect. None of them felt like they were designed with Black women, natural facial balancing, or realistic aging prevention in mind.</p>
+      <p style="margin-bottom:20px;font-size:0.98rem;opacity:.85;line-height:1.7">I did not want a fantasy face. I wanted a thoughtful preview — something that could help me ask better questions and walk into a consultation feeling informed instead of overwhelmed.</p>
+      <p style="font-size:0.98rem;opacity:.85;line-height:1.7">So I built it.</p>
+      <div class="attr" style="margin-top:22px">— Tamara Richards, Founder</div>
+    </div>
+  </div>
+</section>
+
+<section id="who">
+  <div class="wrap">
+    <div class="sec-label reveal">Who we're looking for</div>
+    <h2 class="sec-head reveal">Beta reviewers from<br><span class="serif">aesthetics practices.</span></h2>
+    <p class="body-text reveal">We are inviting a small group of medspa and aesthetics professionals to review the beta concept and provide feedback.</p>
+    <div class="who-grid reveal">
+      <span class="who-pill">Medspa owners</span>
+      <span class="who-pill">Injectors</span>
+      <span class="who-pill">Nurse injectors</span>
+      <span class="who-pill">Aesthetic nurses</span>
+      <span class="who-pill">Estheticians</span>
+      <span class="who-pill">Cosmetic dermatology teams</span>
+      <span class="who-pill">Practice managers</span>
+      <span class="who-pill">Skincare consultants</span>
+      <span class="who-pill">Facial balancing specialists</span>
+    </div>
+    <div class="conf-box reveal">
+      <strong>Confidentiality notice</strong>
+      This beta concept is shared for review and feedback purposes only. The platform concept, report format, visual layouts, workflows, and sample outputs are proprietary and may not be copied, reproduced, distributed, or reverse engineered without prior written permission. Beta participation requires agreement to confidentiality terms.
+    </div>
+  </div>
+</section>
+
+<section id="beta-form">
+  <div class="wrap">
+    <div class="sec-label reveal">Private beta</div>
+    <h2 class="sec-head reveal">Request <span class="serif">beta access.</span></h2>
+
+    <div class="form-wrap reveal">
+      <h2>Beta Interest Form</h2>
+      <p class="form-sub">We'll review your submission and follow up with next steps, including confidentiality terms before any demo access.</p>
+
+      <!-- ─── TALLY EMBED ──────────────────────────────────────
+           To activate:
+           1. tally.so → New form → build your questions → Publish
+           2. Share → Embed → copy the form ID from the iframe src URL
+           3. Replace TALLY_FORM_ID in the two places below
+           4. Delete the <div id="form-body"> fallback below this block
+           ──────────────────────────────────────────────────── -->
+      <div id="tally-embed" style="display:block">
+        <iframe           data-tally-src="https://tally.so/embed/rjpkoR?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+          loading="lazy" width="100%" height="600" frameborder="0"
+          style="border:none;width:100%;min-height:500px"
+          title="AestheticSim Beta Interest Form"
+        ></iframe>
+        <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach(function(e){e.src=e.dataset.tallySrc})};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+      </div>
+
+      <div id="form-body" style="display:none">
+        <form id="beta-form-el" action="https://formspree.io/f/FORM_ID_HERE" method="POST">
+          <input type="hidden" name="_subject" value="AestheticSim Beta Interest" >
+
+          <!-- Contact -->
+          <div class="form-section">
+            <div class="form-section-head">Contact Information</div>
+            <div class="field-row">
+              <div class="field">
+                <label for="contact-name">Contact name *</label>
+                <input type="text" id="contact-name" name="contact_name" required placeholder="Your name" >
+              </div>
+              <div class="field">
+                <label for="role">Your role *</label>
+                <input type="text" id="role" name="role" required placeholder="e.g. Medspa owner, Injector" >
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required placeholder="you@practice.com" >
+              </div>
+              <div class="field">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" name="phone" placeholder="Optional" >
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="practice">Practice name *</label>
+                <input type="text" id="practice" name="practice_name" required placeholder="Your medspa or clinic" >
+              </div>
+              <div class="field">
+                <label for="location">City and state *</label>
+                <input type="text" id="location" name="location" required placeholder="e.g. Atlanta, GA" >
+              </div>
+            </div>
+            <div class="field">
+              <label for="website">Website or Instagram</label>
+              <input type="text" id="website" name="website" placeholder="yourpractice.com or @handle" >
+            </div>
+          </div>
+
+          <!-- Services -->
+          <div class="form-section">
+            <div class="form-section-head">Services Offered</div>
+            <div class="check-grid">
+              <label class="check-item"><input type="checkbox" name="services" value="Botox/Dysport/Daxxify/Jeuveau" > Botox / Dysport / Daxxify / Jeuveau</label>
+              <label class="check-item"><input type="checkbox" name="services" value="Dermal filler" > Dermal filler</label>
+              <label class="check-item"><input type="checkbox" name="services" value="PRF/PRF EZ Gel" > PRF / PRF EZ Gel</label>
+              <label class="check-item"><input type="checkbox" name="services" value="Sculptra" > Sculptra</label>
+              <label class="check-item"><input type="checkbox" name="services" value="Radiesse" > Radiesse</label>
+              <label class="check-item"><input type="checkbox" name="services" value="RF microneedling" > RF microneedling</label>
+              <label class="check-item"><input type="checkbox" name="services" value="Sofwave/ultrasound tightening" > Sofwave / ultrasound tightening</label>
+              <label class="check-item"><input type="checkbox" name="services" value="Lasers" > Lasers</label>
+              <label class="check-item"><input type="checkbox" name="services" value="Chemical peels" > Chemical peels</label>
+              <label class="check-item"><input type="checkbox" name="services" value="Facials/skincare" > Facials / skincare consultations</label>
+              <label class="check-item"><input type="checkbox" name="services" value="Body contouring" > Body contouring</label>
+              <label class="check-item"><input type="checkbox" name="services" value="Weight-loss support" > Weight-loss support</label>
+            </div>
+          </div>
+
+          <!-- Consultation workflow -->
+          <div class="form-section">
+            <div class="form-section-head">Consultation Workflow</div>
+            <div class="field">
+              <label>Biggest challenge in your consultation process</label>
+              <div class="check-grid" style="margin-top:8px">
+                <label class="check-item"><input type="checkbox" name="challenge" value="Clients don't understand options" > Clients don't understand treatment options</label>
+                <label class="check-item"><input type="checkbox" name="challenge" value="Unrealistic expectations" > Clients have unrealistic expectations</label>
+                <label class="check-item"><input type="checkbox" name="challenge" value="Pricing conversations" > Pricing conversations are difficult</label>
+                <label class="check-item"><input type="checkbox" name="challenge" value="Consultations take too long" > Consultations take too long</label>
+                <label class="check-item"><input type="checkbox" name="challenge" value="Clients unsure what to prioritize" > Clients unsure what to prioritize</label>
+                <label class="check-item"><input type="checkbox" name="challenge" value="Clients want visual examples" > Clients want visual examples</label>
+                <label class="check-item"><input type="checkbox" name="challenge" value="Inconsistent follow-up planning" > Follow-up planning is inconsistent</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product feedback -->
+          <div class="form-section">
+            <div class="form-section-head">Product Feedback</div>
+            <div class="field">
+              <label>Which report features would be most valuable?</label>
+              <div class="check-grid" style="margin-top:8px">
+                <label class="check-item"><input type="checkbox" name="features" value="Facial mapping" > Facial mapping</label>
+                <label class="check-item"><input type="checkbox" name="features" value="Treatment education" > Treatment education</label>
+                <label class="check-item"><input type="checkbox" name="features" value="Visual previews" > Side-by-side visual previews</label>
+                <label class="check-item"><input type="checkbox" name="features" value="Injectable planning" > Injectable planning</label>
+                <label class="check-item"><input type="checkbox" name="features" value="Skin quality notes" > Skin quality notes</label>
+                <label class="check-item"><input type="checkbox" name="features" value="Aging prevention plan" > Aging prevention plan</label>
+                <label class="check-item"><input type="checkbox" name="features" value="Cost estimates" > Cost estimates</label>
+                <label class="check-item"><input type="checkbox" name="features" value="Maintenance timelines" > Maintenance timelines</label>
+                <label class="check-item"><input type="checkbox" name="features" value="Consultation questions" > Provider consultation questions</label>
+              </div>
+            </div>
+            <div class="field" style="margin-top:20px">
+              <label>Where would this tool be most useful in your practice?</label>
+              <div class="check-grid" style="margin-top:8px">
+                <label class="check-item"><input type="checkbox" name="use_case" value="Before consultation" > Before consultation</label>
+                <label class="check-item"><input type="checkbox" name="use_case" value="During consultation" > During consultation</label>
+                <label class="check-item"><input type="checkbox" name="use_case" value="Lead generation" > Lead generation</label>
+                <label class="check-item"><input type="checkbox" name="use_case" value="Treatment planning" > Treatment planning</label>
+                <label class="check-item"><input type="checkbox" name="use_case" value="Package sales" > Package sales</label>
+                <label class="check-item"><input type="checkbox" name="use_case" value="Membership planning" > Membership planning</label>
+                <label class="check-item"><input type="checkbox" name="use_case" value="Follow-up visits" > Follow-up visits</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pricing -->
+          <div class="form-section">
+            <div class="form-section-head">Pricing & Adoption</div>
+            <div class="field">
+              <label>Which pricing model would make the most sense for your practice?</label>
+              <div class="radio-row" style="margin-top:8px">
+                <label class="radio-item"><input type="radio" name="pricing" value="Monthly subscription" > Monthly subscription</label>
+                <label class="radio-item"><input type="radio" name="pricing" value="Pay per report" > Pay per report</label>
+                <label class="radio-item"><input type="radio" name="pricing" value="Included with consultation fee" > Included with consultation fee</label>
+                <label class="radio-item"><input type="radio" name="pricing" value="White-label" > White-label version</label>
+                <label class="radio-item"><input type="radio" name="pricing" value="Not sure yet" > Not sure yet</label>
+              </div>
+            </div>
+            <div class="field" style="margin-top:16px">
+              <label for="adoption">What would make this valuable enough to adopt?</label>
+              <textarea id="adoption" name="adoption_answer" placeholder="Tell us what would make this a no-brainer for your practice..."></textarea>
+            </div>
+          </div>
+
+          <!-- Beta participation -->
+          <div class="form-section">
+            <div class="form-section-head">Beta Participation</div>
+            <div class="field">
+              <label>Would you be open to a short beta feedback session?</label>
+              <div class="radio-row" style="margin-top:8px">
+                <label class="radio-item"><input type="radio" name="feedback_session" value="yes" > Yes</label>
+                <label class="radio-item"><input type="radio" name="feedback_session" value="maybe" > Maybe</label>
+                <label class="radio-item"><input type="radio" name="feedback_session" value="no" > Not right now</label>
+              </div>
+            </div>
+            <div class="field" style="margin-top:16px">
+              <label>Would you be willing to test using sample or demo photos with consent?</label>
+              <div class="radio-row" style="margin-top:8px">
+                <label class="radio-item"><input type="radio" name="demo_photos" value="yes" > Yes</label>
+                <label class="radio-item"><input type="radio" name="demo_photos" value="maybe" > Maybe</label>
+                <label class="radio-item"><input type="radio" name="demo_photos" value="no" > No</label>
+              </div>
+            </div>
+            <div class="field" style="margin-top:16px">
+              <label>Would you like early access when the beta opens?</label>
+              <div class="radio-row" style="margin-top:8px">
+                <label class="radio-item"><input type="radio" name="early_access" value="yes" > Yes</label>
+                <label class="radio-item"><input type="radio" name="early_access" value="no" > No</label>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn">Submit beta interest →</button>
+          <p class="form-note">By submitting you agree to keep all beta materials confidential. We will follow up with next steps, including confidentiality terms, before any demo access is shared.<br><br>This tool is for education and consultation support only. Not a medical diagnosis or substitute for an in-person provider evaluation.</p>
+        </form>
+      </div>
+
+      <div id="form-success">
+        <div class="big">You're in the queue. ✦</div>
+        <p>Thank you for your interest. We'll review your submission and follow up with next steps — including confidentiality terms before any demo access.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="f-logo">AestheticSim</div>
+    <div class="f-tagline">AI-assisted facial aesthetics consultation reports for medspas.</div>
+    <div class="f-conf">Confidential beta material. Not for redistribution, reproduction, reverse engineering, or commercial use without written permission. This product is in beta development and is intended for educational and consultation-support purposes only. It is not a medical diagnosis, treatment prescription, or substitute for an in-person evaluation by a qualified medical or aesthetics provider.</div>
+    <div class="f-back">Built by <a href="https://n0kam0rad.github.io/portfolio/" target="_blank" rel="noopener noreferrer">Tamara Richards</a> · <a href="mailto:richards.tlynn@gmail.com">Contact</a></div>
+  </div>
+</footer>
+
+<script>
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold: 0.1});
+  reveals.forEach(r => io.observe(r));
+
+  // Form handling
+  const form = document.getElementById('beta-form-el');
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = form.querySelector('.submit-btn');
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      if(res.ok){
+        document.getElementById('form-body').style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+      } else {
+        btn.textContent = 'Something went wrong — try again';
+        btn.disabled = false;
+      }
+    } catch {
+      btn.textContent = 'Something went wrong — try again';
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
